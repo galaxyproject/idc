@@ -2,4 +2,17 @@ language: python
 sudo: false
 python: 2.7
 
+before_install:
+  - set -e
+  - export GALAXY_HOME=/home/galaxy
+  - export GALAXY_USER=admin@galaxy.org
+  - export GALAXY_USER_EMAIL=admin@galaxy.org
+  - export GALAXY_USER_PASSWD=admin
+
+  - sudo apt-get update -qq
+  - sudo apt-get install docker-ce --no-install-recommends -y -o Dpkg::Options::="--force-confmiss" -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confnew"
+
+  - docker --version
+  - docker info
+
 script: sh run_builder.sh
