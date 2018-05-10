@@ -15,6 +15,8 @@ set -e
 
 GALAXY_URL="http://localhost:$GALAXY_PORT"
 
+{ while true; do echo . ; sleep 60; done; } &
+
 if [ ! -f .venv ]; then
     virtualenv .venv
     . .venv/bin/activate
