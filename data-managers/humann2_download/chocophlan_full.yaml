@@ -1,0 +1,12 @@
+---
+data_managers:
+    - id: toolshed.g2.bx.psu.edu/repos/iuc/data_manager_humann2_database_downloader/data_manager_humann2_download/0.9.9
+      # HUMAnN2 database: Nucleotide database: full chocophlan
+      params:
+          - 'db|database': 'chocophlan'
+          - 'db|build': '{{ item }}'
+      items:
+          - full
+      data_table_reload:
+          - humann2_nucleotide_database
+
