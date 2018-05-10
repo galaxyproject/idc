@@ -15,4 +15,4 @@ before_install:
   - docker --version
   - docker info
 
-script: sh run_builder.sh
+script: bash run_builder.sh
