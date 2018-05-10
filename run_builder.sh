@@ -40,10 +40,6 @@ galaxy-wait -g ${GALAXY_URL}
 
 { while true; do echo . ; sleep 60; done; } &
 
-string='My long string'
-if [[ $string = *"My long"* ]]; then
-  echo "It's there!"
-fi
 
 if [ -s changed_files.txt ]
   then
