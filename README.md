@@ -27,39 +27,12 @@ data_managers:
           - humann2_nucleotide_database
 ```
 
-If you want to add a new reference genome to our community storage you probably want to include the FASTA file, the bowtie2 and Star index and so on. For this please just exchange the [item](https://github.com/bgruening/idc/blob/master/idc-workflows/ngs.yaml#L14) in our configuration file with the UCSC ID of your reference genome.
+If you want to add a new reference genome to our community storage you probably want to include the FASTA file, the bowtie2 and Star index and so on. For this please just add and entry to our [genome file](https://github.com/bgruening/idc/blob/master/idc-workflows/ngs_genomes.yaml).
 
 For examle adding new reference data for mouse (mm10) would look like that.
 
 ```yaml
----
-# configuration for fetch and index genomes
-
-data_managers:
-    # Data manager ID
-    - id: toolshed.g2.bx.psu.edu/repos/devteam/data_manager_fetch_genome_dbkeys_all_fasta/data_manager_fetch_genome_all_fasta_dbkey/0.0.2
-      # tool parameters, nested parameters should be specified using a pipe (|)
-      params:
-          - 'dbkey_source|dbkey': '{{ item }}'
-          - 'reference_source|reference_source_selector': 'ucsc'
-          - 'reference_source|requested_dbkey': '{{ item }}'
-      # Items refere to a list of variables you want to run this data manager. You can use them inside the param field with {{ item }}
-      # In case of genome for example you can run this DM with multiple genomes, or you could give multiple URLs.
-      items:
-          - dm3
-      # Name of the data-tables you want to reload after your DM are finished. This can be important for subsequent data managers
-      data_table_reload:
-          - all_fasta
-          - __dbkeys__
-
-    - id: toolshed.g2.bx.psu.edu/repos/devteam/data_manager_bowtie2_index_builder/bowtie2_index_builder_data_manager/2.2.6
-      params:
-          - 'all_fasta_source': '{{ item }}'
-      items:
-          - dm3
-      data_table_reload:
-          # Bowtie creates indices for Bowtie and TopHat
-          - bowtie2_indexes
-          - tophat2_indexes
-
+genomes:
+  - id: mm9
+    name: M. musculus July 2007 (NCBI37/mm9)
 ```
