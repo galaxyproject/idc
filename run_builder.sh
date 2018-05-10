@@ -13,6 +13,9 @@
 
 GALAXY_URL="http://localhost:$GALAXY_PORT"
 
+CHANGED_YAML_FILES=${git diff --name-only $TRAVIS_COMMIT_RANGE -- '*.yml' '*.yaml'}
+echo $CHANGED_YAML_FILES
+
 if [ ! -f .venv ]; then
     virtualenv .venv
     . .venv/bin/activate
@@ -31,8 +34,6 @@ docker run -d -v ${EXPORT_DIR}:/export/ -e GALAXY_CONFIG_GALAXY_DATA_MANAGER_DAT
 galaxy-wait -g ${GALAXY_URL}
 
 #TODO: make the yml file dynamic
-
-#CHANGED_YAML_FILES=${git diff --name-only $TRAVIS_COMMIT_RANGE -- '*.yml' '*.yaml'}
 
 { while true; do echo . ; sleep 60; done; } &
 
