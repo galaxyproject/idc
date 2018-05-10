@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 : ${GALAXY_DOCKER_IMAGE:="quay.io/bgruening/galaxy:18.01"}
 : ${GALAXY_PORT:="8080"}
 : ${EPHEMERIS_VERSION:="0.8.0"}
@@ -15,7 +17,7 @@ GALAXY_URL="http://localhost:$GALAXY_PORT"
 
 git diff --name-only $TRAVIS_COMMIT_RANGE -- '*.yml' '*.yaml' > changed_files.txt
 echo "Following files have changed."
-echo $CHANGED_YAML_FILES
+cat changed_files.txt
 
 if [ ! -f .venv ]; then
     virtualenv .venv
@@ -31,8 +33,6 @@ echo 'ephemeris installed'
 
 mkdir -p ${DATA_MANAGER_DATA_PATH}
 
-
-
 docker run -d -v ${EXPORT_DIR}:/export/ -e GALAXY_CONFIG_GALAXY_DATA_MANAGER_DATA_PATH=/export/data_manager/ -p 8080:80 ${GALAXY_DOCKER_IMAGE}
 galaxy-wait -g ${GALAXY_URL}
 
@@ -42,22 +42,20 @@ galaxy-wait -g ${GALAXY_URL}
 
 
 if [ -s changed_files.txt ]
-  then
-    for FILE in `cat changed_files.txt`;
-        do
-            if [[ $FILE = *"data-managers"* ]]; then
-                #### RUN single data managers
-                shed-tools install -d $FILE -g ${GALAXY_URL} -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
-                run-data-managers --config $FILE -g ${GALAXY_URL} -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
-
-            elif [[ $FILE = *"idc-workflows"* ]]; then
-                #### RUN the pipline for new genome
-                shed-tools install -d $FILE -g ${GALAXY_URL} -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
-                run-data-managers --config $FILE -g ${GALAXY_URL} -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
-
-            fi
-        done
-  fi
+then
+  for FILE in `cat changed_files.txt`;
+    do
+      if [[ $FILE == *"data-managers"* ]]; then
+         #### RUN single data managers
+         shed-tools install -d $FILE -g ${GALAXY_URL} -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
+         run-data-managers --config $FILE -g ${GALAXY_URL} -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
+      elif [[ $FILE == *"idc-workflows"* ]]; then
+         #### RUN the pipline for new genome
+         shed-tools install -d $FILE -g ${GALAXY_URL} -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
+         run-data-managers --config $FILE -g ${GALAXY_URL} -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
+     fi
+  done
+fi
 
 #shed-tools install -d data-managers/humann2_download/chocophlan_full.yaml -g ${GALAXY_URL} -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
 #run-data-managers --config data-managers/humann2_download/chocophlan_full.yaml -g ${GALAXY_URL} -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
