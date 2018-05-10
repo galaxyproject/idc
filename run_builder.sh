@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 : ${GALAXY_DOCKER_IMAGE:="quay.io/bgruening/galaxy:18.01"}
 : ${GALAXY_PORT:="8080"}
 : ${EPHEMERIS_VERSION:="0.8.0"}
