@@ -1,9 +1,0 @@
----
-
-api_key: admin
-galaxy_instance: http://localhost:8080
-tools:
-  - name: 'data_manager_metaphlan2_database_downloader'
-    owner: 'iuc'
-    tool_panel_section_label: 'Data Manager'
-
