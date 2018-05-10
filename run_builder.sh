@@ -17,7 +17,8 @@ if [ ! -f .venv ]; then
     virtualenv .venv
     . .venv/bin/activate
     pip install -U pip
-    pip install ephemeris=="${EPHEMERIS_VERSION}"
+    #pip install ephemeris=="${EPHEMERIS_VERSION}"
+    pip install -e git://github.com/galaxyproject/ephemeris.git@dm#egg=ephemeris
 fi
 
 echo 'ephemeris installed'
