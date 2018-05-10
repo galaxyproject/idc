@@ -13,7 +13,7 @@
 
 GALAXY_URL="http://localhost:$GALAXY_PORT"
 
-CHANGED_YAML_FILES=`git diff --name-only $TRAVIS_COMMIT_RANGE -- '*.yml' '*.yaml'`
+git diff --name-only $TRAVIS_COMMIT_RANGE -- '*.yml' '*.yaml' > changed_files.txt
 echo "Following files have changed."
 echo $CHANGED_YAML_FILES
 
@@ -40,10 +40,31 @@ galaxy-wait -g ${GALAXY_URL}
 
 { while true; do echo . ; sleep 60; done; } &
 
-#### RUN single data managers
+string='My long string'
+if [[ $string = *"My long"* ]]; then
+  echo "It's there!"
+fi
 
-shed-tools install -d data-managers/humann2_download/chocophlan_full.yaml -g ${GALAXY_URL} -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
-run-data-managers --config data-managers/humann2_download/chocophlan_full.yaml -g ${GALAXY_URL} -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
+if [ -s changed_files.txt ]
+  then
+    for FILE in `cat changed_files.txt`;
+        do
+            if [[ $FILE = *"data-managers"* ]]; then
+                #### RUN single data managers
+                shed-tools install -d $FILE -g ${GALAXY_URL} -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
+                run-data-managers --config $FILE -g ${GALAXY_URL} -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
+
+            elif [[ $FILE = *"idc-workflows"* ]]; then
+                #### RUN the pipline for new genome
+                shed-tools install -d $FILE -g ${GALAXY_URL} -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
+                run-data-managers --config $FILE -g ${GALAXY_URL} -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
+
+            fi
+        done
+  fi
+
+#shed-tools install -d data-managers/humann2_download/chocophlan_full.yaml -g ${GALAXY_URL} -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
+#run-data-managers --config data-managers/humann2_download/chocophlan_full.yaml -g ${GALAXY_URL} -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
 
 #### RUN the pipline for new genome
 
