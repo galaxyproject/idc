@@ -13,7 +13,8 @@
 
 GALAXY_URL="http://localhost:$GALAXY_PORT"
 
-CHANGED_YAML_FILES=${git diff --name-only $TRAVIS_COMMIT_RANGE -- '*.yml' '*.yaml'}
+CHANGED_YAML_FILES=`git diff --name-only $TRAVIS_COMMIT_RANGE -- '*.yml' '*.yaml'`
+echo "Following files have changed."
 echo $CHANGED_YAML_FILES
 
 if [ ! -f .venv ]; then
@@ -29,6 +30,8 @@ echo 'ephemeris installed'
 . .venv/bin/activate
 
 mkdir -p ${DATA_MANAGER_DATA_PATH}
+
+
 
 docker run -d -v ${EXPORT_DIR}:/export/ -e GALAXY_CONFIG_GALAXY_DATA_MANAGER_DATA_PATH=/export/data_manager/ -p 8080:80 ${GALAXY_DOCKER_IMAGE}
 galaxy-wait -g ${GALAXY_URL}
