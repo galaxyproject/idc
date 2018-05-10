@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -e
-
 : ${GALAXY_DOCKER_IMAGE:="quay.io/bgruening/galaxy:18.01"}
 : ${GALAXY_PORT:="8080"}
 : ${EPHEMERIS_VERSION:="0.8.0"}
@@ -14,8 +12,6 @@ set -e
 : ${PLANEMO_SERVE_DATABASE_TYPE:="postgres"}
 
 GALAXY_URL="http://localhost:$GALAXY_PORT"
-
-{ while true; do echo . ; sleep 60; done; } &
 
 if [ ! -f .venv ]; then
     virtualenv .venv
@@ -37,6 +33,8 @@ galaxy-wait -g ${GALAXY_URL}
 #TODO: make the yml file dynamic
 
 #CHANGED_YAML_FILES=${git diff --name-only $TRAVIS_COMMIT_RANGE -- '*.yml' '*.yaml'}
+
+{ while true; do echo . ; sleep 60; done; } &
 
 #### RUN single data managers
 
