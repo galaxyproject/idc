@@ -34,9 +34,8 @@ galaxy-wait -g ${GALAXY_URL}
 
 #CHANGED_YAML_FILES=${git diff --name-only $TRAVIS_COMMIT_RANGE -- '*.yml' '*.yaml'}
 
-shed-tools install -d data-managers/metaphlan2_download/db_v20.yaml -g ${GALAXY_URL} -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
-
-run-data-managers --config data-managers/metaphlan2_download/db_v20.yaml -g ${GALAXY_URL} -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
+shed-tools install -d data-managers/humann2_download/chocophlan_full.yaml -g ${GALAXY_URL} -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
+run-data-managers --config data-managers/humann2_download/chocophlan_full.yaml -g ${GALAXY_URL} -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
 
 ls -l ${DATA_MANAGER_DATA_PATH}
 
