@@ -2,12 +2,11 @@
 
 set -e
 
-: ${GALAXY_DOCKER_IMAGE:="quay.io/bgruening/galaxy:18.01"}
+: ${GALAXY_DOCKER_IMAGE:="quay.io/bgruening/galaxy"}
 : ${GALAXY_PORT:="8080"}
-: ${EPHEMERIS_VERSION:="0.8.0"}
 : ${GALAXY_DEFAULT_ADMIN_USER:="admin@galaxy.org"}
 : ${GALAXY_DEFAULT_ADMIN_PASSWORD:="admin"}
-: ${EXPORT_DIR:="$HOME/export/"}
+: ${EXPORT_DIR:="/mnt/data/export/"}
 : ${DATA_MANAGER_DATA_PATH:="${EXPORT_DIR}/data_manager"}
 
 : ${PLANEMO_PROFILE_NAME:="wxflowtest"}
@@ -23,8 +22,7 @@ if [ ! -f .venv ]; then
     virtualenv .venv
     . .venv/bin/activate
     pip install -U pip
-    #pip install ephemeris=="${EPHEMERIS_VERSION}"
-    pip install -e git://github.com/galaxyproject/ephemeris.git@dm#egg=ephemeris
+    pip install ephemeris
 fi
 
 echo 'ephemeris installed'
@@ -33,38 +31,56 @@ echo 'ephemeris installed'
 
 mkdir -p ${DATA_MANAGER_DATA_PATH}
 
-docker run -d -v ${EXPORT_DIR}:/export/ -e GALAXY_CONFIG_GALAXY_DATA_MANAGER_DATA_PATH=/export/data_manager/ -p 8080:80 ${GALAXY_DOCKER_IMAGE}
+sudo cp scripts/job_conf.xml ${EXPORT_DIR}/job_conf.xml
+
+docker run -d --rm -v ${EXPORT_DIR}:/export/ -e GALAXY_CONFIG_JOB_CONFIG_FILE=/export/job_conf.xml -e GALAXY_CONFIG_GALAXY_DATA_MANAGER_DATA_PATH=/export/data_manager/ -e GALAXY_CONFIG_WATCH_TOOL_DATA_DIR=True -p 8080:80 --name idc_builder ${GALAXY_DOCKER_IMAGE}
+
+echo 'Waitng for Galaxy'
+
 galaxy-wait -g ${GALAXY_URL}
 
-#TODO: make the yml file dynamic
-
-{ while true; do echo . ; sleep 60; done; } &
+chmod 0777 ${DATA_MANAGER_DATA_PATH}
 
 
-if [ -s changed_files.txt ]
-then
-  for FILE in `cat changed_files.txt`;
-    do
-      if [[ $FILE == *"data-managers"* ]]; then
-         #### RUN single data managers
-         shed-tools install -d $FILE -g ${GALAXY_URL} -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
-         run-data-managers --config $FILE -g ${GALAXY_URL} -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
-      elif [[ $FILE == *"idc-workflows"* ]]; then
-         #### RUN the pipline for new genome
-         shed-tools install -d $FILE -g ${GALAXY_URL} -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
-         run-data-managers --config $FILE -g ${GALAXY_URL} -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
-     fi
-  done
-fi
+#if [ -s changed_files.txt ]
+#then
+#  for FILE in `cat changed_files.txt`;
+#    do
+#      if [[ $FILE == *"data-managers"* ]]; then
+#         #### RUN single data managers
+#         shed-tools install -d $FILE -g ${GALAXY_URL} -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
+#         run-data-managers --config $FILE -g ${GALAXY_URL} -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
+#      elif [[ $FILE == *"idc-workflows"* ]]; then
+#         #### RUN the pipline for new genome
+#         shed-tools install -d $FILE -g ${GALAXY_URL} -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
+#         run-data-managers --config $FILE -g ${GALAXY_URL} -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
+#     fi
+#  done
+#fi
 
-#shed-tools install -d data-managers/humann2_download/chocophlan_full.yaml -g ${GALAXY_URL} -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
-#run-data-managers --config data-managers/humann2_download/chocophlan_full.yaml -g ${GALAXY_URL} -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
+echo 'Installing Data Managers'
+# Install the data managers
+shed-tools install -t data_managers_tools.yml -g ${GALAXY_URL} -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
 
-#### RUN the pipline for new genome
+echo 'Fetching new genomes'
+#Cat the genomes and the fetch managers and then run the fetch data managers
+python scripts/make_fetch.py -g genomes.yml
+#cat data_managers_fetch.yml genomes.yml > fetch.yml
+run-data-managers --config fetch.yml -g ${GALAXY_URL} -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
 
-#cat idc-workflows/ngs_genomes.yaml  idc-workflows/ngs.yaml > ./temp_workflow.yaml
-#shed-tools install -d ./temp_workflow.yaml -g ${GALAXY_URL} -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
-#run-data-managers --config ./temp_workflow.yaml -g ${GALAXY_URL} -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
+echo 'Restarting Galaxy'
+#Restart Galaxy to reload the data tables
+docker exec idc_builder supervisorctl restart galaxy:
+galaxy-wait -g ${GALAXY_URL}
+sleep 20
+echo 'Building new indices'
+#Cat the genomes and the fetch managers and then run the fetch data managers
+cat data_managers_genomes.yml genomes.yml > genomes_build.yml
+run-data-managers --config genomes_build.yml -g ${GALAXY_URL} -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
+
 
 ls -l ${DATA_MANAGER_DATA_PATH}
 
+rm fetch.yml
+
+docker stop idc_builder
