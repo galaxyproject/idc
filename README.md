@@ -1,4 +1,4 @@
-# IDC - Intergalactic (referecne) Data Commission
+# IDC - Intergalactic (reference) Data Commission
 
 What the [IUC](https://github.com/galaxyproject/tools-iuc) (Intergalactic Utilities Commission) is for Galaxy tools is the IDC for (reference) Data.
 
