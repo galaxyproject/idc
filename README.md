@@ -36,3 +36,9 @@ genomes:
   - id: mm9
     name: M. musculus July 2007 (NCBI37/mm9)
 ```
+
+## How to use the reference data
+
+If you want to use the reference data please have a look at our [ansible-role](https://github.com/galaxyproject/ansible-cvmfs
+) and the [example playbook](https://github.com/usegalaxy-eu/cvmfs-example).
+
