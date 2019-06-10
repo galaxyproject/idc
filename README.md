@@ -27,7 +27,7 @@ data_managers:
           - humann2_nucleotide_database
 ```
 
-If you want to add a new reference genome to our community storage, you probably want to include the FASTA file, the bowtie2 and Star indexes, and so on. For this please just add and entry to our [genome file](https://github.com/bgruening/idc/blob/master/idc-workflows/ngs_genomes.yaml).
+If you want to add a new reference genome to our community storage, you probably want to include the FASTA file, the bowtie2 and Star indexes, and so on. For this please just add and entry to our [genome file](https://github.com/galaxyproject/idc/blob/master/idc-workflows/ngs_genomes.yaml).
 
 For example, adding new reference data for mouse (mm10) would look like that.
 
