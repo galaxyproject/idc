@@ -3,26 +3,28 @@
       description: Homo sapiens (hg19 with mtDNA replaced with rCRS, and containing pUC18
         and phiX174)
       id: hg19_rCRS_pUC18_phiX174
+      source: ucsc
+      doi:
+      version:
+      checksum:
+      blob:
       indexers:
-      - data_manager_twobit_builder
-      - data_manager_fetch_genome_all_fasta
-      - data_manager_bwa_mem_index_builder
-      - data_manager_sam_fasta_index_builder
-      - data_manager_hisat2_index_builder
-      - data_manager_picard_index_builder
+        - genome
+      blacklist:
+        - bfast
 
     - dbkey: rn6
       description: Rat Jul. 2014 (RGSC 6.0/rn6) (rn6)
       id: rn6
+      source: ucsc
+      doi:
+      version:
+      checksum:
+      blob:
       indexers:
-      - data_manager_twobit_builder
-      - data_manager_fetch_genome_all_fasta
-      - data_manager_bowtie2_index_builder
-      - data_manager_bwa_mem_index_builder
-      - data_manager_sam_fasta_index_builder
-      - data_manager_hisat2_index_builder
-      - data_manager_picard_index_builder
-      - data_manager_star_index_builder
+        - genome
+      blacklist:
+        - bfast
 
     - dbkey: dm6
       description: D. melanogaster Aug. 2014 (BDGP Release 6 + ISO1 MT/dm6) (dm6)

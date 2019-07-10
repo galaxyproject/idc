@@ -1,0 +1,56 @@
+- genomes:
+    - dbkey: hg19_rCRS_pUC18_phiX174
+      description: Homo sapiens (hg19 with mtDNA replaced with rCRS, and containing pUC18
+        and phiX174)
+      id: hg19_rCRS_pUC18_phiX174
+      source: ucsc
+      doi:
+      version:
+      checksum:
+      blob:
+      attributes:
+
+      indexers:
+        - genome
+      blacklist:
+        - bfast
+
+    - dbkey: rn6
+      description: Rat Jul. 2014 (RGSC 6.0/rn6) (rn6)
+      id: rn6
+      source: ucsc
+      doi:
+      version:
+      checksum:
+      blob:
+      indexers:
+        - genome
+      blacklist:
+        - bfast
+
+    - dbkey: dm6
+      description: D. melanogaster Aug. 2014 (BDGP Release 6 + ISO1 MT/dm6) (dm6)
+      id: dm6
+      indexers:
+      source: ucsc
+      doi:
+      version:
+      checksum:
+      blob:
+      indexers:
+        - genome
+      blacklist:
+        - bfast
+
+    - dbkey: danRer10
+      description: Zebrafish Sep. 2014 (GRCz10/danRer10) (danRer10)
+      id: danRer10
+      source: ucsc
+      doi:
+      version:
+      checksum:
+      blob:
+      indexers:
+        - genome
+      blacklist:
+        - bfast

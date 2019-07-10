@@ -2,7 +2,7 @@
 
 set -e
 
-: ${GALAXY_DOCKER_IMAGE:="quay.io/bgruening/galaxy:18.01"}
+: ${GALAXY_DOCKER_IMAGE:="quay.io/bgruening/galaxy"}
 : ${GALAXY_PORT:="8080"}
 : ${EPHEMERIS_VERSION:="0.8.0"}
 : ${GALAXY_DEFAULT_ADMIN_USER:="admin@galaxy.org"}
@@ -23,8 +23,9 @@ if [ ! -f .venv ]; then
     virtualenv .venv
     . .venv/bin/activate
     pip install -U pip
+    pip install ephemeris
     #pip install ephemeris=="${EPHEMERIS_VERSION}"
-    pip install -e git+https://github.com/galaxyproject/ephemeris.git@dm#egg=ephemeris
+    #pip install -e git+https://github.com/galaxyproject/ephemeris.git@dm#egg=ephemeris
 fi
 
 echo 'ephemeris installed'
@@ -32,8 +33,9 @@ echo 'ephemeris installed'
 . .venv/bin/activate
 
 mkdir -p ${DATA_MANAGER_DATA_PATH}
+chmod 0777 ${DATA_MANAGER_DATA_PATH}
 
-docker run -d -v ${EXPORT_DIR}:/export/ -e GALAXY_CONFIG_GALAXY_DATA_MANAGER_DATA_PATH=/export/data_manager/ -p 8080:80 ${GALAXY_DOCKER_IMAGE}
+docker run -d -v ${EXPORT_DIR}:/export/ -e GALAXY_CONFIG_GALAXY_DATA_MANAGER_DATA_PATH=/export/data_manager/ -e GALAXY_CONFIG_GALAXY_WATCH_TOOL_DATA_DIR=True -p 8080:80 ${GALAXY_DOCKER_IMAGE}
 galaxy-wait -g ${GALAXY_URL}
 
 #TODO: make the yml file dynamic
@@ -67,4 +69,3 @@ fi
 #run-data-managers --config ./temp_workflow.yaml -g ${GALAXY_URL} -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
 
 ls -l ${DATA_MANAGER_DATA_PATH}
-
