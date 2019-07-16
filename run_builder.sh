@@ -61,9 +61,11 @@ chmod 0777 ${DATA_MANAGER_DATA_PATH}
 echo 'Installing Data Managers'
 # Install the data managers
 shed-tools install -t data_managers_tools.yml -g ${GALAXY_URL} -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
+#Let others read the shed_data_manager_conf.xml file
+sudo chmod ugo+r ${EXPORT_DIR}/galaxy-central/config/shed_data_manager_conf.xml
 
 echo 'Fetching new genomes'
-#Cat the genomes and the fetch managers and then run the fetch data managers
+#Run make_fetch.py to build the fetch manager config file for ephemeris
 python scripts/make_fetch.py -g genomes.yml
 #cat data_managers_fetch.yml genomes.yml > fetch.yml
 run-data-managers --config fetch.yml -g ${GALAXY_URL} -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
@@ -73,10 +75,11 @@ echo 'Restarting Galaxy'
 docker exec idc_builder supervisorctl restart galaxy:
 galaxy-wait -g ${GALAXY_URL}
 sleep 20
+
 echo 'Building new indices'
-#Cat the genomes and the fetch managers and then run the fetch data managers
-cat data_managers_genomes.yml genomes.yml > genomes_build.yml
-run-data-managers --config genomes_build.yml -g ${GALAXY_URL} -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
+#Run the make_dm_genomes.py script to create the list of index builders and genomes and pass it to ephemeris
+python scripts/make_dm_genomes.py -d data_managers_tools.yml -x ${EXPORT_DIR}/galaxy-central/config/shed_data_manager_conf.xml -g genomes.yml
+run-data-managers --config dm_genomes.yml -g ${GALAXY_URL} -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
 
 
 ls -l ${DATA_MANAGER_DATA_PATH}

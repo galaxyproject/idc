@@ -41,7 +41,7 @@ genomes:
       source: https://swift.rc.nectar.org.au:8888/v1/AUTH_377/public/COMP90014/Assignment1/Ecoli-O157_H7-Sakai-chr.fna
       doi:
       version:
-      checksum:
+      checksum: 1d769fcb47f631c359e0b9407155e34325b223fba4d1f208f7ad8c353f5ab560
       blob:
       indexers:
         - genome
@@ -53,8 +53,8 @@ genomes:
       source: NC_021902
       doi:
       version:
-      checksum:
-      blob:
+      checksum: 8d557e48aa3268afd0177a537a9ae396e6a6c123e4e0d5386bc1fa5a18c3054b
+      blob: "Extra information for this genome is at: https://www.ncbi.nlm.nih.gov/genome/152?genome_assembly_id=299243"
       indexers:
         - genome
       blacklist:
