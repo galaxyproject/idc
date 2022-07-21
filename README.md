@@ -190,3 +190,8 @@ It should work just by cloning the repo to the machine, modifying the environmen
 ## Other data types
 
 Work has been done on some of the other data types, tools and data managers such as those that work on multiple genomes at once like Busco, Metaphlan etc. These can be found in the `older_attempts` directory along with appropriate README.
+## How to use the reference data
+
+If you want to use the reference data, please have a look at our [ansible-role](https://github.com/galaxyproject/ansible-cvmfs
+) and the [example playbook](https://github.com/usegalaxy-eu/cvmfs-example).
+
