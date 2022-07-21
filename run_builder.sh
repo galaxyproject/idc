@@ -85,5 +85,6 @@ run-data-managers --config dm_genomes.yml -g ${GALAXY_URL} -u $GALAXY_DEFAULT_AD
 ls -l ${DATA_MANAGER_DATA_PATH}
 
 rm fetch.yml
+rm dm_genomes.yml
 
 docker stop idc_builder
