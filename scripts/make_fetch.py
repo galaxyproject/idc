@@ -1,20 +1,18 @@
 #!/bin/env python
 
 import yaml
-from collections import defaultdict
+import xml.etree.ElementTree as ET
 import re
-import os
-import sys
 import argparse
 
 def main():
 
-    VERSION = 0.1
+    VERSION = 0.2
     FETCH_DM_TOOL = 'toolshed.g2.bx.psu.edu/repos/devteam/data_manager_fetch_genome_dbkeys_all_fasta/data_manager_fetch_genome_all_fasta_dbkey/0.0.2'
-    FETCH_DM_POST = {'data_table_reload': ['all_fasta','__dbkeys__']}
 
     parser = argparse.ArgumentParser(description="")
     parser.add_argument("-g", "--genome_file", required=True, help="The genome yaml file to read.")
+    parser.add_argument("-x", "--shed_data_managers_conf_file", required=True, help="Path to the shed_data_managers_conf.xml file")
     parser.add_argument("-o", "--outfile", default="fetch.yml", help="The name of the output file to produce.")
     parser.add_argument("--version", action='store_true')
     parser.add_argument("--verbose", action='store_true')
@@ -25,6 +23,18 @@ def main():
         print("make_fetch.py version: %.1f" % VERSION)
         return
 
+    #Read in the shed_data_managers_tool file to get the id of the fetch dm tool.
+    tree = ET.parse(args.shed_data_managers_conf_file)
+    root = tree.getroot()
+    fetch_dm_tool = ''
+    for data_manager in root:
+        for tool in data_manager:
+            if tool.tag == 'tool':
+                for x in tool:
+                    if x.tag == 'id':
+                        if re.search(r"fetch_genome", x.text):
+                            fetch_dm_tool = x.text
+
     #Read in the genome file.
     genomes = yaml.safe_load(open(args.genome_file, 'r'))
 
@@ -32,7 +42,7 @@ def main():
 
     for genome in genomes['genomes']:
         #make the start
-        out = {'id': FETCH_DM_TOOL}
+        out = {'id': fetch_dm_tool}
         out['params'] = []
         out['params'].append({'dbkey_source|dbkey': genome['id']})
         if genome['source'] == 'ucsc':
