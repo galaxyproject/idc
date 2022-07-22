@@ -59,6 +59,8 @@ def main():
             dm = {}
             dm['id'] = name
             dm['params'] = [{'all_fasta_source': '{{ item.id }}'},{'sequence_name': '{{ item.name }}'},{'sequence_id': '{{ item.id }}'}]
+            if re.search("bwa",dm['id']):
+                dm['params'].append({'index_algorithm': 'bwtsw'}) 
             dm['items'] = '{{ genomes }}'
             dm['data_table_reload'] = tables
             out_conf['data_managers'].append(dm)
