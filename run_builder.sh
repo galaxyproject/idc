@@ -5,7 +5,7 @@ set -e
 : ${GALAXY_DOCKER_IMAGE:="quay.io/bgruening/galaxy"}
 : ${GALAXY_PORT:="8080"}
 : ${GALAXY_DEFAULT_ADMIN_USER:="admin@galaxy.org"}
-: ${GALAXY_DEFAULT_ADMIN_PASSWORD:="admin"}
+: ${GALAXY_DEFAULT_ADMIN_PASSWORD:="password"}
 : ${EXPORT_DIR:="/mnt/data/export/"}
 : ${DATA_MANAGER_DATA_PATH:="${EXPORT_DIR}/data_manager"}
 
