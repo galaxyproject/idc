@@ -68,7 +68,7 @@ echo 'Fetching new genomes'
 #Run make_fetch.py to build the fetch manager config file for ephemeris
 python scripts/make_fetch.py -g genomes.yml
 #cat data_managers_fetch.yml genomes.yml > fetch.yml
-run-data-managers --config fetch.yml -g ${GALAXY_URL} -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
+run-data-managers --config fetch.yml -x ${EXPORT_DIR}/galaxy-central/config/shed_data_manager_conf.xml -g ${GALAXY_URL} -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
 
 echo 'Restarting Galaxy'
 #Restart Galaxy to reload the data tables
