@@ -44,7 +44,7 @@
         </destination>
     </destinations>
     <limits>
-	<limit type='registered_user_concurrent_jobs'>2</limit>
+	<limit type='registered_user_concurrent_jobs'>1</limit>
 	<limit type="destination_total_concurrent_jobs" id="slurm_cluster_ucsc">1</limit>
 	<limit type="destination_total_concurrent_jobs" id="condor_cluster_ucsc">1</limit>
     </limits>
