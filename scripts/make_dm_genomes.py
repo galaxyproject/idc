@@ -51,8 +51,6 @@ def main():
                 for x in tool:
                     if x.tag == 'id':
                         name = x.text
-                        if re.search(name, "color"):
-                            continue
                     elif x.tag == 'repository_name':
                         repo = x.text
             elif tool.tag == 'data_table':
@@ -62,7 +60,9 @@ def main():
             dm['id'] = name
             dm['params'] = [{'all_fasta_source': '{{ item.id }}'},{'sequence_name': '{{ item.name }}'},{'sequence_id': '{{ item.id }}'}]
             if re.search("bwa",dm['id']):
-                dm['params'].append({'index_algorithm': 'bwtsw'}) 
+                dm['params'].append({'index_algorithm': 'bwtsw'})
+            if re.search("color_space",dm['id']):
+                continue
             dm['items'] = '{{ genomes }}'
             dm['data_table_reload'] = tables
             out_conf['data_managers'].append(dm)
