@@ -51,6 +51,8 @@ def main():
                 for x in tool:
                     if x.tag == 'id':
                         name = x.text
+                        if re.search(name, "color"):
+                            continue
                     elif x.tag == 'repository_name':
                         repo = x.text
             elif tool.tag == 'data_table':

@@ -20,7 +20,7 @@
         <destination id="slurm_cluster" runner="slurm">
             <env file="/galaxy_venv/bin/activate"/>
             <param id="enabled" from_environ="GALAXY_RUNNERS_ENABLE_SLURM">true</param>
-            <param id="nativeSpecification" from_environ="NATIVE_SPEC">--ntasks=8 --share</param>
+            <param id="nativeSpecification" from_environ="NATIVE_SPEC">--ntasks=32 --share</param>
         </destination>
         <destination id="slurm_cluster_ucsc" runner="slurm">
             <env file="/galaxy_venv/bin/activate"/>
