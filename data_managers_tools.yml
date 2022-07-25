@@ -17,12 +17,6 @@ tools:
     tool_shed_url: toolshed.g2.bx.psu.edu
     tags:
       - genome
-  # - name: data_manager_gatk_picard_index_builder
-  #   owner: devteam
-  #   tool_panel_section_label: None
-  #   tool_shed_url: toolshed.g2.bx.psu.edu
-  #   tags:
-  #     - genome
   - name: data_manager_hisat_index_builder
     owner: devteam
     tool_panel_section_label: None
@@ -31,12 +25,6 @@ tools:
       - genome
   - name: data_manager_twobit_builder
     owner: devteam
-    tool_panel_section_label: None
-    tool_shed_url: toolshed.g2.bx.psu.edu
-    tags:
-      - genome
-  - name: data_manager_diamond_database_builder
-    owner: bgruening
     tool_panel_section_label: None
     tool_shed_url: toolshed.g2.bx.psu.edu
     tags:
@@ -77,3 +65,27 @@ tools:
     tool_shed_url: toolshed.g2.bx.psu.edu
     tags:
       - genome
+  - name: data_manager_snpeff
+    owner: iuc
+    tool_panel_section_label: None
+    tool_shed_url: toolshed.g2.bx.psu.edu
+    tags:
+      - snpeff
+  - name: data_manager_plant_tribes_scaffolds_downloader
+    owner: iuc
+    tool_panel_section_label: None
+    tool_shed_url: toolshed.g2.bx.psu.edu
+    tags:
+      - plant_source
+  - name: data_manager_fetch_ncbi_taxonomy
+    owner: devteam
+    tool_panel_section_label: None
+    tool_shed_url: toolshed.g2.bx.psu.edu
+    tags:
+      - tax_source
+  - name: data_manager_gemini_database_downloader
+    owner: iuc
+    tool_panel_section_label: None
+    tool_shed_url: toolshed.g2.bx.psu.edu
+    tags:
+      - gemini

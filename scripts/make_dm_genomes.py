@@ -2,10 +2,7 @@
 
 import yaml
 import xml.etree.ElementTree as ET
-from collections import defaultdict
 import re
-import os
-import sys
 import argparse
 
 def main():
@@ -26,10 +23,10 @@ def main():
         print("make_fetch.py version: %.1f" % VERSION)
         return
 
-    #Set up the output dictionary
+    # Set up the output dictionary
     out_conf = {'data_managers': [], 'genomes': []}
 
-    #Read in the data managers file and store the names in an array
+    # Read in the data managers file and store the names in an array
     data_managers_tools = yaml.safe_load(open(args.data_managers_file, 'r'))
     dms = []
     for dm in data_managers_tools['tools']:
@@ -67,7 +64,7 @@ def main():
             dm['data_table_reload'] = tables
             out_conf['data_managers'].append(dm)
 
-    #Read in the genome file.
+    # Read in the genome file.
     genomes = yaml.safe_load(open(args.genome_file, 'r'))
 
     out_conf['genomes'] = genomes['genomes']

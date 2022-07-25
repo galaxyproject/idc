@@ -8,7 +8,6 @@ import argparse
 def main():
 
     VERSION = 0.2
-    FETCH_DM_TOOL = 'toolshed.g2.bx.psu.edu/repos/devteam/data_manager_fetch_genome_dbkeys_all_fasta/data_manager_fetch_genome_all_fasta_dbkey/0.0.2'
 
     parser = argparse.ArgumentParser(description="")
     parser.add_argument("-g", "--genome_file", required=True, help="The genome yaml file to read.")
