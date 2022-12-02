@@ -1,0 +1,25 @@
+@startuml
+group Submit Indexer (Contributor) 
+    start
+    :Clone IDC repo;
+    :Update data_managers_tools.yml;
+    :Issue Pull Request;
+end group
+group Continuous Integration (on PR)
+    :Validate artifacts;
+    :Summarize addition;
+end group
+group Review (IDC reviewer)
+    :Review PR;
+    if (accept?) is (yes) then
+      :Merge PR;
+    else
+      :Close PR with explanation;
+      stop
+    endif
+end group
+group Continuous Integration (on merge)
+    :Summarize results;
+    stop
+end group
+@enduml

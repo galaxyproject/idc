@@ -1,0 +1,45 @@
+@startuml
+group Submit Genome (Data Contributor) 
+    start
+    :Clone IDC repo;
+    :Update genome file (or directory);
+    :Issue Pull Request;
+end group
+group Continuous Integration (on PR)
+    :Validate artifacts;
+    :Dry run execution of data managers;
+    note right
+       Just run the fetch_source or some sampling
+       of the downstream managers or all of them?
+    end note
+    note right
+      How do we implement dry run?
+      - CVMFS transaction that gets rolled back.
+      - Implement dryrun in the Galaxy API.
+      - Store artifacts on PR, publish on merge?
+    end note
+    :Summarize addition;
+end group
+group Review (IDC Reviewer)
+    :Review PR;
+    if (accept?) is (yes) then
+      :Merge PR;
+    else
+      :Close PR with explanation;
+      stop
+    endif
+end group
+group Continuous Integration (on Merge)
+    :Re-run data managers;
+    note right
+      Dependent on how we implement dry run.
+    end note
+    :Place data on CVMFS;
+    note right
+      Mirror usegalaxy-tools here? Any WIP on this or links
+      to current SOP?
+    end note
+    :Summarize results;
+    stop
+end group
+@enduml

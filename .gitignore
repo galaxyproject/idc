@@ -100,5 +100,7 @@ ENV/
 # mypy
 .mypy_cache/
 
+docs/*jar
+
 # Simon's working directory
 working/

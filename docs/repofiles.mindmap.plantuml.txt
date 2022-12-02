@@ -1,0 +1,19 @@
+@startmindmap
+* <i>IDC repo files</i>
+** <i>managed data</i>
+*** /data_managers_tools.yml
+****_ Move to Ephemeris if [[https://github.com/galaxyproject/ephemeris/issues/188]]?
+*** /data_managers_genomes.yml
+*** /genomes.yml
+****_ Describe Genomes to be indexed by other data managers.
+****_ Generalize to include other database sources?
+****_ should probably be a directory to prevent PR conflicts (?)
+** /README.md
+***_ Markdown description of IDC processes
+** /run_builder.sh
+***_ Orchestrate relevant data managers.
+** /scripts/
+*** make_fetch.py
+****_ Builds genomes fetch command YAML for run-data-managers\nMove to ephemeris if [[https://github.com/galaxyproject/ephemeris/issues/189]]?
+*** make_dm_genomes.py
+@endmindmap

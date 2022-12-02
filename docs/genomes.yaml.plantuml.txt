@@ -1,0 +1,27 @@
+@startyaml
+genomes:
+  - dbkey: dm6
+    description: D. melanogaster Aug. 2014 (BDGP Release 6 + ISO1 MT/dm6) (dm6)
+    id: dm6
+    source: ucsc
+    doi:
+    version:
+    checksum:
+    blob:
+    indexers:
+      - genome
+    exclude:
+      - bfast
+  - dbkey: Ecoli-O157-H7-Sakai
+    description: "Escherichia coli O157-H7 Sakai"
+    id: Ecoli-O157-H7-Sakai
+    source: https://swift.rc.nectar.org.au:8888/v1/AUTH_377/public/COMP90014/Assignment1/Ecoli-O157_H7-Sakai-chr.fna
+    doi:
+    version:
+    checksum:
+    blob:
+    indexers:
+      - genome
+    exclude:
+      - bfast
+@endyaml
