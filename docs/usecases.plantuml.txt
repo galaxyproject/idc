@@ -1,0 +1,39 @@
+@startuml
+left to right direction
+skinparam actorStyle awesome
+:Data Contributor: as contributor
+:IDC Reviewer: as idcreviewer
+:Usegalaxy.* Admin: as usegalaxyadmin
+:Galaxy Admin: as galaxyadmin
+:Galaxy User: as galaxyuser
+
+package "IDC Use Cases" {
+  usecase "Submit Genome" as SG
+  usecase "Submit Indexer" as SI
+  usecase "Submit Database" as SD
+  note right of SD
+    Any data source that isn't a Genome?
+    A generalization of Submit Genome then?
+  end note
+  usecase "Review Submission" as RS
+  usecase "Accept Submission" as AS
+  usecase "Decline Submission" as DS
+  usecase "Debug Failed Index" as DB
+  usecase "Deploy IDC Data to Galaxy" as DD
+  usecase "Use IDC Data from Galaxy" as DU
+  note "Are these basically done via CVMFS documentation?" as NOTEDONE
+}
+
+contributor --> SG
+contributor --> SD
+contributor --> SI
+idcreviewer --> RS
+idcreviewer --> AS
+idcreviewer --> DS
+idcreviewer --> DB
+usegalaxyadmin --> DB
+galaxyadmin --> DD
+galaxyuser --> DU
+(DU) .. NOTEDONE
+(DD) .. NOTEDONE
+@enduml

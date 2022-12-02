@@ -1,0 +1,13 @@
+@startuml
+group run_builder.sh
+start
+:docker start --name idc_builder quay.io/bgruening/galaxy;
+:shed-tools install -t data_managers_tools.yml;
+:python scripts/make_fetch.py -g genomes.yml;
+:run-data-managers --config fetch.yml;
+:docker exec idc_builder supervisorctl restart galaxy:;
+:python scripts/make_dm_genomes.py -d data_managers_tools.yml;
+:run-data-managers --config dm_genomes.yml;
+:docker stop idc_builder;
+stop
+@enduml
