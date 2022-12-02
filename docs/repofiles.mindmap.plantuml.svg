@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" height="228px" preserveAspectRatio="none" style="width:876px;height:228px;background:#FFFFFF;" version="1.1" viewBox="0 0 876 228" width="876px" zoomAndPan="magnify"><defs/><g><rect fill="#F1F1F1" height="36.4883" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:1.5;" width="84" x="10" y="95.2324"/><text fill="#000000" font-family="sans-serif" font-size="14" font-style="italic" lengthAdjust="spacing" textLength="64" x="20" y="118.7676">repo files</text><rect fill="#F1F1F1" height="36.4883" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:1.5;" width="118" x="144" y="76.4883"/><text fill="#000000" font-family="sans-serif" font-size="14" font-style="italic" lengthAdjust="spacing" textLength="98" x="154" y="100.0234">managed data</text><rect fill="#F1F1F1" height="36.4883" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:1.5;" width="194" x="312" y="20"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="174" x="322" y="43.5352">data_managers_tools.yml</text><path d="M262,94.7324 L272,94.7324 C287,94.7324 287,38.2441 302,38.2441 L312,38.2441 " fill="none" style="stroke:#181818;stroke-width:1.0;"/><rect fill="#F1F1F1" height="36.4883" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:1.5;" width="223" x="312" y="76.4883"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="203" x="322" y="100.0234">data_managers_genomes.yml</text><path d="M262,94.7324 L272,94.7324 C287,94.7324 287,94.7324 302,94.7324 L312,94.7324 " fill="none" style="stroke:#181818;stroke-width:1.0;"/><rect fill="#F1F1F1" height="36.4883" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:1.5;" width="111" x="312" y="132.9766"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="91" x="322" y="156.5117">genomes.yml</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="388" x="476" y="156.5117">should probably be a directory to prevent conflicts -John</text><path d="M423,151.2207 L433,151.2207 C448,151.2207 448,151.2207 463,151.2207 L473,151.2207 " fill="none" style="stroke:#181818;stroke-width:1.0;"/><path d="M262,94.7324 L272,94.7324 C287,94.7324 287,151.2207 302,151.2207 L312,151.2207 " fill="none" style="stroke:#181818;stroke-width:1.0;"/><path d="M94,113.4766 L104,113.4766 C119,113.4766 119,94.7324 134,94.7324 L144,94.7324 " fill="none" style="stroke:#181818;stroke-width:1.0;"/><rect fill="#F1F1F1" height="36.4883" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:1.5;" width="103" x="144" y="170.4648"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="83" x="154" y="194">README.md</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="243" x="300" y="194">Markdown description of processes</text><path d="M247,188.709 L257,188.709 C272,188.709 272,188.709 287,188.709 L297,188.709 " fill="none" style="stroke:#181818;stroke-width:1.0;"/><path d="M94,113.4766 L104,113.4766 C119,113.4766 119,188.709 134,188.709 L144,188.709 " fill="none" style="stroke:#181818;stroke-width:1.0;"/><!--MD5=[943b42180c34236a7d1852614de1797a]
+@startmindmap
+
+* <i>repo files</i>
+** <i>managed data</i>
+*** data_managers_tools.yml
+*** data_managers_genomes.yml
+*** genomes.yml
+****_ should probably be a directory to prevent conflicts -John
+** README.md
+***_ Markdown description of processes 
+@endmindmap
+
+PlantUML version 1.2022.8(Sun Sep 25 05:00:33 EDT 2022)
+(GPL source distribution)
+Java Runtime: Java(TM) SE Runtime Environment
+JVM: Java HotSpot(TM) 64-Bit Server VM
+Default Encoding: UTF-8
+Language: en
+Country: US
+--></g></svg>

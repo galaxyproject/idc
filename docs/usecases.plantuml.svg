@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" height="318px" preserveAspectRatio="none" style="width:337px;height:318px;background:#FFFFFF;" version="1.1" viewBox="0 0 337 318" width="337px" zoomAndPan="magnify"><defs/><g><!--MD5=[f386712c76392bcda1de196e3f2daba2]
+cluster IDC--><g id="cluster_IDC"><path d="M130.5,6 L157.5,6 A3.75,3.75 0 0 1 160,8.5 L167,28.4883 L327.5,28.4883 A2.5,2.5 0 0 1 330,30.9883 L330,306.5 A2.5,2.5 0 0 1 327.5,309 L130.5,309 A2.5,2.5 0 0 1 128,306.5 L128,8.5 A2.5,2.5 0 0 1 130.5,6 " fill="none" style="stroke:#000000;stroke-width:1.5;"/><line style="stroke:#000000;stroke-width:1.5;" x1="128" x2="167" y1="28.4883" y2="28.4883"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="26" x="132" y="21.5352">IDC</text></g><g id="elem_SG"><ellipse cx="229.2079" cy="59.1416" fill="#F1F1F1" rx="76.2079" ry="17.6416" style="stroke:#181818;stroke-width:0.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="109" x="174.7079" y="62.4326">Submit Genome</text></g><g id="elem_SI"><ellipse cx="229.0639" cy="128.8128" fill="#F1F1F1" rx="74.5639" ry="17.3128" style="stroke:#181818;stroke-width:0.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="105" x="176.5639" y="132.1038">Submit Indexer</text></g><g id="elem_SD"><ellipse cx="229.206" cy="200.1412" fill="#F1F1F1" rx="78.706" ry="18.1412" style="stroke:#181818;stroke-width:0.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="115" x="171.706" y="203.4322">Submit Database</text></g><g id="elem_RS"><ellipse cx="229.0984" cy="272.9197" fill="#F1F1F1" rx="85.0984" ry="19.4197" style="stroke:#181818;stroke-width:0.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="130" x="164.0984" y="276.2107">Review Submission</text></g><!--MD5=[9a62c7632a3e12d2b4ef62c23371a6aa]
+entity contributor--><g id="elem_contributor"><ellipse cx="45" cy="107" fill="#F1F1F1" rx="16" ry="16" style="stroke:#181818;stroke-width:1.5;"/><path d="M45,127 C49,127 52,127 56,123 C64,123 72,131 72,139 L72,143 C72,147 68,151 64,151 L26,151 C22,151 18,147 18,143 L18,139 C18,131 26,123 34,123 C38,127 41,127 45,127 " fill="#F1F1F1" style="stroke:#181818;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="78" x="6" y="166.0352">contributor</text></g><!--MD5=[486698509cf424f1ea9a72989d7a4830]
+entity idcreviewer--><g id="elem_idcreviewer"><ellipse cx="45" cy="251" fill="#F1F1F1" rx="16" ry="16" style="stroke:#181818;stroke-width:1.5;"/><path d="M45,271 C49,271 52,271 56,267 C64,267 72,275 72,283 L72,287 C72,291 68,295 64,295 L26,295 C22,295 18,291 18,287 L18,283 C18,275 26,267 34,267 C38,271 41,271 45,271 " fill="#F1F1F1" style="stroke:#181818;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="78" x="6" y="310.0352">idcreviewer</text></g><!--MD5=[889343a637b357d4cb7c85a3ba746c62]
+link contributor to SG--><g id="link_contributor_SG"><path d="M84.38,109.7 C95.72,104.31 108.24,98.66 120,94 C138.09,86.83 158.28,79.98 176.27,74.28 " fill="none" id="contributor-to-SG" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="#181818" points="181.29,72.7,171.5047,71.5832,176.5201,74.1995,173.9039,79.215,181.29,72.7" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[7d769af729dc3adb0c7b6969d521aea4]
+link contributor to SD--><g id="link_contributor_SD"><path d="M84.02,148.05 C95.46,153.49 108.13,159.23 120,164 C138.02,171.24 158.12,178.22 176.05,184.08 " fill="none" id="contributor-to-SD" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="#181818" points="181.04,185.7,173.713,179.1186,176.2839,184.1575,171.245,186.7283,181.04,185.7" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[5cb59f311133a590a4e0d1967aaf68fb]
+link contributor to SI--><g id="link_contributor_SI"><path d="M84.15,129 C103.05,129 126.6,129 149.14,129 " fill="none" id="contributor-to-SI" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="#181818" points="154.23,129,145.23,125,149.23,129,145.23,133,154.23,129" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[320a5ef9a5668ba5c76062ea105221f9]
+link idcreviewer to RS--><g id="link_idcreviewer_RS"><path d="M84.15,273 C100.06,273 119.27,273 138.4,273 " fill="none" id="idcreviewer-to-RS" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="#181818" points="143.79,273,134.79,269,138.79,273,134.79,277,143.79,273" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[9aa22f14cc3bbb5c5f08c878c1de43ec]
+@startuml
+
+left to right direction
+skinparam actorStyle awesome
+:contributor:
+:idcreviewer:
+
+package IDC {
+  usecase "Submit Genome" as SG
+  usecase "Submit Indexer" as SI
+  usecase "Submit Database" as SD
+  usecase "Review Submission" as RS
+}
+
+
+contributor - -> SG
+contributor - -> SD
+contributor - -> SI
+idcreviewer - -> RS
+
+@enduml
+
+PlantUML version 1.2022.8(Sun Sep 25 05:00:33 EDT 2022)
+(GPL source distribution)
+Java Runtime: Java(TM) SE Runtime Environment
+JVM: Java HotSpot(TM) 64-Bit Server VM
+Default Encoding: UTF-8
+Language: en
+Country: US
+--></g></svg>
