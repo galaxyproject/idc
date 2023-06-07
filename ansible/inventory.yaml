@@ -1,0 +1,16 @@
+---
+# idc hosts
+
+all:
+  hosts:
+    idc-build.galaxyproject.org:
+      ansible_user: rocky
+      ansible_become: true
+      ansible_ssh_common_args: -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no
+  children:
+    idc_builders:
+      hosts:
+        idc-build.galaxyproject.org:
+    js2:
+      hosts:
+        idc-build.galaxyproject.org:

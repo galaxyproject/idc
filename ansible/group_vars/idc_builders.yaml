@@ -1,0 +1,150 @@
+---
+
+# FIXME: generate a new key for idc
+os_key_name: nate-treehouse
+
+# this carries over the SSL cert so we don't run into rate limit issues
+os_volumes:
+  - name: idc-build-letsencrypt
+    size: 1
+    fstype: ext4
+
+# the `filesystems` fact is set by the openstack role
+mounts:
+  - path: /etc/letsencrypt
+    src: "{{ filesystems[0].dev }}"
+    fstype: "{{ os_volumes[0].fstype }}"
+
+os_image: usegalaxy-node
+os_flavor: m3.small
+os_security_groups: [default, ssh-http-https]
+os_floating_ips: ["{{ lookup('dig', inventory_hostname) }}"]
+
+host_groups:
+  - name: idc
+    gid: 808
+
+host_users:
+  - name: idc
+    home: /home/idc
+    uid: 808
+    group: idc
+    shell: /bin/sh
+
+host_directories:
+  - path: /jetstream2/scratch/idc
+    owner: idc
+    group: idc
+    mode: "0755"
+
+postgresql_objects_users:
+  - name: idc
+postgresql_objects_databases:
+  - name: idc
+    owner: idc
+
+nginx_flavor: core
+nginx_servers:
+  - certbot_redirects
+nginx_ssl_servers:
+  - idc-build
+
+nginx_ssl_role: usegalaxy_eu.certbot
+nginx_conf_ssl_certificate: /etc/letsencrypt/live/idc-build.galaxyproject.org/fullchain.pem
+nginx_conf_ssl_certificate_key: /etc/letsencrypt/live/idc-build.galaxyproject.org/privkey.pem
+
+certbot_virtualenv_package_name: python39-libs
+certbot_virtualenv_command: python3.9 -m venv
+certbot_auto_renew: false
+certbot_auth_method: --webroot
+certbot_domains: ["{{ inventory_hostname }}"]
+certbot_admin_email: nate@bx.psu.edu
+certbot_agree_tos: --agree-tos
+certbot_well_known_root: /srv/nginx/_well-known_root
+certbot_share_key_users:
+  - nginx
+certbot_post_renewal: |
+  systemctl restart nginx || true
+
+galaxy_layout: root-dir
+galaxy_root: /srv/galaxy
+galaxy_user:
+  name: idc
+galaxy_server_dir: /cvmfs/main.galaxyproject.org/galaxy
+galaxy_venv_dir: /cvmfs/main.galaxyproject.org/venv
+galaxy_config_dir: "{{ galaxy_root }}/config"
+galaxy_shed_tools_dir: /jetstream2/scratch/idc/shed_tools
+galaxy_manage_clone: false
+galaxy_manage_download: false
+galaxy_manage_existing: false
+galaxy_manage_paths: true
+galaxy_manage_static_setup: true
+galaxy_manage_mutable_setup: true
+galaxy_manage_database: false
+galaxy_fetch_dependencies: false
+galaxy_build_client: false
+galaxy_backup_configfiles: false
+galaxy_manage_gravity: true
+
+galaxy_privsep_dirs:
+  - "{{ galaxy_config_dir }}"
+  - "{{ galaxy_config_dir }}/tpv"
+galaxy_config_templates:
+  - src: templates/idc/tpv/idc.yaml.j2
+    dest: "{{ galaxy_config_dir }}/tpv/idc.yaml"
+galaxy_config:
+  gravity:
+    process_manager: systemd
+    galaxy_user: idc
+    galaxy_group: idc
+    galaxy_root: "{{ galaxy_server_dir }}"
+    virtualenv: "{{ galaxy_venv_dir }}"
+    gunicorn:
+      bind: localhost:8080
+      workers: 1
+    handlers:
+      handler:
+        processes: 1
+        pools:
+          - job-handlers
+          - workflow-schedulers
+  galaxy:
+    database_connection: postgresql:///idc
+    conda_auto_init: false
+    conda_auto_install: false
+    allow_user_creation: false
+    require_login: true
+    admin_users:
+      - idc@galaxyproject.org
+    file_path: /jetstream2/scratch/idc/objects
+    job_working_directory: /jetstream2/scratch/idc/jobs
+    object_store_store_by: uuid
+    container_resolvers:
+      - type: cached_mulled_singularity
+        cache_directory: /cvmfs/singularity.galaxyproject.org/all
+        cache_directory_cacher_type: dir_mtime
+      #- type: mulled_singularity
+      #  cache_directory: /jetstream2/scratch/idc/singularity
+      - type: explicit_singularity
+    job_config:
+      runners:
+        local:
+          load: galaxy.jobs.runners.local:LocalJobRunner
+          workers: 1
+        slurm:
+          load: galaxy.jobs.runners.slurm:SlurmJobRunner
+          workers: 2
+          drmaa_library_path: /usr/lib64/libdrmaa.so.1
+      handling:
+        assign:
+          - db-skip-locked
+      execution:
+        default: tpv_dispatcher
+        environments:
+          tpv_dispatcher:
+            runner: dynamic
+            type: python
+            function: map_tool_to_destination
+            rules_module: tpv.rules
+            tpv_config_files:
+              - "config/tpv/idc.yaml"

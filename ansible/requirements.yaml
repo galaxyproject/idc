@@ -1,0 +1,17 @@
+---
+
+roles:
+  - name: galaxyproject.galaxy
+    version: 0.10.15
+  - name: galaxyproject.nginx
+    version: 0.7.1
+  - name: galaxyproject.postgresql
+    version: 1.1.2
+  - name: galaxyproject.postgresql_objects
+    version: 1.2.0
+  - name: usegalaxy_eu.certbot
+    version: 0.1.11
+
+collections:
+  - name: galaxyproject.general
+    version: 1.0.0

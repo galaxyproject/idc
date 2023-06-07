@@ -102,3 +102,7 @@ ENV/
 
 # Simon's working directory
 working/
+
+# Ansible installed artifacts
+ansible/collections
+ansible/roles/*.*

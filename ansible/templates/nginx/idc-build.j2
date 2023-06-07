@@ -1,0 +1,50 @@
+##
+## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
+##
+
+upstream galaxy {
+    server 127.0.0.1:8080;
+}
+
+server {
+    listen       *:443 ssl default_server;
+    server_name  idc-build.galaxyproject.org;
+
+	access_log  syslog:server=unix:/dev/log;
+	error_log   syslog:server=unix:/dev/log;
+
+    location / {
+        proxy_pass         http://galaxy;
+        proxy_redirect     off;
+        proxy_set_header   Host              $host;
+        proxy_set_header   X-Real-IP         $remote_addr;
+        proxy_set_header   X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Forwarded-Proto $scheme;
+    }
+
+    location /static {
+        alias {{ galaxy_server_dir }}/static;
+    }
+
+    location /robots.txt {
+        alias {{ galaxy_server_dir }}/static/robots.txt;
+    }
+
+    location /favicon.ico {
+        alias {{ galaxy_server_dir }}/static/favicon.ico;
+    }
+
+    location /_x_accel_redirect {
+        internal;
+        alias /;
+        add_header X-Frame-Options SAMEORIGIN;
+        add_header X-Content-Type-Options nosniff;
+    }
+
+    location /jetstream2/scratch/idc/objects {
+        internal;
+        alias /jetstream2/scratch/idc/objects;
+    }
+}
+
+# vim: set filetype=nginx

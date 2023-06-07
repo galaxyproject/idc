@@ -1,0 +1,77 @@
+---
+
+- name: Instance spawn block
+  block:
+
+    - name: Create volumes
+      os_volume:
+        cloud: "{{ os_cloud_id }}"
+        display_name: "{{ item.name }}"
+        size: "{{ item.size }}"
+      delegate_to: localhost
+      loop: "{{ os_volumes | default([]) }}"
+
+    - name: Spawn new instance
+      os_server:
+        cloud: "{{ os_cloud_id }}"
+        name: "{{ os_name | default(inventory_hostname) }}"
+        image: "{{ os_image }}"
+        flavor: "{{ os_flavor }}"
+        key_name: "{{ os_key_name }}"
+        nics: "{{ os_nics }}"
+        security_groups: "{{ os_security_groups }}"
+        auto_ip: "{{ os_auto_ip | default(omit) }}"
+        floating_ips: "{{ os_floating_ips | default(omit) }}"
+        meta: "group={{ group_names[0] }}"
+        userdata: |
+          #cloud-config
+          package_upgrade: false
+      delegate_to: localhost
+      register: __spawn_result
+
+    - name: Attach volumes to instances
+      os_server_volume:
+        cloud: "{{ os_cloud_id }}"
+        server: "{{ os_name | default(inventory_hostname) }}"
+        volume: "{{ item.name }}"
+      delegate_to: localhost
+      loop: "{{ os_volumes | default([]) }}"
+      register: __attach_result
+
+    - name: Set volume device(s) fact
+      set_fact:
+        __os_volume_devices: "{{ __attach_result.results | selectattr('attachments', 'defined') | map(attribute='attachments') | flatten | map(attribute='device') | list }}"
+
+    - name: Set filesystems fact
+      set_fact:
+        filesystems: "{{ (filesystems | default([])) + [{'dev': item[1], 'fstype': item[0]}] }}"
+      loop: "{{ (os_volumes | map(attribute='fstype')) | zip(__os_volume_devices) | list }}"
+
+    - name: Update inventory with spawned instance IP
+      set_fact:
+        ansible_host: "{{ __spawn_result.server.public_v4 or __spawn_result.server.private_v4 }}"
+      #delegate_to: localhost
+
+    - name: Log IP addresses
+      debug:
+        var: ansible_host
+
+    - name: Wait for instance to become accessible
+      wait_for_connection:
+        timeout: 120
+
+    - name: Set authorized keys
+      authorized_key:
+        user: "{{ ansible_user }}"
+        key: "{% for authorized in os_admin_users %}{{ ssh_public_keys[authorized] ~ '\n' }}{% endfor %}"
+        exclusive: "{{ os_admin_users_exclusive | default('yes') }}"
+      when: os_admin_users is defined
+
+  always:
+
+    - import_tasks: clean.yml
+
+  rescue:
+
+    - fail:
+        msg: Exiting due to previous failure
