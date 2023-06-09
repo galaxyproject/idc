@@ -7,7 +7,7 @@ upstream galaxy {
 }
 
 server {
-    listen       *:443 ssl default_server;
+    listen       *:80 default_server;
     server_name  idc-build.galaxyproject.org;
 
 	access_log  syslog:server=unix:/dev/log;

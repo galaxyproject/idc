@@ -46,6 +46,7 @@
       set_fact:
         filesystems: "{{ (filesystems | default([])) + [{'dev': item[1], 'fstype': item[0]}] }}"
       loop: "{{ (os_volumes | map(attribute='fstype')) | zip(__os_volume_devices) | list }}"
+      when: os_volumes is defined
 
     - name: Update inventory with spawned instance IP
       set_fact:

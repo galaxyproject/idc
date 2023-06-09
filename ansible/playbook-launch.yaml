@@ -47,8 +47,5 @@
       become_user: idc
     - import_role:
         name: galaxyproject.nginx
-    - name: Renew certificate
-      command: /opt/certbot/bin/certbot renew
-
-# TODO:
-# - destroy /jetstream2/scratch/idc on teardown
+    - import_role:
+        name: artis3n.tailscale

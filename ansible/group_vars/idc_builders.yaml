@@ -1,24 +1,21 @@
 ---
 
+tailscale_authkey: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          34346366626338313161386530346338656430303436636534373038366662663261306237613964
+          6439336136666336383765643030616339316531653137340a646563393330313133666539316662
+          35306431333636316565393566386135346634656366313334626563393066663333303965663936
+          6235653037376332300a333130383039396232383731643132643662393162386263636364343733
+          37383431666265643239313136396138316462393532303266306133313836353861656333353337
+          61633832616266303365303366623736363137396666323532666230363932326539313036353066
+          303732376366356461323638313263373838
+
 # FIXME: generate a new key for idc
 os_key_name: nate-treehouse
-
-# this carries over the SSL cert so we don't run into rate limit issues
-os_volumes:
-  - name: idc-build-letsencrypt
-    size: 1
-    fstype: ext4
-
-# the `filesystems` fact is set by the openstack role
-mounts:
-  - path: /etc/letsencrypt
-    src: "{{ filesystems[0].dev }}"
-    fstype: "{{ os_volumes[0].fstype }}"
 
 os_image: usegalaxy-node
 os_flavor: m3.small
 os_security_groups: [default, ssh-http-https]
-os_floating_ips: ["{{ lookup('dig', inventory_hostname) }}"]
 
 host_groups:
   - name: idc
@@ -44,27 +41,9 @@ postgresql_objects_databases:
     owner: idc
 
 nginx_flavor: core
+nginx_enable_default_server: false
 nginx_servers:
-  - certbot_redirects
-nginx_ssl_servers:
   - idc-build
-
-nginx_ssl_role: usegalaxy_eu.certbot
-nginx_conf_ssl_certificate: /etc/letsencrypt/live/idc-build.galaxyproject.org/fullchain.pem
-nginx_conf_ssl_certificate_key: /etc/letsencrypt/live/idc-build.galaxyproject.org/privkey.pem
-
-certbot_virtualenv_package_name: python39-libs
-certbot_virtualenv_command: python3.9 -m venv
-certbot_auto_renew: false
-certbot_auth_method: --webroot
-certbot_domains: ["{{ inventory_hostname }}"]
-certbot_admin_email: nate@bx.psu.edu
-certbot_agree_tos: --agree-tos
-certbot_well_known_root: /srv/nginx/_well-known_root
-certbot_share_key_users:
-  - nginx
-certbot_post_renewal: |
-  systemctl restart nginx || true
 
 galaxy_layout: root-dir
 galaxy_root: /srv/galaxy
