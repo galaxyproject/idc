@@ -147,4 +147,4 @@ galaxy_config:
             function: map_tool_to_destination
             rules_module: tpv.rules
             tpv_config_files:
-              - "config/tpv/idc.yaml"
+              - "{{ galaxy_config_dir }}/tpv/idc.yaml"

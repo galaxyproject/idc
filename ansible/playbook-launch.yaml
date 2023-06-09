@@ -32,6 +32,8 @@
       become_user: postgres
     - import_role:
         name: galaxyproject.galaxy
+    - name: Flush handlers
+      meta: flush_handlers
     - name: Copy bootstrap script
       copy:
         src: files/idc/bootstrap.sh
