@@ -54,6 +54,11 @@ GALAXY_GIT_DEPTH= #100
 GALAXY_SERVER_DIR='/cvmfs/main.galaxyproject.org/galaxy'
 GALAXY_VENV_DIR='/cvmfs/main.galaxyproject.org/venv'
 
+# Mounted read-only into the container
+GALAXY_MOUNT_DIRS=(
+    /cvmfs/main.galaxyproject.org
+)
+
 #
 # Ensure that everything is defined for set -u
 #
@@ -419,11 +424,13 @@ function clone_galaxy() {
 
 
 function write_galaxy_yml() {
-    local tmpdir=$(mktemp -d -t idc.galaxy_yml.xxxxxx)
-	cat > "${tmpdir}/galaxy.yml" <<EOF
+    local tmpdir=$(mktemp -d -t idc.galaxy_yml.XXXXXX)
+    cat > "${tmpdir}/galaxy.yml" <<EOF
 gravity:
   galaxy_root: /galaxy/server
   virtualenv: "${GALAXY_VENV_DIR}"
+  gunicorn:
+    bind: 0.0.0.0:8080
 galaxy:
   data_dir: /galaxy/server/database
   managed_config_dir: /galaxy/server/database/config
@@ -440,28 +447,34 @@ EOF
 
 
 function run_mounted_galaxy() {
-    local venv_mount_flag=
+    local extra_mount_flags=
     if [ -z "$GALAXY_SERVER_DIR" ]; then
         clone_galaxy
         GALAXY_SERVER_DIR="$GALAXY_SOURCE_TMPDIR"
         GALAXY_VENV_DIR="./.venv"
     else
-        venv_mount_flag="-v ${GALAXY_VENV_DIR}:${GALAXY_VENV_DIR}:ro"
+        for dir in "${GALAXY_MOUNT_DIRS[@]}"; do
+            extra_mount_flags+=" -v ${dir}:${dir}:ro"
+        done
     fi
+
+    write_galaxy_yml
 
     # update tool_data_table_conf.xml from repo
     copy_to config/tool_data_table_conf.xml
     exec_on diff -q "${WORKDIR}/tool_data_table_conf.xml" "/cvmfs/${REPO}/config/tool_data_table_conf.xml" || exec_on cp "${WORKDIR}/tool_data_table_conf.xml" "${OVERLAYFS_MOUNT}/config/tool_data_table_conf.xml"
 
     log "Starting Importer Galaxy"
+    # supervisor configs have the default sample path if $GALAXY_CONFIG_FILE isn't set, why?
     exec_on docker run -d -p 127.0.0.1:${REMOTE_PORT}:8080 --user "${USER_UID}:${USER_GID}" --name="${CONTAINER_NAME}" \
-        -v "${WORKDIR}/galaxy.yml:/galaxy/server/config/galaxy.yml:ro" \
+        -e "GALAXY_CONFIG_FILE=/galaxy/config/galaxy.yml" \
         -v "${OVERLAYFS_MOUNT}:/cvmfs/${REPO}" \
-        $venv_mount_flag \
         -v "${GALAXY_SERVER_DIR}:/galaxy/server" \
         -v "${GALAXY_DATABASE_TMPDIR}:/galaxy/server/database" \
+        -v "${WORKDIR}/galaxy.yml:/galaxy/config/galaxy.yml:ro" \
+        $extra_mount_flags \
         --workdir /galaxy/server \
-        "$GALAXY_DOCKER_IMAGE" ${GALAXY_VENV_DIR}/bin/galaxy -c /galaxy/server/config/galaxy.yml
+        "$GALAXY_DOCKER_IMAGE" /bin/sh -c "${GALAXY_VENV_DIR}/bin/galaxy -c /galaxy/config/galaxy.yml"
     GALAXY_CONTAINER_UP=true
 }
 
