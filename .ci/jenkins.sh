@@ -10,8 +10,9 @@ GALAXY_URL="http://127.0.0.1:${LOCAL_PORT}"
 SSH_MASTER_SOCKET_DIR="${HOME}/.cache/usegalaxy-tools"
 MAIN_BRANCH='main'
 
-# Set to 'centos:7' and set GALAXY_GIT_* below to use a clone
-GALAXY_DOCKER_IMAGE='galaxy/galaxy-min:23.0'
+# Set to 'centos:...' or 'rockylinux:...' and set GALAXY_GIT_* or GALAXY_SERVER_DIR below to use a clone
+#GALAXY_DOCKER_IMAGE='galaxy/galaxy-min:23.0'
+GALAXY_DOCKER_IMAGE='rockylinux:8'
 # Disable if using a locally built image e.g. for debugging
 GALAXY_DOCKER_IMAGE_PULL=true
 
@@ -21,10 +22,8 @@ GALAXY_DOCKER_IMAGE_PULL=true
 GALAXY_TEMPLATE_DB_URL=
 GALAXY_TEMPLATE_DB='galaxy.sqlite'
 
-# Need to run dev until 0.10.4
-#EPHEMERIS="git+https://github.com/galaxyproject/ephemeris.git"
-# Fix for not installing Conda deps: https://github.com/galaxyproject/ephemeris/pull/181
-EPHEMERIS="git+https://github.com/mvdbeek/ephemeris.git@fix_option_parsing_and_tool_id_handling"
+EPHEMERIS="git+https://github.com/mvdbeek/ephemeris.git@data_manager_mode#egg_name=ephemeris"
+BIOBLEND="git+https://github.com/mvdbeek/bioblend.git@idc_data_manager_runs#egg_name=bioblend"
 
 # Should be set by Jenkins, so the default here is for development
 : ${GIT_COMMIT:=$(git rev-parse HEAD)}
@@ -42,14 +41,18 @@ USE_LOCAL_OVERLAYFS=true
 # the image before Galaxy is run
 GALAXY_PATCH_FILE=
 
-# If $GALAXY_DOCKER_IMAGE is centos*, you can set these to clone Galaxy at a specific revision and mount it in to the
-# container. Not fully tested because I was essentially using this to bisect for the bug, but Martin figured out what
-# the bug was before I finished. But everything up to starting Galaxy works.
+# If $GALAXY_DOCKER_IMAGE is centos or rocky, you can set these to clone Galaxy at a specific revision and mount it in
+# to the container. Not fully tested because I was essentially using this to bisect for the bug, but Martin figured out
+# what the bug was before I finished. But everything up to starting Galaxy works.
 GALAXY_GIT_REPO= #https://github.com/galaxyproject/galaxy.git/
 GALAXY_GIT_HEAD= #963093448eb6d029d44aa627354d2e01761c8a7b
 # Branch is only used if the depth is set
 GALAXY_GIT_BRANCH= #release_19.09
 GALAXY_GIT_DEPTH= #100
+
+# Alternatively, you can use Galaxy already available on the system (e.g. in CVMFS)
+GALAXY_SERVER_DIR='/cvmfs/main.galaxyproject.org/galaxy'
+GALAXY_VENV_DIR='/cvmfs/main.galaxyproject.org/venv'
 
 #
 # Ensure that everything is defined for set -u
@@ -171,29 +174,32 @@ function load_repo_configs() {
 
 
 function detect_changes() {
-    log 'Detecting changes to genome files...'
-    log_exec git remote set-branches --add origin "$MAIN_BRANCH"
-    log_exec git fetch origin
-    COMMIT_RANGE="origin/${MAIN_BRANCH}..."
+#    log 'Detecting changes to genome files...'
+#    log_exec git remote set-branches --add origin "$MAIN_BRANCH"
+#    log_exec git fetch origin
+#    COMMIT_RANGE="origin/${MAIN_BRANCH}..."
+#
+#    log 'Change detection limited to directories:'
+#    for d in "${!REPOS[@]}"; do
+#        echo "${d}/"
+#    done
+#
+#    REPO= ;
+#    while read op path; do
+#        if [ -n "$REPO" -a "$REPO" != "${path%%/*}" ]; then
+#            log_exit_error "Changes to data in multiple repos found: ${REPO} != ${path%%/*}"
+#        elif [ -z "$REPO" ]; then
+#            REPO="${path%%/*}"
+#        fi
+#        case "$op" in
+#            A|M)
+#                echo "$op $path"
+#                ;;
+#        esac
+#    done < <(git diff --color=never --name-status "$COMMIT_RANGE" -- $(for d in "${!REPOS[@]}"; do echo "${d}/"; done))
 
-    log 'Change detection limited to directories:'
-    for d in "${!REPOS[@]}"; do
-        echo "${d}/"
-    done
-
-    REPO= ;
-    while read op path; do
-        if [ -n "$REPO" -a "$REPO" != "${path%%/*}" ]; then
-            log_exit_error "Changes to data in multiple repos found: ${REPO} != ${path%%/*}"
-        elif [ -z "$REPO" ]; then
-            REPO="${path%%/*}"
-        fi
-        case "$op" in
-            A|M)
-                echo "$op $path"
-                ;;
-        esac
-    done < <(git diff --color=never --name-status "$COMMIT_RANGE" -- $(for d in "${!REPOS[@]}"; do echo "${d}/"; done))
+	# FIXME:
+    REPO=sandbox
 
     log 'Change detection results:'
     declare -p REPO
@@ -208,10 +214,6 @@ function detect_changes() {
 function set_repo_vars() {
     REPO_USER="${REPO_USERS[$REPO]}"
     REPO_STRATUM0="${REPO_STRATUM0S[$REPO]}"
-    SHED_TOOL_CONFIG="${SHED_TOOL_CONFIGS[$REPO]}"
-    SHED_TOOL_DIR="${SHED_TOOL_DIRS[$REPO]}"
-    SHED_TOOL_DATA_TABLE_CONFIG="${SHED_TOOL_DATA_TABLE_CONFIGS[$REPO]}"
-    SHED_DATA_MANAGER_CONFIG="${SHED_DATA_MANAGER_CONFIGS[$REPO]}"
     CONTAINER_NAME="usegalaxy-tools-${REPO_USER}-${BUILD_NUMBER}"
     if $USE_LOCAL_OVERLAYFS; then
         OVERLAYFS_LOWER="${WORKSPACE}/${BUILD_NUMBER}/lower"
@@ -236,7 +238,7 @@ function setup_ephemeris() {
     #set -u
     log_exec pip install --upgrade pip wheel
     log_exec pip install --index-url https://wheels.galaxyproject.org/simple/ \
-        --extra-index-url https://pypi.org/simple/ "${EPHEMERIS:=ephemeris}" #"${PLANEMO:=planemo}"
+        --extra-index-url https://pypi.org/simple/ "${BIOBLEND:=bioblend}" "${EPHEMERIS:=ephemeris}"
 }
 
 
@@ -346,15 +348,7 @@ function prep_for_galaxy_run() {
     # Sets globals $GALAXY_DATABASE_TMPDIR $WORKDIR
     log "Copying configs to Stratum 0"
     WORKDIR=$(exec_on mktemp -d -t idc.work.XXXXXX)
-    if [ -n "$GALAXY_TEMPLATE_DB_URL" ]; then
-        log_exec curl -o ".ci/${GALAXY_TEMPLATE_DB}" "$GALAXY_TEMPLATE_DB_URL"
-        copy_to ".ci/${GALAXY_TEMPLATE_DB}"
-    fi
-    copy_to ".ci/tool_sheds_conf.xml"
-    GALAXY_DATABASE_TMPDIR=$(exec_on mktemp -d -t usegalaxy-tools.database.XXXXXX)
-    if [ -n "$GALAXY_TEMPLATE_DB_URL" ]; then
-        exec_on mv "${WORKDIR}/${GALAXY_TEMPLATE_DB}" "${GALAXY_DATABASE_TMPDIR}"
-    fi
+    GALAXY_DATABASE_TMPDIR=$(exec_on mktemp -d -t idc.database.XXXXXX)
     if $GALAXY_DOCKER_IMAGE_PULL; then
         log "Fetching latest Galaxy image"
         exec_on docker pull "$GALAXY_DOCKER_IMAGE"
@@ -398,9 +392,9 @@ function clean_preconfigured_container() {
 
 
 # TODO: update for $USE_LOCAL_OVERLAYFS
-function run_mounted_galaxy() {
+function clone_galaxy() {
     log "Cloning Galaxy"
-    GALAXY_SOURCE_TMPDIR=$(exec_on mktemp -d -t usegalaxy-tools.source.XXXXXX)
+    GALAXY_SOURCE_TMPDIR=$(exec_on mktemp -d -t idc.source.XXXXXX)
     if [ -n "$GALAXY_GIT_BRANCH" -a -n "$GALAXY_GIT_DEPTH" ]; then
         log "Performing shallow clone of branch ${GALAXY_GIT_BRANCH} to depth ${GALAXY_GIT_DEPTH}"
         exec_on git clone --branch "$GALAXY_GIT_BRANCH" --depth "$GALAXY_GIT_DEPTH" "$GALAXY_GIT_REPO" "$GALAXY_SOURCE_TMPDIR"
@@ -421,39 +415,58 @@ function run_mounted_galaxy() {
     exec_on docker exec --user "${USER_UID}:${USER_GID}" --workdir /galaxy/server -e "HOME=/galaxy/server/database" "$PRECONFIGURE_CONTAINER_NAME" ./.venv/bin/pip install --upgrade pip setuptools wheel
     exec_on docker exec --user "${USER_UID}:${USER_GID}" --workdir /galaxy/server -e "HOME=/galaxy/server/database" "$PRECONFIGURE_CONTAINER_NAME" ./.venv/bin/pip install -r requirements.txt
     commit_preconfigured_container
+}
 
-    if [ -n "$GALAXY_TEMPLATE_DB_URL" ]; then
-        log "Updating database"
-        exec_on docker run --rm --user "${USER_UID}:${USER_GID}" --name="${CONTAINER_NAME}-setup" \
-            -e "GALAXY_CONFIG_OVERRIDE_DATABASE_CONNECTION=sqlite:////galaxy/server/database/${GALAXY_TEMPLATE_DB}" \
-            -v "${GALAXY_SOURCE_TMPDIR}:/galaxy/server" \
-            -v "${GALAXY_DATABASE_TMPDIR}:/galaxy/server/database" \
-            --workdir /galaxy/server \
-            "$GALAXY_DOCKER_IMAGE" ./.venv/bin/python ./scripts/manage_db.py upgrade
+
+function write_galaxy_yml() {
+    local tmpdir=$(mktemp -d -t idc.galaxy_yml.xxxxxx)
+	cat > "${tmpdir}/galaxy.yml" <<EOF
+gravity:
+  galaxy_root: /galaxy/server
+  virtualenv: "${GALAXY_VENV_DIR}"
+galaxy:
+  data_dir: /galaxy/server/database
+  managed_config_dir: /galaxy/server/database/config
+  conda_auto_init: false
+  conda_auto_install: false
+  bootstrap_admin_api_key: deadbeef
+  tool_data_path: /cvmfs/${REPO}/data
+  admin_users: idc@galaxyproject.org
+  tool_data_table_config_path: /cvmfs/${REPO}/config/tool_data_table_conf.xml
+EOF
+    copy_to "${tmpdir}/galaxy.yml"
+    rm -rf "$tmpdir"
+}
+
+
+function run_mounted_galaxy() {
+    local venv_mount_flag=
+    if [ -z "$GALAXY_SERVER_DIR" ]; then
+        clone_galaxy
+        GALAXY_SERVER_DIR="$GALAXY_SOURCE_TMPDIR"
+        GALAXY_VENV_DIR="./.venv"
+    else
+        venv_mount_flag="-v ${GALAXY_VENV_DIR}:${GALAXY_VENV_DIR}:ro"
     fi
 
-    log "Starting Galaxy on Stratum 0"
+    # update tool_data_table_conf.xml from repo
+    copy_to config/tool_data_table_conf.xml
+    exec_on diff -q "${WORKDIR}/tool_data_table_conf.xml" "/cvmfs/${REPO}/config/tool_data_table_conf.xml" || exec_on cp "${WORKDIR}/tool_data_table_conf.xml" "${OVERLAYFS_MOUNT}/config/tool_data_table_conf.xml"
+
+    log "Starting Importer Galaxy"
     exec_on docker run -d -p 127.0.0.1:${REMOTE_PORT}:8080 --user "${USER_UID}:${USER_GID}" --name="${CONTAINER_NAME}" \
-        -e "GALAXY_CONFIG_OVERRIDE_DATABASE_CONNECTION=sqlite:////galaxy/server/database/${GALAXY_TEMPLATE_DB}" \
-        -e "GALAXY_CONFIG_OVERRIDE_INTEGRATED_TOOL_PANEL_CONFIG=/tmp/integrated_tool_panel.xml" \
-        -e "GALAXY_CONFIG_OVERRIDE_SHED_TOOL_CONFIG_FILE=${SHED_TOOL_CONFIG}" \
-        -e "GALAXY_CONFIG_OVERRIDE_MIGRATED_TOOLS_CONFIG=/abcdef" \
-        -e "GALAXY_CONFIG_OVERRIDE_TOOL_SHEDS_CONFIG_FILE=/tool_sheds_conf.xml" \
-        -e "GALAXY_CONFIG_OVERRIDE_SHED_TOOL_DATA_TABLE_CONFIG=${SHED_TOOL_DATA_TABLE_CONFIG}" \
-        -e "GALAXY_CONFIG_OVERRIDE_SHED_DATA_MANAGER_CONFIG_FILE=${SHED_DATA_MANAGER_CONFIG}" \
-        -e "GALAXY_CONFIG_TOOL_DATA_PATH=/tmp/tool-data" \
-        -e "GALAXY_CONFIG_MASTER_API_KEY=${API_KEY:=deadbeef}" \
-        -e "GALAXY_CONFIG_FILE=config/galaxy.yml.sample" \
+        -v "${WORKDIR}/galaxy.yml:/galaxy/server/config/galaxy.yml:ro" \
         -v "${OVERLAYFS_MOUNT}:/cvmfs/${REPO}" \
-        -v "${WORKDIR}/tool_sheds_conf.xml:/tool_sheds_conf.xml" \
-        -v "${GALAXY_SOURCE_TMPDIR}:/galaxy/server" \
+        $venv_mount_flag \
+        -v "${GALAXY_SERVER_DIR}:/galaxy/server" \
         -v "${GALAXY_DATABASE_TMPDIR}:/galaxy/server/database" \
         --workdir /galaxy/server \
-        "$GALAXY_DOCKER_IMAGE" ./.venv/bin/gunicorn 'galaxy.webapps.galaxy.fast_factory:factory\(\)' --timeout 300 --pythonpath lib -k galaxy.webapps.galaxy.workers.Worker -b 0.0.0.0:8080
+        "$GALAXY_DOCKER_IMAGE" ${GALAXY_VENV_DIR}/bin/galaxy -c /galaxy/server/config/galaxy.yml
     GALAXY_CONTAINER_UP=true
 }
 
 
+# TODO: update
 function run_cloudve_galaxy() {
 
     patch_cloudve_galaxy
@@ -496,7 +509,7 @@ function run_galaxy() {
         galaxy/galaxy*)
             run_cloudve_galaxy
             ;;
-        centos*)
+        centos*|rockylinux*)
             run_mounted_galaxy
             ;;
         *)
@@ -641,7 +654,7 @@ function do_install_local() {
     mount_overlay
     run_galaxy
     wait_for_galaxy
-    install_tools
+    #install_tools
     check_for_repo_changes
     stop_galaxy
     clean_preconfigured_container
@@ -662,7 +675,7 @@ function do_install_remote() {
     begin_transaction
     run_galaxy
     wait_for_galaxy
-    install_tools
+    #install_tools
     check_for_repo_changes
     stop_galaxy
     clean_preconfigured_container
