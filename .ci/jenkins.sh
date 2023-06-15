@@ -91,6 +91,8 @@ BUILD_GALAXY_UP=false
 
 function trap_handler() {
     { set +x; } 2>/dev/null
+    # return to original dir
+    while popd; do :; done || true
     $GALAXY_CONTAINER_UP && stop_import_galaxy
     clean_preconfigured_container
     $LOCAL_CVMFS_MOUNTED && unmount_overlay
@@ -245,6 +247,7 @@ function setup_ansible() {
     pushd ansible
     log_exec pip install -r requirements.txt
     log_exec ansible-galaxy role install -p roles -r requirements.yaml
+    log_exec ansible-galaxy collection install -p collections -r requirements.yaml
     popd
     deactivate
 }
@@ -641,11 +644,11 @@ function main() {
     load_repo_configs
     detect_changes
     set_repo_vars
-    setup_ephemeris
     prep_for_galaxy_run
     run_build_galaxy
     #install_data_managers
     #run_data_managers
+    setup_ephemeris
     if $USE_LOCAL_OVERLAYFS; then
         do_install_local
     else

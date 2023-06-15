@@ -1,5 +1,4 @@
 # the python requirements for running this playbook
-ansible
+ansible<7
 dnspython
-openstacksdk
-python-openstackclient
+openstacksdk<0.70

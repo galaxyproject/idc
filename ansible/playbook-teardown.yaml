@@ -5,6 +5,8 @@
       file:
         path: /jetstream2/scratch/idc
         state: absent
+    - name: Log out from tailnet
+      command: tailscale logout
 
 - name: Destroy instance
   hosts: idc_builders
