@@ -365,6 +365,7 @@ function prep_for_galaxy_run() {
 
 function run_build_galaxy() {
     setup_ansible
+    log "Starting Build Galaxy"
     # This is set beforehand so that the teardown playbook will destroy the instance if launch fails partway through
     BUILD_GALAXY_UP=true
     . ./ansible-venv/bin/activate
@@ -377,11 +378,28 @@ function run_build_galaxy() {
 
 function stop_build_galaxy() {
     . ./ansible-venv/bin/activate
+    log "Stopping Build Galaxy"
     pushd ansible
     log_exec ansible-playbook playbook-teardown.yaml
     BUILD_GALAXY_UP=false
     popd
     deactivate
+}
+
+
+function install_data_managers() {
+    # FIXME: this will be in the repo after Simon's PR is merged
+    log "Installing Data Managers"
+    log_exec curl -L -o data_managers_tools.yml https://github.com/Slugger70/idc/raw/usegalaxy_proposal/data_managers_tools.yml
+    log_exec shed-tools install -t data_managers_tools.yml -g "$BUILD_GALAXY_URL" -u idc -p "$IDC_USER_PASS"
+}
+
+
+function run_data_managers() {
+    # FIXME: this will be generated
+    log "Running Data Managers"
+    log_exec curl -L -o fetch-dm6.yml https://gist.github.com/natefoo/7c8d27ab2460ea11426c724bbafff011/raw/c99029b65fec45b51b7ffc35afbe842caaef4b3b/fetch-dm6.yml
+    log_exec run-data-managers --config fetch-dm6.yml -g "$BUILD_GALAXY_URL" -u idc -p "$IDC_USER_PASS" --data_manager_mode bundle
 }
 
 
@@ -543,6 +561,11 @@ function wait_for_import_galaxy() {
 }
 
 
+function import_tool_data_bundles() {
+    python3 .ci/import-tool-data-bundles.py
+}
+
+
 function show_logs() {
     local lines=
     if [ -n "${1:-}" ]; then
@@ -623,7 +646,7 @@ function do_install_local() {
     mount_overlay
     run_import_galaxy
     wait_for_import_galaxy
-    #import_tool_data_bundles
+    import_tool_data_bundles
     check_for_repo_changes
     stop_import_galaxy
     clean_preconfigured_container
@@ -646,9 +669,9 @@ function main() {
     set_repo_vars
     prep_for_galaxy_run
     run_build_galaxy
-    #install_data_managers
-    #run_data_managers
     setup_ephemeris
+    install_data_managers
+    run_data_managers
     if $USE_LOCAL_OVERLAYFS; then
         do_install_local
     else
