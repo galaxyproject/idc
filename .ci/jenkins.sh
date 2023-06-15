@@ -4,10 +4,11 @@ set -euo pipefail
 # Set this variable to 'true' to publish on successful installation
 : ${PUBLISH:=false}
 
+BUILD_GALAXY_URL="http://idc-build"
 LOCAL_PORT=8080
 REMOTE_PORT=8080
-GALAXY_URL="http://127.0.0.1:${LOCAL_PORT}"
-SSH_MASTER_SOCKET_DIR="${HOME}/.cache/usegalaxy-tools"
+IMPORT_GALAXY_URL="http://127.0.0.1:${LOCAL_PORT}"
+SSH_MASTER_SOCKET_DIR="${HOME}/.cache/idc"
 MAIN_BRANCH='main'
 
 # Set to 'centos:...' or 'rockylinux:...' and set GALAXY_GIT_* or GALAXY_SERVER_DIR below to use a clone
@@ -85,15 +86,17 @@ CVMFS_TRANSACTION_UP=false
 GALAXY_CONTAINER_UP=false
 LOCAL_CVMFS_MOUNTED=false
 LOCAL_OVERLAYFS_MOUNTED=false
+BUILD_GALAXY_UP=false
 
 
 function trap_handler() {
     { set +x; } 2>/dev/null
-    $GALAXY_CONTAINER_UP && stop_galaxy
+    $GALAXY_CONTAINER_UP && stop_import_galaxy
     clean_preconfigured_container
     $LOCAL_CVMFS_MOUNTED && unmount_overlay
     # $LOCAL_OVERLAYFS_MOUNTED does not need to be checked here since if it's true, $LOCAL_CVMFS_MOUNTED must be true
     $CVMFS_TRANSACTION_UP && abort_transaction
+    $BUILD_GALAXY_UP && stop_build_galaxy
     $SSH_MASTER_UP && stop_ssh_control
     return 0
 }
@@ -219,7 +222,7 @@ function detect_changes() {
 function set_repo_vars() {
     REPO_USER="${REPO_USERS[$REPO]}"
     REPO_STRATUM0="${REPO_STRATUM0S[$REPO]}"
-    CONTAINER_NAME="usegalaxy-tools-${REPO_USER}-${BUILD_NUMBER}"
+    CONTAINER_NAME="idc-${REPO_USER}-${BUILD_NUMBER}"
     if $USE_LOCAL_OVERLAYFS; then
         OVERLAYFS_LOWER="${WORKSPACE}/${BUILD_NUMBER}/lower"
         OVERLAYFS_UPPER="${WORKSPACE}/${BUILD_NUMBER}/upper"
@@ -234,13 +237,23 @@ function set_repo_vars() {
 }
 
 
+function setup_ansible() {
+    log "Setting up Ansible"
+    log_exec python3 -m venv ansible-venv
+    . ./ansible-venv/bin/activate
+    log_exec pip install --upgrade pip wheel
+    pushd ansible
+    log_exec pip install -r requirements.txt
+    log_exec ansible-galaxy role install -p roles -r requirements.yaml
+    popd
+    deactivate
+}
+
+
 function setup_ephemeris() {
     log "Setting up Ephemeris"
     log_exec python3 -m venv ephemeris
-    # FIXME: temporary until Jenkins nodes are updated, new versions of venv properly default unset vars in activate
-    #set +u
     . ./ephemeris/bin/activate
-    #set -u
     log_exec pip install --upgrade pip wheel
     log_exec pip install --index-url https://wheels.galaxyproject.org/simple/ \
         --extra-index-url https://pypi.org/simple/ "${BIOBLEND:=bioblend}" "${EPHEMERIS:=ephemeris}"
@@ -335,20 +348,6 @@ function publish_transaction() {
 }
 
 
-function patch_cloudve_galaxy() {
-    [ -n "${GALAXY_PATCH_FILE:-}" ] || return 0
-    log "Copying patch to Stratum 0"
-    copy_to ".ci/${GALAXY_PATCH_FILE}"
-    run_container_for_preconfigure
-    log "Installing patch"
-    exec_on docker exec --user root "$PRECONFIGURE_CONTAINER_NAME" apt-get -q update
-    exec_on docker exec --user root -e DEBIAN_FRONTEND=noninteractive "$PRECONFIGURE_CONTAINER_NAME" apt-get install -y patch
-    log "Patching Galaxy"
-    exec_on docker exec --workdir /galaxy/server "$PRECONFIGURE_CONTAINER_NAME" patch -p1 -i "/work/$GALAXY_PATCH_FILE"
-    commit_preconfigured_container
-}
-
-
 function prep_for_galaxy_run() {
     # Sets globals $GALAXY_DATABASE_TMPDIR $WORKDIR
     log "Copying configs to Stratum 0"
@@ -358,6 +357,28 @@ function prep_for_galaxy_run() {
         log "Fetching latest Galaxy image"
         exec_on docker pull "$GALAXY_DOCKER_IMAGE"
     fi
+}
+
+
+function run_build_galaxy() {
+    setup_ansible
+    # This is set beforehand so that the teardown playbook will destroy the instance if launch fails partway through
+    BUILD_GALAXY_UP=true
+    . ./ansible-venv/bin/activate
+    pushd ansible
+    log_exec ansible-playbook playbook-launch.yaml
+    popd
+    deactivate
+}
+
+
+function stop_build_galaxy() {
+    . ./ansible-venv/bin/activate
+    pushd ansible
+    log_exec ansible-playbook playbook-teardown.yaml
+    BUILD_GALAXY_UP=false
+    popd
+    deactivate
 }
 
 
@@ -479,48 +500,10 @@ function run_mounted_galaxy() {
 }
 
 
-# TODO: update
-function run_cloudve_galaxy() {
-
-    patch_cloudve_galaxy
-
-    if [ -n "$GALAXY_TEMPLATE_DB_URL" ]; then
-        log "Updating database"
-        exec_on docker run --rm --user "${USER_UID}:${USER_GID}" --name="${CONTAINER_NAME}-setup" \
-            -e "GALAXY_CONFIG_OVERRIDE_DATABASE_CONNECTION=sqlite:////galaxy/server/database/${GALAXY_TEMPLATE_DB}" \
-            -v "${GALAXY_DATABASE_TMPDIR}:/galaxy/server/database" \
-            "$GALAXY_DOCKER_IMAGE" ./.venv/bin/python ./scripts/manage_db.py upgrade
-    fi
-
-    # we could just start the patch container and run Galaxy in it with `docker exec`, but then logs aren't captured
-    log "Starting Galaxy on Stratum 0"
-    exec_on docker run -d -p 127.0.0.1:${REMOTE_PORT}:8080 --user "${USER_UID}:${USER_GID}" --name="${CONTAINER_NAME}" \
-        -e "GALAXY_CONFIG_OVERRIDE_DATABASE_CONNECTION=sqlite:////galaxy/server/database/${GALAXY_TEMPLATE_DB}" \
-        -e "GALAXY_CONFIG_OVERRIDE_INTEGRATED_TOOL_PANEL_CONFIG=/tmp/integrated_tool_panel.xml" \
-        -e "GALAXY_CONFIG_OVERRIDE_SHED_TOOL_CONFIG_FILE=${SHED_TOOL_CONFIG}" \
-        -e "GALAXY_CONFIG_OVERRIDE_MIGRATED_TOOLS_CONFIG=/abcdef" \
-        -e "GALAXY_CONFIG_OVERRIDE_TOOL_SHEDS_CONFIG_FILE=/tool_sheds_conf.xml" \
-        -e "GALAXY_CONFIG_OVERRIDE_SHED_TOOL_DATA_TABLE_CONFIG=${SHED_TOOL_DATA_TABLE_CONFIG}" \
-        -e "GALAXY_CONFIG_OVERRIDE_SHED_DATA_MANAGER_CONFIG_FILE=${SHED_DATA_MANAGER_CONFIG}" \
-        -e "GALAXY_CONFIG_TOOL_DATA_PATH=/tmp/tool-data" \
-        -e "GALAXY_CONFIG_MASTER_API_KEY=${API_KEY:=deadbeef}" \
-        -e "GALAXY_CONFIG_FILE=config/galaxy.yml.sample" \
-        -v "${OVERLAYFS_MOUNT}:/cvmfs/${REPO}" \
-        -v "${WORKDIR}/tool_sheds_conf.xml:/tool_sheds_conf.xml" \
-        -v "${GALAXY_DATABASE_TMPDIR}:/galaxy/server/database" \
-        --workdir /galaxy/server \
-        "$GALAXY_DOCKER_IMAGE" ./.venv/bin/gunicorn 'galaxy.webapps.galaxy.fast_factory:factory\(\)' --timeout 300 --pythonpath lib -k galaxy.webapps.galaxy.workers.Worker -b 0.0.0.0:8080
-        #"$GALAXY_DOCKER_IMAGE" ./.venv/bin/uwsgi --yaml config/galaxy.yml
-        # TODO: double quoting above probably breaks non-local mode
-    GALAXY_CONTAINER_UP=true
-}
-
-
-function run_galaxy() {
-    prep_for_galaxy_run
+function run_import_galaxy() {
     case "$GALAXY_DOCKER_IMAGE" in
         galaxy/galaxy*)
-            run_cloudve_galaxy
+            log_exit_error "Galaxy image support was not ported from usegalaxy-tools"
             ;;
         centos*|rockylinux*)
             run_mounted_galaxy
@@ -532,8 +515,8 @@ function run_galaxy() {
 }
 
 
-function stop_galaxy() {
-    log "Stopping Galaxy on Stratum 0"
+function stop_import_galaxy() {
+    log "Stopping Importer Galaxy"
     # NOTE: docker rm -f exits 1 if the container does not exist
     exec_on docker stop "$CONTAINER_NAME" || true  # try graceful shutdown first
     exec_on docker kill "$CONTAINER_NAME" || true  # probably failed to start, don't prevent the rest of cleanup
@@ -544,14 +527,14 @@ function stop_galaxy() {
 }
 
 
-function wait_for_galaxy() {
+function wait_for_import_galaxy() {
     log "Waiting for Galaxy connection"
-    log_exec galaxy-wait -v -g "$GALAXY_URL" --timeout 120 || {
+    log_exec galaxy-wait -v -g "$IMPORT_GALAXY_URL" --timeout 120 || {
         log_error "Timed out waiting for Galaxy"
         log_debug "contents of docker log";
         exec_on docker logs "$CONTAINER_NAME"
-        log_debug "response from ${GALAXY_URL}";
-        curl "$GALAXY_URL";
+        log_debug "response from ${IMPORT_GALAXY_URL}";
+        curl "$IMPORT_GALAXY_URL";
         log_exit_error "Terminating build due to previous errors"
     }
 }
@@ -570,10 +553,8 @@ function show_logs() {
 
 
 function show_paths() {
-    log_debug "contents of \$GALAXY_DATABASE_TMPDIR (will be discarded)"
-    exec_on tree -L 6 "$GALAXY_DATABASE_TMPDIR"
-    log_debug "contents of OverlayFS upper mount (will be published)"
-    exec_on tree -L 6 "$OVERLAYFS_UPPER"
+    log "contents of OverlayFS upper mount (will be published)"
+    exec_on tree "$OVERLAYFS_UPPER"
 }
 
 
@@ -584,7 +565,7 @@ function install_tools() {
         log "Installing tools in ${tool_yaml}"
         # FIXME: after https://github.com/galaxyproject/ephemeris/pull/181 is merged you would need to remove
         # --skip_install_resolver_dependencies for install_resolver_dependencies in tools.yaml to work
-        log_exec shed-tools install --skip_install_resolver_dependencies -v -g "$GALAXY_URL" -a "$API_KEY" -t "$tool_yaml" || {
+        log_exec shed-tools install --skip_install_resolver_dependencies -v -g "$IMPORT_GALAXY_URL" -a "$API_KEY" -t "$tool_yaml" || {
             log_error "Tool installation failed"
             show_logs
             show_paths
@@ -606,33 +587,15 @@ function install_tools() {
 
 
 function check_for_repo_changes() {
-    local stc="${SHED_TOOL_CONFIG%,*}"
-    # probbably don't need this unless things fail
-    #log "Showing log"
-    #show_logs
+    local lower=
     log "Checking for changes to repo"
     show_paths
-    log_debug "diff of shed_tool_conf.xml"
-    exec_on diff -u "${OVERLAYFS_LOWER}${stc##*${REPO}}" "${OVERLAYFS_MOUNT}${stc##*${REPO}}" || true
-    log_debug "diff of shed_tool_data_table_conf.xml"
-    exec_on diff -u "${OVERLAYFS_LOWER}${SHED_TOOL_DATA_TABLE_CONFIG##*${REPO}}" \
-        "${OVERLAYFS_MOUNT}${SHED_TOOL_DATA_TABLE_CONFIG##*${REPO}}" || true
-    log_debug "diff of shed_data_manager.xml"
-    exec_on diff -u "${OVERLAYFS_LOWER}${SHED_DATA_MANAGER_CONFIG##*${REPO}}" \
-        "${OVERLAYFS_MOUNT}${SHED_DATA_MANAGER_CONFIG##*${REPO}}" || true
-    if [ -n "$CONDA_PATH" ]; then
-        exec_on [ -d "${OVERLAYFS_UPPER}${CONDA_PATH##*${REPO}}" -o -d "${OVERLAYFS_UPPER}${SHED_TOOL_DIR##*${REPO}}" ] || {
-            log_error "Tool installation failed";
-            show_logs
-            log_exit_error "Terminating build: expected changes to ${OVERLAYFS_UPPER} not found!";
-        }
-    else
-        exec_on [ -d "${OVERLAYFS_UPPER}${SHED_TOOL_DIR##*${REPO}}" ] || {
-            log_error "Tool installation failed";
-            show_logs
-            log_exit_error "Terminating build: expected changes to ${OVERLAYFS_UPPER} not found!";
-        }
-    fi
+    # NOTE: this assumes local mode
+    for config in ${OVERLAYFS_UPPER}/config/*; do
+        lower="${OVERLAYFS_LOWER}/${config##*/}"
+        [ -f "$lower" ] || lower=/dev/null
+        diff -q "$lower" "$config" || diff --color=always "$lower" "$config"
+    done
 }
 
 
@@ -640,16 +603,6 @@ function post_install() {
     log "Running post-installation tasks"
     exec_on "find '$OVERLAYFS_UPPER' -perm -u+r -not -perm -o+r -not -type l -print0 | xargs -0 --no-run-if-empty chmod go+r"
     exec_on "find '$OVERLAYFS_UPPER' -perm -u+rx -not -perm -o+rx -not -type l -print0 | xargs -0 --no-run-if-empty chmod go+rx"
-    if [ -n "$CONDA_PATH" ]; then
-        exec_on docker run --rm --user "${USER_UID}:${USER_GID}" --name="${CONTAINER_NAME}" \
-            -v "${OVERLAYFS_MOUNT}:/cvmfs/${REPO}" \
-            -v "${WORKDIR}/condarc:${CONDARC_MOUNT_PATH}" \
-            "$GALAXY_DOCKER_IMAGE" ${CONDA_PATH}/bin/conda clean --tarballs --yes
-        # we're fixing the links for everything here not just the new stuff in $OVERLAYFS_UPPER
-        exec_on "find '${OVERLAYFS_UPPER}${CONDA_PATH##*${REPO}}/envs' -maxdepth 1 -mindepth 1 -type d -print0 | xargs -0 --no-run-if-empty -I_ENVPATH_ ln -s '${CONDA_PATH}/bin/activate' '_ENVPATH_/bin/activate'" || true
-        exec_on "find '${OVERLAYFS_UPPER}${CONDA_PATH##*${REPO}}/envs' -maxdepth 1 -mindepth 1 -type d -print0 | xargs -0 --no-run-if-empty -I_ENVPATH_ ln -s '${CONDA_PATH}/bin/deactivate' '_ENVPATH_/bin/deactivate'" || true
-        exec_on "find '${OVERLAYFS_UPPER}${CONDA_PATH##*${REPO}}/envs' -maxdepth 1 -mindepth 1 -type d -print0 | xargs -0 --no-run-if-empty -I_ENVPATH_ ln -s '${CONDA_PATH}/bin/conda' '_ENVPATH_/bin/conda'" || true
-    fi
     [ -n "${WORKDIR:-}" ] && exec_on rm -rf "$WORKDIR"
 }
 
@@ -665,11 +618,11 @@ function copy_upper_to_stratum0() {
 
 function do_install_local() {
     mount_overlay
-    run_galaxy
-    wait_for_galaxy
-    #install_tools
+    run_import_galaxy
+    wait_for_import_galaxy
+    #import_tool_data_bundles
     check_for_repo_changes
-    stop_galaxy
+    stop_import_galaxy
     clean_preconfigured_container
     post_install
     if $PUBLISH; then
@@ -683,32 +636,22 @@ function do_install_local() {
 }
 
 
-function do_install_remote() {
-    start_ssh_control
-    begin_transaction
-    run_galaxy
-    wait_for_galaxy
-    #install_tools
-    check_for_repo_changes
-    stop_galaxy
-    clean_preconfigured_container
-    post_install
-    $PUBLISH && publish_transaction || abort_transaction
-    stop_ssh_control
-}
-
-
 function main() {
     check_bot_command
     load_repo_configs
     detect_changes
     set_repo_vars
     setup_ephemeris
+    prep_for_galaxy_run
+    run_build_galaxy
+    #install_data_managers
+    #run_data_managers
     if $USE_LOCAL_OVERLAYFS; then
         do_install_local
     else
-        do_install_remote
+        log_exit_error "Remote mode was not ported from usegalaxy-tools"
     fi
+    stop_build_galaxy
     return 0
 }
 
