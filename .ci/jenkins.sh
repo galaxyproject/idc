@@ -25,6 +25,7 @@ GALAXY_TEMPLATE_DB='galaxy.sqlite'
 
 EPHEMERIS="git+https://github.com/mvdbeek/ephemeris.git@data_manager_mode#egg_name=ephemeris"
 BIOBLEND="git+https://github.com/mvdbeek/bioblend.git@idc_data_manager_runs#egg_name=bioblend"
+GALAXY_MAINTENANCE_SCRIPTS="git+https://github.com/mvdbeek/galaxy-maintainance-scripts.git#egg_name=galaxy-maintainance-scripts"
 
 # Should be set by Jenkins, so the default here is for development
 : ${GIT_COMMIT:=$(git rev-parse HEAD)}
@@ -208,7 +209,7 @@ function detect_changes() {
 #        esac
 #    done < <(git diff --color=never --name-status "$COMMIT_RANGE" -- $(for d in "${!REPOS[@]}"; do echo "${d}/"; done))
 
-	# FIXME:
+    # FIXME:
     REPO=sandbox
 
     log 'Change detection results:'
@@ -482,6 +483,16 @@ galaxy:
   tool_data_path: /cvmfs/${REPO}/data
   admin_users: idc@galaxyproject.org
   tool_data_table_config_path: /cvmfs/${REPO}/config/tool_data_table_conf.xml
+  job_config:
+    runners:
+      local:
+        load: galaxy.jobs.runners.local:LocalJobRunner
+        workers: 1
+    execution:
+      default: local
+      environments:
+        local:
+          runner: local
 EOF
     copy_to "${tmpdir}/galaxy.yml"
     rm -rf "$tmpdir"
@@ -506,18 +517,18 @@ function run_mounted_galaxy() {
     copy_to config/tool_data_table_conf.xml
     exec_on diff -q "${WORKDIR}/tool_data_table_conf.xml" "/cvmfs/${REPO}/config/tool_data_table_conf.xml" || exec_on cp "${WORKDIR}/tool_data_table_conf.xml" "${OVERLAYFS_MOUNT}/config/tool_data_table_conf.xml"
 
-    log "Starting Importer Galaxy"
-    # supervisor configs have the default sample path if $GALAXY_CONFIG_FILE isn't set, why?
-    exec_on docker run -d -p 127.0.0.1:${REMOTE_PORT}:8080 --user "${USER_UID}:${USER_GID}" --name="${CONTAINER_NAME}" \
-        -e "GALAXY_CONFIG_FILE=/galaxy/config/galaxy.yml" \
-        -v "${OVERLAYFS_MOUNT}:/cvmfs/${REPO}" \
-        -v "${GALAXY_SERVER_DIR}:/galaxy/server" \
-        -v "${GALAXY_DATABASE_TMPDIR}:/galaxy/server/database" \
-        -v "${WORKDIR}/galaxy.yml:/galaxy/config/galaxy.yml:ro" \
-        $extra_mount_flags \
-        --workdir /galaxy/server \
-        "$GALAXY_DOCKER_IMAGE" /bin/sh -c "${GALAXY_VENV_DIR}/bin/galaxy -c /galaxy/config/galaxy.yml"
-    GALAXY_CONTAINER_UP=true
+    #log "Starting Importer Galaxy"
+    ## supervisor configs have the default sample path if $GALAXY_CONFIG_FILE isn't set, why?
+    #exec_on docker run -d -p 127.0.0.1:${REMOTE_PORT}:8080 --user "${USER_UID}:${USER_GID}" --name="${CONTAINER_NAME}" \
+    #    -e "GALAXY_CONFIG_FILE=/galaxy/config/galaxy.yml" \
+    #    -v "${OVERLAYFS_MOUNT}:/cvmfs/${REPO}" \
+    #    -v "${GALAXY_SERVER_DIR}:/galaxy/server" \
+    #    -v "${GALAXY_DATABASE_TMPDIR}:/galaxy/server/database" \
+    #    -v "${WORKDIR}/galaxy.yml:/galaxy/config/galaxy.yml:ro" \
+    #    $extra_mount_flags \
+    #    --workdir /galaxy/server \
+    #    "$GALAXY_DOCKER_IMAGE" /bin/sh -c "${GALAXY_VENV_DIR}/bin/galaxy -c /galaxy/config/galaxy.yml"
+    #GALAXY_CONTAINER_UP=true
 }
 
 
@@ -562,7 +573,16 @@ function wait_for_import_galaxy() {
 
 
 function import_tool_data_bundles() {
-    python3 .ci/import-tool-data-bundles.py
+    local bundle_uri="$(python3 ./.ci/import-tool-data-bundles.py)"
+    log_debug "BUNDLE URI IS: $bundle_uri"
+    log "Importing data bundles to Importer Galaxy"
+    log_exec python3 -m venv galaxy-maintenance-scripts-venv
+    . ./galaxy-maintenance-scripts-venv/bin/activate
+    log_exec pip install --upgrade pip wheel
+    log_exec pip install "$GALAXY_MAINTENANCE_SCRIPTS"
+    log_exec galaxy-import-data-bundle -c "${WORKDIR}/galaxy.yml" "$bundle_uri"
+    deactivate
+    #python3 .ci/import-tool-data-bundles.py
 }
 
 
@@ -645,7 +665,7 @@ function copy_upper_to_stratum0() {
 function do_install_local() {
     mount_overlay
     run_import_galaxy
-    wait_for_import_galaxy
+    #wait_for_import_galaxy
     import_tool_data_bundles
     check_for_repo_changes
     stop_import_galaxy
