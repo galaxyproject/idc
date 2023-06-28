@@ -25,7 +25,7 @@ GALAXY_TEMPLATE_DB='galaxy.sqlite'
 
 EPHEMERIS="git+https://github.com/mvdbeek/ephemeris.git@data_manager_mode#egg_name=ephemeris"
 BIOBLEND="git+https://github.com/mvdbeek/bioblend.git@idc_data_manager_runs#egg_name=bioblend"
-GALAXY_MAINTENANCE_SCRIPTS="git+https://github.com/mvdbeek/galaxy-maintainance-scripts.git#egg_name=galaxy-maintainance-scripts"
+GALAXY_MAINTENANCE_SCRIPTS="git+https://github.com/mvdbeek/galaxy-maintenance-scripts.git@avoid_galaxy_app#egg_name=galaxy-maintenance-scripts"
 
 # Should be set by Jenkins, so the default here is for development
 : ${GIT_COMMIT:=$(git rev-parse HEAD)}
@@ -53,8 +53,8 @@ GALAXY_GIT_BRANCH= #release_19.09
 GALAXY_GIT_DEPTH= #100
 
 # Alternatively, you can use Galaxy already available on the system (e.g. in CVMFS)
-GALAXY_SERVER_DIR='/cvmfs/main.galaxyproject.org/galaxy'
-GALAXY_VENV_DIR='/cvmfs/main.galaxyproject.org/venv'
+GALAXY_SERVER_DIR= #'/cvmfs/main.galaxyproject.org/galaxy'
+GALAXY_VENV_DIR= #'/cvmfs/main.galaxyproject.org/venv'
 
 # Mounted read-only into the container
 GALAXY_MOUNT_DIRS=(
@@ -416,8 +416,8 @@ function run_container_for_preconfigure() {
     exec_on docker run -d --name="$PRECONFIGURE_CONTAINER_NAME" \
         -v "${WORKDIR}/:/work/" \
         $source_mount_flag \
-        -v "${GALAXY_DATABASE_TMPDIR}:/galaxy/server/database" \
         "$GALAXY_DOCKER_IMAGE" sleep infinity
+        #-v "${GALAXY_DATABASE_TMPDIR}:/galaxy/server/database" \
     GALAXY_CONTAINER_UP=true
 }
 
@@ -466,59 +466,35 @@ function clone_galaxy() {
 }
 
 
-function write_galaxy_yml() {
-    local tmpdir=$(mktemp -d -t idc.galaxy_yml.XXXXXX)
-    cat > "${tmpdir}/galaxy.yml" <<EOF
-gravity:
-  galaxy_root: /galaxy/server
-  virtualenv: "${GALAXY_VENV_DIR}"
-  gunicorn:
-    bind: 0.0.0.0:8080
-galaxy:
-  data_dir: /galaxy/server/database
-  managed_config_dir: /galaxy/server/database/config
-  conda_auto_init: false
-  conda_auto_install: false
-  bootstrap_admin_api_key: deadbeef
-  tool_data_path: /cvmfs/${REPO}/data
-  admin_users: idc@galaxyproject.org
-  tool_data_table_config_path: /cvmfs/${REPO}/config/tool_data_table_conf.xml
-  job_config:
-    runners:
-      local:
-        load: galaxy.jobs.runners.local:LocalJobRunner
-        workers: 1
-    execution:
-      default: local
-      environments:
-        local:
-          runner: local
-EOF
-    copy_to "${tmpdir}/galaxy.yml"
-    rm -rf "$tmpdir"
-}
-
-
 function run_mounted_galaxy() {
     local extra_mount_flags=
-    if [ -z "$GALAXY_SERVER_DIR" ]; then
+    if [ -n "$GALAXY_GIT_REPO" ]; then
         clone_galaxy
         GALAXY_SERVER_DIR="$GALAXY_SOURCE_TMPDIR"
         GALAXY_VENV_DIR="./.venv"
-    else
+    elif [ -n "$GALAXY_SERVER_DIR" ]; then
         for dir in "${GALAXY_MOUNT_DIRS[@]}"; do
             extra_mount_flags+=" -v ${dir}:${dir}:ro"
         done
+    else
+        run_container_for_preconfigure
+        log "Installing importer scripts"
+        exec_on docker exec "$PRECONFIGURE_CONTAINER_NAME" yum install -y python39 git
+        exec_on docker exec "$PRECONFIGURE_CONTAINER_NAME" pip3 install --upgrade pip wheel setuptools
+        exec_on docker exec "$PRECONFIGURE_CONTAINER_NAME" /usr/local/bin/pip install "$GALAXY_MAINTENANCE_SCRIPTS"
+        commit_preconfigured_container
     fi
-
-    write_galaxy_yml
 
     # update tool_data_table_conf.xml from repo
     copy_to config/tool_data_table_conf.xml
     exec_on diff -q "${WORKDIR}/tool_data_table_conf.xml" "/cvmfs/${REPO}/config/tool_data_table_conf.xml" || exec_on cp "${WORKDIR}/tool_data_table_conf.xml" "${OVERLAYFS_MOUNT}/config/tool_data_table_conf.xml"
 
-    #log "Starting Importer Galaxy"
+
+    log "Starting importer container"
     ## supervisor configs have the default sample path if $GALAXY_CONFIG_FILE isn't set, why?
+    exec_on docker run -d --user "${USER_UID}:${USER_GID}" --name="${CONTAINER_NAME}" \
+        -v "${OVERLAYFS_MOUNT}:/cvmfs/${REPO}" \
+        "$GALAXY_DOCKER_IMAGE" sleep infinity
     #exec_on docker run -d -p 127.0.0.1:${REMOTE_PORT}:8080 --user "${USER_UID}:${USER_GID}" --name="${CONTAINER_NAME}" \
     #    -e "GALAXY_CONFIG_FILE=/galaxy/config/galaxy.yml" \
     #    -v "${OVERLAYFS_MOUNT}:/cvmfs/${REPO}" \
@@ -528,7 +504,7 @@ function run_mounted_galaxy() {
     #    $extra_mount_flags \
     #    --workdir /galaxy/server \
     #    "$GALAXY_DOCKER_IMAGE" /bin/sh -c "${GALAXY_VENV_DIR}/bin/galaxy -c /galaxy/config/galaxy.yml"
-    #GALAXY_CONTAINER_UP=true
+    GALAXY_CONTAINER_UP=true
 }
 
 
@@ -574,15 +550,11 @@ function wait_for_import_galaxy() {
 
 function import_tool_data_bundles() {
     local bundle_uri="$(python3 ./.ci/import-tool-data-bundles.py)"
-    log_debug "BUNDLE URI IS: $bundle_uri"
-    log "Importing data bundles to Importer Galaxy"
-    log_exec python3 -m venv galaxy-maintenance-scripts-venv
-    . ./galaxy-maintenance-scripts-venv/bin/activate
-    log_exec pip install --upgrade pip wheel
-    log_exec pip install "$GALAXY_MAINTENANCE_SCRIPTS"
-    log_exec galaxy-import-data-bundle -c "${WORKDIR}/galaxy.yml" "$bundle_uri"
+    log_debug "bundle URI is: $bundle_uri"
+    log "Importing data bundles"
+    exec_on docker exec "$CONTAINER_NAME" mkdir -p "/cvmfs/${REPO}/data"
+    exec_on docker exec "$CONTAINER_NAME" /usr/local/bin/galaxy-import-data-bundle --tool-data-path "/cvmfs/${REPO}/data" --data-table-config-path "/cvmfs/${REPO}/config/tool_data_table_conf.xml" "$bundle_uri"
     deactivate
-    #python3 .ci/import-tool-data-bundles.py
 }
 
 
@@ -640,7 +612,7 @@ function check_for_repo_changes() {
     for config in ${OVERLAYFS_UPPER}/config/*; do
         lower="${OVERLAYFS_LOWER}/${config##*/}"
         [ -f "$lower" ] || lower=/dev/null
-        diff -q "$lower" "$config" || diff --color=always "$lower" "$config"
+        diff -q "$lower" "$config" || diff -u --color=always "$lower" "$config"
     done
 }
 
