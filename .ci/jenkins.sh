@@ -5,17 +5,13 @@ set -euo pipefail
 : ${PUBLISH:=false}
 
 BUILD_GALAXY_URL="http://idc-build"
-LOCAL_PORT=8080
-REMOTE_PORT=8080
-IMPORT_GALAXY_URL="http://127.0.0.1:${LOCAL_PORT}"
 SSH_MASTER_SOCKET_DIR="${HOME}/.cache/idc"
 MAIN_BRANCH='main'
 
 # Set to 'centos:...' or 'rockylinux:...' and set GALAXY_GIT_* or GALAXY_SERVER_DIR below to use a clone
-#GALAXY_DOCKER_IMAGE='galaxy/galaxy-min:23.0'
-GALAXY_DOCKER_IMAGE='rockylinux:8'
+IMPORT_DOCKER_IMAGE='rockylinux:8'
 # Disable if using a locally built image e.g. for debugging
-GALAXY_DOCKER_IMAGE_PULL=true
+IMPORT_DOCKER_IMAGE_PULL=true
 
 #GALAXY_TEMPLATE_DB_URL='https://raw.githubusercontent.com/davebx/galaxyproject-sqlite/master/20.01.sqlite'
 #GALAXY_TEMPLATE_DB="${GALAXY_TEMPLATE_DB_URL##*/}"
@@ -39,28 +35,6 @@ USE_LOCAL_OVERLAYFS=true
 # Development/debug options
 #
 
-# If $GALAXY_DOCKER_IMAGE is a CloudVE image, you can set this to a patch file in .ci/ that will be applied to Galaxy in
-# the image before Galaxy is run
-GALAXY_PATCH_FILE=
-
-# If $GALAXY_DOCKER_IMAGE is centos or rocky, you can set these to clone Galaxy at a specific revision and mount it in
-# to the container. Not fully tested because I was essentially using this to bisect for the bug, but Martin figured out
-# what the bug was before I finished. But everything up to starting Galaxy works.
-GALAXY_GIT_REPO= #https://github.com/galaxyproject/galaxy.git/
-GALAXY_GIT_HEAD= #963093448eb6d029d44aa627354d2e01761c8a7b
-# Branch is only used if the depth is set
-GALAXY_GIT_BRANCH= #release_19.09
-GALAXY_GIT_DEPTH= #100
-
-# Alternatively, you can use Galaxy already available on the system (e.g. in CVMFS)
-GALAXY_SERVER_DIR= #'/cvmfs/main.galaxyproject.org/galaxy'
-GALAXY_VENV_DIR= #'/cvmfs/main.galaxyproject.org/venv'
-
-# Mounted read-only into the container
-GALAXY_MOUNT_DIRS=(
-    /cvmfs/main.galaxyproject.org
-)
-
 #
 # Ensure that everything is defined for set -u
 #
@@ -68,15 +42,10 @@ GALAXY_MOUNT_DIRS=(
 TOOL_YAMLS=()
 REPO_USER=
 REPO_STRATUM0=
-SHED_TOOL_CONFIG=
-SHED_TOOL_DATA_TABLE_CONFIG=
-SHED_DATA_MANAGER_CONFIG=
 SSH_MASTER_SOCKET=
 WORKDIR=
 USER_UID="$(id -u)"
 USER_GID="$(id -g)"
-GALAXY_DATABASE_TMPDIR=
-GALAXY_SOURCE_TMPDIR=
 OVERLAYFS_UPPER=
 OVERLAYFS_LOWER=
 OVERLAYFS_WORK=
@@ -84,7 +53,7 @@ OVERLAYFS_MOUNT=
 
 SSH_MASTER_UP=false
 CVMFS_TRANSACTION_UP=false
-GALAXY_CONTAINER_UP=false
+IMPORT_CONTAINER_UP=false
 LOCAL_CVMFS_MOUNTED=false
 LOCAL_OVERLAYFS_MOUNTED=false
 BUILD_GALAXY_UP=false
@@ -94,7 +63,7 @@ function trap_handler() {
     { set +x; } 2>/dev/null
     # return to original dir
     while popd; do :; done || true
-    $GALAXY_CONTAINER_UP && stop_import_galaxy
+    $IMPORT_CONTAINER_UP && stop_import_container
     clean_preconfigured_container
     $LOCAL_CVMFS_MOUNTED && unmount_overlay
     # $LOCAL_OVERLAYFS_MOUNTED does not need to be checked here since if it's true, $LOCAL_CVMFS_MOUNTED must be true
@@ -347,19 +316,18 @@ function abort_transaction() {
 
 function publish_transaction() {
     log "Publishing transaction on $REPO"
-    exec_on "cvmfs_server publish -a 'tools-${GIT_COMMIT:0:7}' -m 'Automated data installation for commit ${GIT_COMMIT}' ${REPO}"
+    exec_on "cvmfs_server publish -a 'idc-${GIT_COMMIT:0:7}' -m 'Automated data installation for commit ${GIT_COMMIT}' ${REPO}"
     CVMFS_TRANSACTION_UP=false
 }
 
 
 function prep_for_galaxy_run() {
-    # Sets globals $GALAXY_DATABASE_TMPDIR $WORKDIR
+    # Sets globals $WORKDIR
     log "Copying configs to Stratum 0"
     WORKDIR=$(exec_on mktemp -d -t idc.work.XXXXXX)
-    GALAXY_DATABASE_TMPDIR=$(exec_on mktemp -d -t idc.database.XXXXXX)
-    if $GALAXY_DOCKER_IMAGE_PULL; then
+    if $IMPORT_DOCKER_IMAGE_PULL; then
         log "Fetching latest Galaxy image"
-        exec_on docker pull "$GALAXY_DOCKER_IMAGE"
+        exec_on docker pull "$IMPORT_DOCKER_IMAGE"
     fi
 }
 
@@ -406,28 +374,23 @@ function run_data_managers() {
 
 function run_container_for_preconfigure() {
     # Sets globals $PRECONFIGURE_CONTAINER_NAME $PRECONFIGURED_IMAGE_NAME
-    # $1 = true if should mount $GALAXY_SOURCE_TMPDIR
-    local source_mount_flag=
-    ${1:-false} && source_mount_flag="-v ${GALAXY_SOURCE_TMPDIR}:/galaxy/server"
     PRECONFIGURE_CONTAINER_NAME="${CONTAINER_NAME}-preconfigure"
     PRECONFIGURED_IMAGE_NAME="${PRECONFIGURE_CONTAINER_NAME}d"
-    ORIGINAL_IMAGE_NAME="$GALAXY_DOCKER_IMAGE"
-    log "Starting Galaxy container for preconfiguration on Stratum 0"
+    ORIGINAL_IMAGE_NAME="$IMPORT_DOCKER_IMAGE"
+    log "Starting import container for preconfiguration"
     exec_on docker run -d --name="$PRECONFIGURE_CONTAINER_NAME" \
         -v "${WORKDIR}/:/work/" \
-        $source_mount_flag \
-        "$GALAXY_DOCKER_IMAGE" sleep infinity
-        #-v "${GALAXY_DATABASE_TMPDIR}:/galaxy/server/database" \
-    GALAXY_CONTAINER_UP=true
+        "$IMPORT_DOCKER_IMAGE" sleep infinity
+    IMPORT_CONTAINER_UP=true
 }
 
 
 function commit_preconfigured_container() {
     log "Stopping and committing preconfigured container on Stratum 0"
     exec_on docker kill "$PRECONFIGURE_CONTAINER_NAME"
-    GALAXY_CONTAINER_UP=false
+    IMPORT_CONTAINER_UP=false
     exec_on docker commit "$PRECONFIGURE_CONTAINER_NAME" "$PRECONFIGURED_IMAGE_NAME"
-    GALAXY_DOCKER_IMAGE="$PRECONFIGURED_IMAGE_NAME"
+    IMPORT_DOCKER_IMAGE="$PRECONFIGURED_IMAGE_NAME"
 }
 
 
@@ -439,112 +402,33 @@ function clean_preconfigured_container() {
 }
 
 
-# TODO: update for $USE_LOCAL_OVERLAYFS
-function clone_galaxy() {
-    log "Cloning Galaxy"
-    GALAXY_SOURCE_TMPDIR=$(exec_on mktemp -d -t idc.source.XXXXXX)
-    if [ -n "$GALAXY_GIT_BRANCH" -a -n "$GALAXY_GIT_DEPTH" ]; then
-        log "Performing shallow clone of branch ${GALAXY_GIT_BRANCH} to depth ${GALAXY_GIT_DEPTH}"
-        exec_on git clone --branch "$GALAXY_GIT_BRANCH" --depth "$GALAXY_GIT_DEPTH" "$GALAXY_GIT_REPO" "$GALAXY_SOURCE_TMPDIR"
-    else
-        exec_on git clone "$GALAXY_GIT_REPO" "$GALAXY_SOURCE_TMPDIR"
-    fi
-    log "Checking out Galaxy at ref ${GALAXY_GIT_HEAD}"
-    # ancient git in EL7 doesn't have -C
-    #exec_on git -C "$GALAXY_SOURCE_TMPDIR" checkout "$GALAXY_GIT_HEAD"
-    exec_on "cd '$GALAXY_SOURCE_TMPDIR'; git checkout '$GALAXY_GIT_HEAD'"
-
-    run_container_for_preconfigure true
-    log "Installing packages"
-    exec_on docker exec --user root "$PRECONFIGURE_CONTAINER_NAME" yum install -y python-virtualenv
-    log "Installing dependencies"
-    exec_on docker exec --user "${USER_UID}:${USER_GID}" --workdir /galaxy/server "$PRECONFIGURE_CONTAINER_NAME" virtualenv .venv
-    # $HOME is set for pip cache (~/.cache), which is needed to build wheels
-    exec_on docker exec --user "${USER_UID}:${USER_GID}" --workdir /galaxy/server -e "HOME=/galaxy/server/database" "$PRECONFIGURE_CONTAINER_NAME" ./.venv/bin/pip install --upgrade pip setuptools wheel
-    exec_on docker exec --user "${USER_UID}:${USER_GID}" --workdir /galaxy/server -e "HOME=/galaxy/server/database" "$PRECONFIGURE_CONTAINER_NAME" ./.venv/bin/pip install -r requirements.txt
+function run_import_container() {
+    run_container_for_preconfigure
+    log "Installing importer scripts"
+    exec_on docker exec "$PRECONFIGURE_CONTAINER_NAME" yum install -y python39 git
+    exec_on docker exec "$PRECONFIGURE_CONTAINER_NAME" pip3 install --upgrade pip wheel setuptools
+    exec_on docker exec "$PRECONFIGURE_CONTAINER_NAME" /usr/local/bin/pip install "$GALAXY_MAINTENANCE_SCRIPTS"
     commit_preconfigured_container
-}
-
-
-function run_mounted_galaxy() {
-    local extra_mount_flags=
-    if [ -n "$GALAXY_GIT_REPO" ]; then
-        clone_galaxy
-        GALAXY_SERVER_DIR="$GALAXY_SOURCE_TMPDIR"
-        GALAXY_VENV_DIR="./.venv"
-    elif [ -n "$GALAXY_SERVER_DIR" ]; then
-        for dir in "${GALAXY_MOUNT_DIRS[@]}"; do
-            extra_mount_flags+=" -v ${dir}:${dir}:ro"
-        done
-    else
-        run_container_for_preconfigure
-        log "Installing importer scripts"
-        exec_on docker exec "$PRECONFIGURE_CONTAINER_NAME" yum install -y python39 git
-        exec_on docker exec "$PRECONFIGURE_CONTAINER_NAME" pip3 install --upgrade pip wheel setuptools
-        exec_on docker exec "$PRECONFIGURE_CONTAINER_NAME" /usr/local/bin/pip install "$GALAXY_MAINTENANCE_SCRIPTS"
-        commit_preconfigured_container
-    fi
 
     # update tool_data_table_conf.xml from repo
     copy_to config/tool_data_table_conf.xml
     exec_on diff -q "${WORKDIR}/tool_data_table_conf.xml" "/cvmfs/${REPO}/config/tool_data_table_conf.xml" || exec_on cp "${WORKDIR}/tool_data_table_conf.xml" "${OVERLAYFS_MOUNT}/config/tool_data_table_conf.xml"
 
-
     log "Starting importer container"
-    ## supervisor configs have the default sample path if $GALAXY_CONFIG_FILE isn't set, why?
     exec_on docker run -d --user "${USER_UID}:${USER_GID}" --name="${CONTAINER_NAME}" \
         -v "${OVERLAYFS_MOUNT}:/cvmfs/${REPO}" \
-        "$GALAXY_DOCKER_IMAGE" sleep infinity
-    #exec_on docker run -d -p 127.0.0.1:${REMOTE_PORT}:8080 --user "${USER_UID}:${USER_GID}" --name="${CONTAINER_NAME}" \
-    #    -e "GALAXY_CONFIG_FILE=/galaxy/config/galaxy.yml" \
-    #    -v "${OVERLAYFS_MOUNT}:/cvmfs/${REPO}" \
-    #    -v "${GALAXY_SERVER_DIR}:/galaxy/server" \
-    #    -v "${GALAXY_DATABASE_TMPDIR}:/galaxy/server/database" \
-    #    -v "${WORKDIR}/galaxy.yml:/galaxy/config/galaxy.yml:ro" \
-    #    $extra_mount_flags \
-    #    --workdir /galaxy/server \
-    #    "$GALAXY_DOCKER_IMAGE" /bin/sh -c "${GALAXY_VENV_DIR}/bin/galaxy -c /galaxy/config/galaxy.yml"
-    GALAXY_CONTAINER_UP=true
+        "$IMPORT_DOCKER_IMAGE" sleep infinity
+    IMPORT_CONTAINER_UP=true
 }
 
 
-function run_import_galaxy() {
-    case "$GALAXY_DOCKER_IMAGE" in
-        galaxy/galaxy*)
-            log_exit_error "Galaxy image support was not ported from usegalaxy-tools"
-            ;;
-        centos*|rockylinux*)
-            run_mounted_galaxy
-            ;;
-        *)
-            log_exit_error "Unknown Galaxy Docker image: ${GALAXY_DOCKER_IMAGE}"
-            ;;
-    esac
-}
-
-
-function stop_import_galaxy() {
-    log "Stopping Importer Galaxy"
+function stop_import_container() {
+    log "Stopping importer container"
     # NOTE: docker rm -f exits 1 if the container does not exist
     exec_on docker stop "$CONTAINER_NAME" || true  # try graceful shutdown first
     exec_on docker kill "$CONTAINER_NAME" || true  # probably failed to start, don't prevent the rest of cleanup
     exec_on docker rm -v "$CONTAINER_NAME" || true
-    [ -n "$GALAXY_DATABASE_TMPDIR" ] && exec_on rm -rf "$GALAXY_DATABASE_TMPDIR"
-    [ -n "${GALAXY_SOURCE_TMPDIR:-}" ] && exec_on rm -rf "$GALAXY_SOURCE_TMPDIR"
-    GALAXY_CONTAINER_UP=false
-}
-
-
-function wait_for_import_galaxy() {
-    log "Waiting for Galaxy connection"
-    log_exec galaxy-wait -v -g "$IMPORT_GALAXY_URL" --timeout 120 || {
-        log_error "Timed out waiting for Galaxy"
-        log_debug "contents of docker log";
-        exec_on docker logs "$CONTAINER_NAME"
-        log_debug "response from ${IMPORT_GALAXY_URL}";
-        curl "$IMPORT_GALAXY_URL";
-        log_exit_error "Terminating build due to previous errors"
-    }
+    IMPORT_CONTAINER_UP=false
 }
 
 
@@ -574,34 +458,6 @@ function show_paths() {
     log "contents of OverlayFS upper mount (will be published)"
     exec_on tree "$OVERLAYFS_UPPER"
 }
-
-
-function install_tools() {
-    local tool_yaml
-    log "Installing tools"
-    for tool_yaml in "${TOOL_YAMLS[@]}"; do
-        log "Installing tools in ${tool_yaml}"
-        # FIXME: after https://github.com/galaxyproject/ephemeris/pull/181 is merged you would need to remove
-        # --skip_install_resolver_dependencies for install_resolver_dependencies in tools.yaml to work
-        log_exec shed-tools install --skip_install_resolver_dependencies -v -g "$IMPORT_GALAXY_URL" -a "$API_KEY" -t "$tool_yaml" || {
-            log_error "Tool installation failed"
-            show_logs
-            show_paths
-            log_exit_error "Terminating build due to previous errors"
-        }
-        #shed-tools install -v -a deadbeef -t "$tool_yaml" --test --test_json "${tool_yaml##*/}"-test.json || {
-        #    # TODO: test here if test failures should be ignored (but we can't separate test failures from install
-        #    # failures at the moment) and also we can't easily get the job stderr
-        #    [ "$TRAVIS_PULL_REQUEST" == "false" -a "$TRAVIS_BRANCH" == "master" ] || {
-        #        log_error "Tool install/test failed";
-        #        show_logs
-        #        show_paths
-        #        log_exit_error "Terminating build due to previous errors"
-        #    };
-        #}
-    done
-}
-
 
 
 function check_for_repo_changes() {
@@ -636,11 +492,10 @@ function copy_upper_to_stratum0() {
 
 function do_install_local() {
     mount_overlay
-    run_import_galaxy
-    #wait_for_import_galaxy
+    run_import_container
     import_tool_data_bundles
     check_for_repo_changes
-    stop_import_galaxy
+    stop_import_container
     clean_preconfigured_container
     post_install
     if $PUBLISH; then
