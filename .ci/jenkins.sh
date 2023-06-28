@@ -69,6 +69,7 @@ function trap_handler() {
     # $LOCAL_OVERLAYFS_MOUNTED does not need to be checked here since if it's true, $LOCAL_CVMFS_MOUNTED must be true
     $CVMFS_TRANSACTION_UP && abort_transaction
     $BUILD_GALAXY_UP && stop_build_galaxy
+    clean_workspace
     $SSH_MASTER_UP && stop_ssh_control
     return 0
 }
@@ -257,7 +258,6 @@ function unmount_overlay() {
     # Attempt to kill anything still accessing lower so unmount doesn't fail
     log_exec fuser -v -k "$OVERLAYFS_LOWER" || true
     log_exec fusermount -u "$OVERLAYFS_LOWER"
-    log_exec rm -rf "${WORKSPACE}/${BUILD_NUMBER}"
     LOCAL_CVMFS_MOUNTED=false
 }
 
@@ -473,6 +473,11 @@ function check_for_repo_changes() {
 }
 
 
+function clean_workspace() {
+    log_exec rm -rf "${WORKSPACE}/${BUILD_NUMBER}"
+}
+
+
 function post_install() {
     log "Running post-installation tasks"
     exec_on "find '$OVERLAYFS_UPPER' -perm -u+r -not -perm -o+r -not -type l -print0 | xargs -0 --no-run-if-empty chmod go+r"
@@ -525,6 +530,7 @@ function main() {
         log_exit_error "Remote mode was not ported from usegalaxy-tools"
     fi
     stop_build_galaxy
+    clean_workspace
     return 0
 }
 
