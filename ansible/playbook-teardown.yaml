@@ -5,6 +5,7 @@
       file:
         path: /jetstream2/scratch/idc
         state: absent
+      diff: false
     - name: Log out from tailnet
       command: tailscale logout
 
