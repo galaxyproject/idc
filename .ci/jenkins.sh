@@ -366,9 +366,11 @@ function install_data_managers() {
 
 function run_data_managers() {
     # FIXME: this will be generated
+    local dm_id='data_manager_fetch_genome_all_fasta_dbkey'
+    local build_id='dm6'
     log "Running Data Managers"
     log_exec curl -L -o fetch-dm6.yml https://gist.github.com/natefoo/7c8d27ab2460ea11426c724bbafff011/raw/c99029b65fec45b51b7ffc35afbe842caaef4b3b/fetch-dm6.yml
-    log_exec run-data-managers --config fetch-dm6.yml -g "$BUILD_GALAXY_URL" -u idc -p "$IDC_USER_PASS" --data_manager_mode bundle
+    log_exec run-data-managers --config fetch-dm6.yml -g "$BUILD_GALAXY_URL" -u idc -p "$IDC_USER_PASS" --data-manager-mode bundle --history-name "${build_id}.${dm_id}"
 }
 
 
@@ -433,7 +435,10 @@ function stop_import_container() {
 
 
 function import_tool_data_bundles() {
-    local bundle_uri="$(python3 ./.ci/import-tool-data-bundles.py)"
+    # FIXME
+    local dm_id='data_manager_fetch_genome_all_fasta_dbkey'
+    local build_id='dm6'
+    local bundle_uri="$(python3 ./.ci/get-bundle-url.py --galaxy-url "$BUILD_GALAXY_URL" --history-name "${build_id}.${dm_id}")"
     log_debug "bundle URI is: $bundle_uri"
     log "Importing data bundles"
     exec_on docker exec "$CONTAINER_NAME" mkdir -p "/cvmfs/${REPO}/data"
