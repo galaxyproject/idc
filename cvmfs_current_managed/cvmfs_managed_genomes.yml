@@ -1,0 +1,598 @@
+- genomes:
+    - dbkey: hg19_rCRS_pUC18_phiX174
+      description: Homo sapiens (hg19 with mtDNA replaced with rCRS, and containing pUC18
+        and phiX174)
+      id: hg19_rCRS_pUC18_phiX174
+      indexers:
+      - data_manager_twobit_builder
+      - data_manager_fetch_genome_all_fasta
+      - data_manager_bowtie2_index_builder
+      - data_manager_bwa_mem_index_builder
+      - data_manager_sam_fasta_index_builder
+      - data_manager_hisat2_index_builder
+      - data_manager_picard_index_builder
+      - data_manager_star_index_builder
+      
+    - dbkey: rn6
+      description: Rat Jul. 2014 (RGSC 6.0/rn6) (rn6)
+      id: rn6
+      indexers:
+      - data_manager_twobit_builder
+      - data_manager_fetch_genome_all_fasta
+      - data_manager_bowtie2_index_builder
+      - data_manager_bwa_mem_index_builder
+      - data_manager_sam_fasta_index_builder
+      - data_manager_hisat2_index_builder
+      - data_manager_picard_index_builder
+      - data_manager_star_index_builder
+
+    - dbkey: dm6
+      description: D. melanogaster Aug. 2014 (BDGP Release 6 + ISO1 MT/dm6) (dm6)
+      id: dm6
+      indexers:
+      - data_manager_twobit_builder
+      - data_manager_fetch_genome_all_fasta
+      - data_manager_bowtie2_index_builder
+      - data_manager_bwa_mem_index_builder
+      - data_manager_sam_fasta_index_builder
+      - data_manager_hisat2_index_builder
+      - data_manager_picard_index_builder
+      - data_manager_star_index_builder
+
+    - dbkey: musFur1
+      description: Ferret Apr. 2011 (MusPutFur1.0/musFur1) (musFur1)
+      id: musFur1
+      indexers:
+      - data_manager_twobit_builder
+      - data_manager_fetch_genome_all_fasta
+      - data_manager_bowtie2_index_builder
+      - data_manager_bwa_mem_index_builder
+      - data_manager_sam_fasta_index_builder
+      - data_manager_hisat2_index_builder
+      - data_manager_picard_index_builder
+
+    - dbkey: nomLeu3
+      description: Gibbon Oct. 2012 (GGSC Nleu3.0/nomLeu3) (nomLeu3)
+      id: nomLeu3
+      indexers:
+      - data_manager_twobit_builder
+      - data_manager_fetch_genome_all_fasta
+      - data_manager_bowtie2_index_builder
+      - data_manager_bwa_mem_index_builder
+      - data_manager_sam_fasta_index_builder
+      - data_manager_hisat2_index_builder
+      - data_manager_picard_index_builder
+
+    - dbkey: cerSim1
+      description: White rhinoceros May 2012 (CerSimSim1.0/cerSim1) (cerSim1)
+      id: cerSim1
+      indexers:
+      - data_manager_twobit_builder
+      - data_manager_fetch_genome_all_fasta
+      - data_manager_bowtie2_index_builder
+      - data_manager_bwa_mem_index_builder
+      - data_manager_sam_fasta_index_builder
+      - data_manager_hisat2_index_builder
+      - data_manager_picard_index_builder
+
+    - dbkey: danRer10
+      description: Zebrafish Sep. 2014 (GRCz10/danRer10) (danRer10)
+      id: danRer10
+      indexers:
+      - data_manager_twobit_builder
+      - data_manager_fetch_genome_all_fasta
+      - data_manager_bowtie2_index_builder
+      - data_manager_sam_fasta_index_builder
+      - data_manager_picard_index_builder
+
+    - dbkey: papAnu2
+      description: Baboon Mar. 2012 (Baylor Panu_2.0/papAnu2) (papAnu2)
+      id: papAnu2
+      indexers:
+      - data_manager_twobit_builder
+      - data_manager_fetch_genome_all_fasta
+      - data_manager_bowtie2_index_builder
+      - data_manager_bwa_mem_index_builder
+      - data_manager_sam_fasta_index_builder
+      - data_manager_hisat2_index_builder
+      - data_manager_picard_index_builder
+
+    - dbkey: bosTau8
+      description: Cow Jun. 2014 (Bos_taurus_UMD_3.1.1/bosTau8) (bosTau8)
+      id: bosTau8
+      indexers:
+      - data_manager_twobit_builder
+      - data_manager_fetch_genome_all_fasta
+      - data_manager_bowtie2_index_builder
+      - data_manager_bwa_mem_index_builder
+      - data_manager_sam_fasta_index_builder
+      - data_manager_hisat2_index_builder
+      - data_manager_picard_index_builder
+
+    - dbkey: melUnd1
+      description: 'Budgerigar (Melopsittacus undulatus): melUnd1'
+      id: melUnd1
+      indexers:
+      - data_manager_twobit_builder
+      - data_manager_bowtie2_index_builder
+      - data_manager_bwa_mem_index_builder
+      - data_manager_hisat2_index_builder
+
+    - dbkey: allMis1
+      description: American alligator Aug. 2012 (allMis0.2/allMis1) (allMis1)
+      id: allMis1
+      indexers:
+      - data_manager_twobit_builder
+      - data_manager_fetch_genome_all_fasta
+      - data_manager_bowtie2_index_builder
+      - data_manager_bwa_mem_index_builder
+      - data_manager_sam_fasta_index_builder
+      - data_manager_hisat2_index_builder
+      - data_manager_picard_index_builder
+
+    - dbkey: vicPac1
+      description: Alpaca Jul. 2008 (Broad/vicPac1) (vicPac1)
+      id: vicPac1
+      indexers:
+      - data_manager_twobit_builder
+      - data_manager_fetch_genome_all_fasta
+      - data_manager_bowtie2_index_builder
+      - data_manager_bwa_mem_index_builder
+      - data_manager_sam_fasta_index_builder
+      - data_manager_hisat2_index_builder
+      - data_manager_picard_index_builder
+
+    - dbkey: vicPac2
+      description: Alpaca Mar. 2013 (Vicugna_pacos-2.0.1/vicPac2) (vicPac2)
+      id: vicPac2
+      indexers:
+      - data_manager_twobit_builder
+      - data_manager_fetch_genome_all_fasta
+      - data_manager_bowtie2_index_builder
+      - data_manager_bwa_mem_index_builder
+      - data_manager_sam_fasta_index_builder
+      - data_manager_hisat2_index_builder
+      - data_manager_picard_index_builder
+
+    - dbkey: gadMor1
+      description: Atlantic cod May 2010 (Genofisk GadMor_May2010/gadMor1) (gadMor1)
+      id: gadMor1
+      indexers:
+      - data_manager_twobit_builder
+      - data_manager_fetch_genome_all_fasta
+      - data_manager_bowtie2_index_builder
+      - data_manager_bwa_mem_index_builder
+      - data_manager_sam_fasta_index_builder
+      - data_manager_hisat2_index_builder
+      - data_manager_picard_index_builder
+
+    - dbkey: dasNov3
+      description: Armadillo Dec. 2011 (Baylor/dasNov3) (dasNov3)
+      id: dasNov3
+      indexers:
+      - data_manager_twobit_builder
+      - data_manager_fetch_genome_all_fasta
+      - data_manager_bowtie2_index_builder
+      - data_manager_bwa_mem_index_builder
+      - data_manager_sam_fasta_index_builder
+      - data_manager_hisat2_index_builder
+      - data_manager_picard_index_builder
+
+    - dbkey: panPan1
+      description: Bonobo May. 2012 (Max-Planck/panPan1) (panPan1)
+      id: panPan1
+      indexers:
+      - data_manager_twobit_builder
+      - data_manager_fetch_genome_all_fasta
+      - data_manager_bowtie2_index_builder
+      - data_manager_bwa_mem_index_builder
+      - data_manager_sam_fasta_index_builder
+      - data_manager_hisat2_index_builder
+      - data_manager_picard_index_builder
+
+    - dbkey: felCat8
+      description: Cat Nov. 2014 (ICGSC Felis_catus_8.0/felCat8) (felCat8)
+      id: felCat8
+      indexers:
+      - data_manager_twobit_builder
+      - data_manager_fetch_genome_all_fasta
+      - data_manager_bowtie2_index_builder
+      - data_manager_bwa_mem_index_builder
+      - data_manager_sam_fasta_index_builder
+      - data_manager_hisat2_index_builder
+      - data_manager_picard_index_builder
+
+    - dbkey: aptMan1
+      description: Brown Kiwi Jun. 2015 (MPI-EVA AptMant0/aptMan1) (aptMan1)
+      id: aptMan1
+      indexers:
+      - data_manager_twobit_builder
+      - data_manager_fetch_genome_all_fasta
+      - data_manager_bowtie2_index_builder
+      - data_manager_bwa_mem_index_builder
+      - data_manager_sam_fasta_index_builder
+      - data_manager_hisat2_index_builder
+      - data_manager_picard_index_builder
+
+    - dbkey: bosTau7
+      description: 'Cow (Bos taurus): bosTau7'
+      id: bosTau7
+      indexers:
+      - data_manager_twobit_builder
+      - data_manager_hisat2_index_builder
+
+    - dbkey: apiMel4
+      description: A. mellifera 04 Nov 2010 (Amel_4.5/apiMel4) (apiMel4)
+      id: apiMel4
+      indexers:
+      - data_manager_twobit_builder
+      - data_manager_fetch_genome_all_fasta
+      - data_manager_bowtie2_index_builder
+      - data_manager_bwa_mem_index_builder
+      - data_manager_sam_fasta_index_builder
+      - data_manager_hisat2_index_builder
+      - data_manager_picard_index_builder
+      - data_manager_star_index_builder
+
+    - dbkey: Amel_4.5
+      description: A. mellifera Nov. 2010 (GCF_000002195.4/Amel_4.5) (Amel_4.5)
+      id: Amel_4.5
+      indexers:
+      - data_manager_twobit_builder
+      - data_manager_fetch_genome_all_fasta
+      - data_manager_bowtie2_index_builder
+      - data_manager_bwa_mem_index_builder
+      - data_manager_sam_fasta_index_builder
+      - data_manager_hisat2_index_builder
+      - data_manager_picard_index_builder
+      - data_manager_star_index_builder
+
+    - dbkey: taeGut2
+      description: Zebra finch Feb. 2013 (WashU taeGut324/taeGut2)
+      id: taeGut2
+      indexers:
+      - data_manager_fetch_genome_all_fasta
+
+    - dbkey: criGri1
+      description: Chinese hamster Jul. 2013 (C_griseus_v1.0/criGri1) (criGri1)
+      id: criGri1
+      indexers:
+      - data_manager_fetch_genome_all_fasta
+
+    - dbkey: latCha1
+      description: Coelacanth Aug. 2011 (Broad/latCha1) (latCha1)
+      id: latCha1
+      indexers:
+      - data_manager_fetch_genome_all_fasta
+
+    - dbkey: sacCer3
+      description: 'Yeast (Saccharomyces cerevisiae): sacCer3'
+      id: sacCer3
+      indexers:
+      - data_manager_bowtie2_index_builder
+      - data_manager_bwa_mem_index_builder
+      - data_manager_hisat2_index_builder
+      - data_manager_star_index_builder
+
+    - dbkey: sacCer2
+      description: 'Yeast (Saccharomyces cerevisiae): sacCer2'
+      id: sacCer2
+      indexers:
+      - data_manager_bowtie2_index_builder
+      - data_manager_bwa_mem_index_builder
+      - data_manager_hisat2_index_builder
+      - data_manager_star_index_builder
+
+    - dbkey: Schizosaccharomyces_pombe_1.1
+      description: 'Fission Yeast (Schizosaccharomyces pombe): Schizosaccharomyces_pombe_1.1'
+      id: Schizosaccharomyces_pombe_1.1
+      indexers:
+      - data_manager_bowtie2_index_builder
+      - data_manager_bwa_mem_index_builder
+      - data_manager_hisat2_index_builder
+
+    - dbkey: galGal4
+      description: Chicken (Nov 2011, Gallus gallus)
+      id: galgal4
+      indexers:
+      - data_manager_bowtie2_index_builder
+
+    - dbkey: loxAfr1
+      description: 'Elephant (Loxodonta africana africana): loxAfr1'
+      id: loxAfr1
+      indexers:
+      - data_manager_bowtie2_index_builder
+      - data_manager_bwa_mem_index_builder
+      - data_manager_hisat2_index_builder
+
+    - dbkey: loxAfr3
+      description: 'Elephant (Loxodonta africana africana): loxAfr3'
+      id: loxAfr3
+      indexers:
+      - data_manager_bowtie2_index_builder
+      - data_manager_bwa_mem_index_builder
+      - data_manager_hisat2_index_builder
+
+    - dbkey: oryza_sativa_japonica_nipponbare_IRGSP4.0
+      description: 'Rice (Oryza sativa L. ssp. japonica var. Nipponbare): IRGSP4.0'
+      id: oryza_sativa_japonica_nipponbare_IRGSP4.0
+      indexers:
+      - data_manager_bowtie2_index_builder
+
+    - dbkey: melGal1
+      description: 'Turkey (Meleagris gallopavo): melGal1'
+      id: melGal1
+      indexers:
+      - data_manager_bowtie2_index_builder
+      - data_manager_bwa_mem_index_builder
+      - data_manager_hisat2_index_builder
+
+    - dbkey: equCab1
+      description: 'Horse (Equus caballus): equCab1'
+      id: equCab1
+      indexers:
+      - data_manager_bowtie2_index_builder
+      - data_manager_bwa_mem_index_builder
+      - data_manager_hisat2_index_builder
+
+    - dbkey: rheMac2
+      description: 'Rhesus Macaque (Macaca mulatta): rheMac2'
+      id: rheMac2
+      indexers:
+      - data_manager_bowtie2_index_builder
+      - data_manager_bwa_mem_index_builder
+      - data_manager_hisat2_index_builder
+
+    - dbkey: galGal4
+      description: 'Chicken (Gallus gallus): galGal4'
+      id: galGal4
+      indexers:
+      - data_manager_bowtie2_index_builder
+      - data_manager_bwa_mem_index_builder
+      - data_manager_hisat2_index_builder
+
+    - dbkey: equCab2
+      description: 'Horse (Equus caballus): equCab2'
+      id: equCab2
+      indexers:
+      - data_manager_bowtie2_index_builder
+      - data_manager_bwa_mem_index_builder
+      - data_manager_hisat2_index_builder
+
+    - dbkey: rheMac3
+      description: 'Rhesus Macaque (Macaca mulatta): rheMac3'
+      id: rheMac3
+      indexers:
+      - data_manager_bowtie2_index_builder
+      - data_manager_bwa_mem_index_builder
+      - data_manager_hisat2_index_builder
+
+    - dbkey: eschColi_K12
+      description: 'Escherichia coli (str. K-12 substr. MG1655): eschColi_K12'
+      id: eschColi_K12
+      indexers:
+      - data_manager_bowtie2_index_builder
+      - data_manager_bwa_mem_index_builder
+      - data_manager_hisat2_index_builder
+
+    - dbkey: galGal3
+      description: 'Chicken (Gallus gallus): galGal3 Canonical'
+      id: galGal3canon
+      indexers:
+      - data_manager_bowtie2_index_builder
+      - data_manager_bwa_mem_index_builder
+
+    - dbkey: galGal3
+      description: 'Chicken (Gallus gallus): galGal3 Full'
+      id: galGal3full
+      indexers:
+      - data_manager_bowtie2_index_builder
+      - data_manager_bwa_mem_index_builder
+
+    - dbkey: canFam3
+      description: 'Dog (Canis lupus familiaris): canFam3'
+      id: canFam3
+      indexers:
+      - data_manager_bwa_mem_index_builder
+      - data_manager_hisat2_index_builder
+
+    - dbkey: ce9
+      description: 'C. elegans (WS210): ce9'
+      id: ce9
+      indexers:
+      - data_manager_bwa_mem_index_builder
+      - data_manager_hisat2_index_builder
+      - data_manager_star_index_builder
+
+    - dbkey: canFam2
+      description: 'Dog (Canis lupus familiaris): canFam2'
+      id: canFam2
+      indexers:
+      - data_manager_bwa_mem_index_builder
+      - data_manager_hisat2_index_builder
+
+    - dbkey: susScr2
+      description: 'Pig (Sus scrofa): susScr2'
+      id: susScr2
+      indexers:
+      - data_manager_bwa_mem_index_builder
+      - data_manager_hisat2_index_builder
+
+    - dbkey: bosTauMd3
+      description: 'Cow (Bos taurus): bosTauMd3'
+      id: bosTauMd3
+      indexers:
+      - data_manager_bwa_mem_index_builder
+      - data_manager_hisat2_index_builder
+
+    - dbkey: papHam1
+      description: 'Baboon (Papio anubis): papHam1'
+      id: papHam1
+      indexers:
+      - data_manager_bwa_mem_index_builder
+      - data_manager_hisat2_index_builder
+
+    - dbkey: otoGar3
+      description: 'Bushbaby (Otolemur garnetti): otoGar3'
+      id: otoGar3
+      indexers:
+      - data_manager_bwa_mem_index_builder
+      - data_manager_hisat2_index_builder
+
+    - dbkey: felCat5
+      description: 'Cat (Felis catus): felCat5'
+      id: felCat5
+      indexers:
+      - data_manager_bwa_mem_index_builder
+      - data_manager_hisat2_index_builder
+
+    - dbkey: otoGar1
+      description: 'Bushbaby (Otolemur garnetti): otoGar1'
+      id: otoGar1
+      indexers:
+      - data_manager_bwa_mem_index_builder
+      - data_manager_hisat2_index_builder
+
+    - dbkey: panTro4
+      description: 'Chimpanzee (Pan troglodytes): panTro4'
+      id: panTro4
+      indexers:
+      - data_manager_bwa_mem_index_builder
+      - data_manager_hisat2_index_builder
+
+    - dbkey: turTru2
+      description: 'Dolphin (Tursiops truncatus): turTru2'
+      id: turTru2
+      indexers:
+      - data_manager_bwa_mem_index_builder
+      - data_manager_hisat2_index_builder
+
+    - dbkey: panTro3
+      description: 'Chimpanzee (Pan troglodytes): panTro3 Canonical'
+      id: panTro3canon
+      indexers:
+      - data_manager_bwa_mem_index_builder
+      - data_manager_hisat2_index_builder
+
+    - dbkey: panTro3
+      description: 'Chimpanzee (Pan troglodytes): panTro3 Full'
+      id: panTro3full
+      indexers:
+      - data_manager_bwa_mem_index_builder
+      - data_manager_hisat2_index_builder
+
+    - dbkey: Araly1
+      description: 'Arabidopsis lyrata: Araly1'
+      id: Araly1
+      indexers:
+      - data_manager_sam_fasta_index_builder
+
+    - dbkey: dm3
+      description: 'Fruit Fly (Drosophila melanogaster): dm3'
+      id: dm3
+      indexers:
+      - data_manager_hisat2_index_builder
+      - data_manager_star_index_builder
+
+    - dbkey: mm10
+      description: 'Mouse (Mus Musculus): mm10'
+      id: mm10
+      indexers:
+      - data_manager_hisat2_index_builder
+      - data_manager_star_index_builder
+
+    - dbkey: galGal3
+      description: 'Chicken (Gallus gallus): galGal3 Full'
+      id: galGal3
+      indexers:
+      - data_manager_hisat2_index_builder
+
+    - dbkey: mm9
+      description: 'Mouse (Mus musculus): mm9'
+      id: mm9
+      indexers:
+      - data_manager_hisat2_index_builder
+      - data_manager_star_index_builder
+
+    - dbkey: hg_g1k_v37
+      description: 'Human (Homo sapiens) (b37): hg_g1k_v37'
+      id: hg_g1k_v37
+      indexers:
+      - data_manager_hisat2_index_builder
+
+    - dbkey: susScr3
+      description: 'Pig (Sus scrofa): susScr3'
+      id: susScr3
+      indexers:
+      - data_manager_hisat2_index_builder
+
+    - dbkey: ce10
+      description: 'C. elegans (WS220): ce10'
+      id: ce10
+      indexers:
+      - data_manager_hisat2_index_builder
+      - data_manager_star_index_builder
+
+    - dbkey: hg19
+      description: 'Human (Homo sapiens) (b37): hg19'
+      id: hg19
+      indexers:
+      - data_manager_hisat2_index_builder
+      - data_manager_star_index_builder
+
+    - dbkey: hg19
+      description: 'Human (Homo sapiens) (b37): hg19 Canonical Female'
+      id: hg19female
+      indexers:
+      - data_manager_hisat2_index_builder
+
+    - dbkey: hg19
+      description: 'Human (Homo sapiens) (b37): hg19 Canonical'
+      id: hg19canon
+      indexers:
+      - data_manager_hisat2_index_builder
+
+    - dbkey: hg38
+      description: 'Human (Homo sapiens) (b38): hg38 Canonical Female'
+      id: hg38female
+      indexers:
+      - data_manager_hisat2_index_builder
+
+    - dbkey: hg38
+      description: 'Human (Homo sapiens) (b38): hg38 Canonical'
+      id: hg38canon
+      indexers:
+      - data_manager_hisat2_index_builder
+
+    - dbkey: hg38
+      description: 'Human (Homo sapiens) (b38): hg38'
+      id: hg38
+      indexers:
+      - data_manager_hisat2_index_builder
+      - data_manager_star_index_builder
+
+    - description: NCBI-2015-10-05
+      id: ncbi-2015-10-05
+      indexers:
+      - data_manager_fetch_ncbi_taxonomy
+
+    - description: 22Gv1.1
+      id: 22Gv1.1
+      indexers:
+      - data_manager_plant_tribes_scaffolds_downloader
+
+    - description: 26 plant genomes (Angiosperms clusters, version 2.0)
+      id: 26Gv2.0
+      indexers:
+      - data_manager_plant_tribes_scaffolds_downloader
+
+    - description: 37 plant genomes (Angiosperms clusters, version 1.0)
+      id: 37Gv1.0
+      indexers:
+      - data_manager_plant_tribes_scaffolds_downloader
+
+    - dbkey: rn5
+      description: 'Rat (Rattus norvegicus): rn5'
+      id: rn5
+      indexers:
+      - data_manager_star_index_builder

@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<job_conf>
+    <plugins workers="2">
+        <plugin id="slurm" type="runner" load="galaxy.jobs.runners.slurm:SlurmJobRunner">
+            <param id="drmaa_library_path">/usr/lib/slurm-drmaa/lib/libdrmaa.so</param>
+            <param id="enabled" from_environ="GALAXY_RUNNERS_ENABLE_SLURM">true</param>
+        </plugin>
+        <plugin id="condor" type="runner" load="galaxy.jobs.runners.condor:CondorJobRunner">
+            <param id="enabled" from_environ="GALAXY_RUNNERS_ENABLE_CONDOR">true</param>
+        </plugin>
+        <plugin id="local" type="runner" load="galaxy.jobs.runners.local:LocalJobRunner"/>
+    </plugins>
+    <!-- The default handler can be changed by specifying the GALAXY_HANDLERS_DEFAULT environment variable. -->
+    <handlers default_from_environ="GALAXY_HANDLERS_DEFAULT" default="handlers">
+        <handler id="handler0" tags="handlers"/>
+        <handler id="handler1" tags="handlers"/>
+    </handlers>
+    <!-- The default destination can be changed by specifying the GALAXY_DESTINATIONS_DEFAULT environment variable. -->
+    <destinations default_from_environ="GALAXY_DESTINATIONS_DEFAULT" default="slurm_cluster">
+        <destination id="slurm_cluster" runner="slurm">
+            <env file="/galaxy_venv/bin/activate"/>
+            <param id="enabled" from_environ="GALAXY_RUNNERS_ENABLE_SLURM">true</param>
+            <param id="nativeSpecification" from_environ="NATIVE_SPEC">--ntasks=32 --share</param>
+        </destination>
+        <destination id="slurm_cluster_ucsc" runner="slurm">
+            <env file="/galaxy_venv/bin/activate"/>
+            <param id="enabled" from_environ="GALAXY_RUNNERS_ENABLE_SLURM">true</param>
+            <param id="nativeSpecification" from_environ="NATIVE_SPEC">--ntasks=1 --share</param>
+        </destination>
+        <destination id="slurm_cluster_2cores" runner="slurm">
+            <env file="/galaxy_venv/bin/activate"/>
+            <param id="enabled" from_environ="GALAXY_RUNNERS_ENABLE_SLURM">true</param>
+            <param id="nativeSpecification" from_environ="NATIVE_SPEC">--ntasks=2 --share</param>
+        </destination>
+        <destination id="condor_cluster" runner="condor">
+            <env file="/galaxy_venv/bin/activate"/>
+            <param id="enabled" from_environ="GALAXY_RUNNERS_ENABLE_CONDOR">true</param>
+            <param id="universe" from_environ="GALAXY_CONDOR_UNIVERSE">vanilla</param>
+        </destination>
+        <destination id="condor_cluster_ucsc" runner="condor">
+            <env file="/galaxy_venv/bin/activate"/>
+            <param id="enabled" from_environ="GALAXY_RUNNERS_ENABLE_CONDOR">true</param>
+            <param id="universe" from_environ="GALAXY_CONDOR_UNIVERSE">vanilla</param>
+        </destination>
+    </destinations>
+    <limits>
+	<limit type='registered_user_concurrent_jobs'>1</limit>
+	<limit type="destination_total_concurrent_jobs" id="slurm_cluster_ucsc">1</limit>
+	<limit type="destination_total_concurrent_jobs" id="condor_cluster_ucsc">1</limit>
+    </limits>
+    <tools>
+	<tool id="toolshed.g2.bx.psu.edu/repos/devteam/data_manager_fetch_genome_dbkeys_all_fasta/data_manager_fetch_genome_all_fasta_dbkey/0.0.2" destination="slurm_cluster_ucsc"/>
+	<tool id="data_manager_fetch_genome_all_fasta_dbkey" destination="slurm_cluster_ucsc"/>
+    </tools>
+</job_conf>
