@@ -376,9 +376,7 @@ function stop_build_galaxy() {
 
 
 function install_data_managers() {
-    # FIXME: this will be in the repo after Simon's PR is merged
     log "Installing Data Managers"
-    log_exec curl -L -o data_managers_tools.yml https://github.com/Slugger70/idc/raw/usegalaxy_proposal/data_managers_tools.yml
     log_exec shed-tools install -t data_managers_tools.yml -g "$BUILD_GALAXY_URL" -u idc -p "$IDC_USER_PASS"
 }
 
