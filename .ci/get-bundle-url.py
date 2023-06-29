@@ -34,5 +34,5 @@ datasets = gi.datasets.get_datasets(
 )
 dataset_id = datasets[0]['id']
 
-bundle_url = f"{url}/api/datasets/{dataset_id}/display?to_ext={EXT}"
+bundle_url = f"{args.galaxy_url}/api/datasets/{dataset_id}/display?to_ext={EXT}"
 print(bundle_url)
