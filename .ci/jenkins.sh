@@ -234,11 +234,30 @@ function setup_ephemeris() {
 }
 
 
+function verify_cvmfs_revision() {
+    log "Verifying that CVMFS Client and Stratum 0 are in sync"
+    local cvmfs_io_sock="${WORKSPACE}/${BUILD_NUMBER}/cvmfs-cache/${REPO}/cvmfs_io.${REPO}"
+    local stratum0_published_url="http://${REPO_STRATUM0}/cvmfs/${REPO}/.cvmfspublished"
+    local client_rev=$(cvmfs_talk -p "$cvmfs_io_sock" revision)
+    local stratum0_rev=$(curl "$stratum0_published_url" | awk -F '^--$' '{print $1} NF>1{exit}' | grep '^S' | sed 's/^S//')
+    if [ -z "$client_rev" ]; then
+        log_exit_error "Failed to detect client revision"
+    elif [ -z "$stratum0_rev" ]; then
+        log_exit_error "Failed to detect Stratum 0 revision"
+    elif [ "$client_rev" -ne "$stratum0_rev" ]; then
+        log_exit_error "Client revision '${client_rev}' does not match Stratum 0 revision '${stratum0_rev}'"
+    fi
+
+    log "${REPO} is revision ${client_rev}"
+}
+
+
 function mount_overlay() {
     log "Mounting OverlayFS/CVMFS"
     log_debug "\$JOB_NAME: ${JOB_NAME}, \$WORKSPACE: ${WORKSPACE}, \$BUILD_NUMBER: ${BUILD_NUMBER}"
     log_exec mkdir -p "$OVERLAYFS_LOWER" "$OVERLAYFS_UPPER" "$OVERLAYFS_WORK" "$OVERLAYFS_MOUNT" "$CVMFS_CACHE"
     log_exec cvmfs2 -o config=.ci/cvmfs-fuse.conf,allow_root "$REPO" "$OVERLAYFS_LOWER"
+    verify_cvmfs_revision
     LOCAL_CVMFS_MOUNTED=true
     log_exec fuse-overlayfs \
         -o "lowerdir=${OVERLAYFS_LOWER},upperdir=${OVERLAYFS_UPPER},workdir=${OVERLAYFS_WORK},allow_root" \
