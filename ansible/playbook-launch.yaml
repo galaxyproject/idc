@@ -26,21 +26,6 @@
         name: galaxyproject.galaxy
     - name: Flush handlers
       meta: flush_handlers
-    - name: Copy bootstrap script
-      copy:
-        src: files/idc/bootstrap.sh
-        dest: /srv/galaxy/bootstrap.sh
-        owner: root
-        group: idc
-        mode: "0750"
-    - name: Create admin user
-      command: /srv/galaxy/bootstrap.sh
-      become: true
-      become_user: idc
-      register: _bootstrap_result
-    - name: Bootstrap result
-      debug:
-        var: _bootstrap_result
     - import_role:
         name: galaxyproject.nginx
     - import_role:
