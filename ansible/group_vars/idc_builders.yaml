@@ -71,6 +71,8 @@ galaxy_privsep_dirs:
 galaxy_config_templates:
   - src: templates/idc/tpv/idc.yaml.j2
     dest: "{{ galaxy_config_dir }}/tpv/idc.yaml"
+  - src: templates/idc/object_store_conf.xml.j2
+    dest: "{{ galaxy_config_dir }}/object_store_conf.xml"
 galaxy_config:
   gravity:
     process_manager: systemd
@@ -97,6 +99,7 @@ galaxy_config:
       - idc@galaxyproject.org
     file_path: /jetstream2/scratch/idc/objects
     job_working_directory: /jetstream2/scratch/idc/jobs
+    object_store_config_file: "{{ galaxy_config_dir }}/object_store_conf.xml"
     object_store_store_by: uuid
     container_resolvers:
       - type: cached_mulled_singularity
