@@ -1,0 +1,60 @@
+data_manager_fetch_genome_dbkeys_all_fasta:
+  tool_id: 'toolshed.g2.bx.psu.edu/repos/devteam/data_manager_fetch_genome_dbkeys_all_fasta/data_manager_fetch_genome_all_fasta_dbkey/0.0.3'
+  tags:
+    - fetch_source
+data_manager_bowtie2_index_builder:
+  tool_id: 'toolshed.g2.bx.psu.edu/repos/devteam/data_manager_bowtie2_index_builder/bowtie2_index_builder_data_manager/2.3.4.3'
+  tags:
+    - genome
+data_manager_bwa_mem_index_builder:
+  tool_id: 'toolshed.g2.bx.psu.edu/repos/devteam/data_manager_bwa_mem_index_builder/bwa_mem_index_builder_data_manager/0.0.3'
+  tags:
+    - genome
+data_manager_hisat_index_builder:
+  tool_id: 'toolshed.g2.bx.psu.edu/repos/devteam/data_manager_hisat_index_builder/hisat_index_builder_data_manager/1.0.0'
+  tags:
+    - genome
+data_manager_twobit_builder:
+  tool_id: 'toolshed.g2.bx.psu.edu/repos/devteam/data_manager_twobit_builder/twobit_builder_data_manager/0.0.2'
+  tags:
+    - genome
+data_manager_picard_index_builder:
+  tool_id: 'toolshed.g2.bx.psu.edu/repos/devteam/data_manager_picard_index_builder/picard_index_builder_data_manager/2.7.1'
+  tags:
+    - genome
+data_manager_sam_fasta_index_builder:
+  tool_id: 'toolshed.g2.bx.psu.edu/repos/devteam/data_manager_sam_fasta_index_builder/sam_fasta_index_builder/0.0.2'
+  tags:
+    - genome
+data_manager_hisat2_index_builder:
+  tool_id: 'toolshed.g2.bx.psu.edu/repos/iuc/data_manager_hisat2_index_builder/hisat2_index_builder_data_manager/2.0.5'
+  tags:
+    - genome
+data_manager_star_index_builder:
+  tool_id: 'toolshed.g2.bx.psu.edu/repos/iuc/data_manager_star_index_builder/rna_star_index_builder_data_manager/0.0.5'
+  tags:
+    - genome
+data_manager_bowtie_index_builder:
+  tool_id: 'toolshed.g2.bx.psu.edu/repos/iuc/data_manager_bowtie_index_builder/bowtie_color_space_index_builder_data_manager/0.0.2'
+  tags:
+    - genome
+data_manager_kallisto_index_builder:
+  tool_id: 'toolshed.g2.bx.psu.edu/repos/iuc/data_manager_kallisto_index_builder/kallisto_index_builder_data_manager/0.43.1'
+  tags:
+    - genome
+data_manager_snpeff:
+  tool_id: 'toolshed.g2.bx.psu.edu/repos/iuc/data_manager_snpeff/data_manager_snpeff_databases/4.3r'
+  tags:
+    - snpeff
+data_manager_plant_tribes_scaffolds_downloader:
+  tool_id: 'toolshed.g2.bx.psu.edu/repos/iuc/data_manager_plant_tribes_scaffolds_downloader/data_manager_plant_tribes_scaffolds_download/1.1.0'
+  tags:
+    - plant_source
+data_manager_fetch_ncbi_taxonomy:
+  tool_id: 'toolshed.g2.bx.psu.edu/repos/devteam/data_manager_fetch_ncbi_taxonomy/ncbi_taxonomy_fetcher/1.0.0'
+  tags:
+    - tax_source
+data_manager_gemini_database_downloader:
+  tool_id: 'toolshed.g2.bx.psu.edu/repos/iuc/data_manager_gemini_database_downloader/data_manager_gemini_download/0.20.1'
+  tags:
+    - gemini

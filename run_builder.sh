@@ -60,9 +60,8 @@ chmod 0777 ${DATA_MANAGER_DATA_PATH}
 
 echo 'Installing Data Managers'
 # Install the data managers
-shed-tools install -t data_managers_tools.yml -g ${GALAXY_URL} -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
-#Let others read the shed_data_manager_conf.xml file
-sudo chmod ugo+r ${EXPORT_DIR}/galaxy-central/config/shed_data_manager_conf.xml
+_idc-data-managers-to-tools
+shed-tools install -t tools.yml -g ${GALAXY_URL} -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
 
 echo 'Fetching new genomes'
 #Run make_fetch.py to build the fetch manager config file for ephemeris

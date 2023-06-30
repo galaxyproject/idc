@@ -26,92 +26,32 @@ The resulting genome files and tool indices will be located in the directory spe
 
 The three important files are:
 
-* `data_managers_tools.yml`
-* `data_managers_genomes.yml`
+* `data_managers.yml`
 * `genomes.yml`
 
-### data_managers_tools.yml
+### data_managers.yml
 
-This file contains the list of data managers that are to be installed into the Galaxy docker instance. It is in the format of an Ephemeris tool specification .yml file.
+This file contains the list of data managers that are to be installed into the target 
+Galaxy building IDC data.
 
 ```yaml
-tools:
-  - name: NAME_OF_THE_DATA_MANAGER
-    owner: OWNER_OF_THE_TOOL_IN_THE_TOOLSHED
-    tool_panel_section_label: None
-    toolshed_url: toolshed.g2.bx.psu.edu
-    tags:
-      - tag #Tag can be either "genome" or "fetch_source".
+NAME_OF_THE_DATA_MANAGER:
+  tool_id: TOOL_ID_IN_TARGET_REPO_OF_DATA_MANAGER
+  tags:
+    - tag #Tag can be either "genome" or "fetch_source".
 ```
 
 Other data managers are added as elements in the `tools` yml array. The first tool listed should always be the `fetch_source` data manager. In most cases this will be the `data_manager_fetch_genome_dbkeys_all_fasta` data manager that sources and downloads most genomes and populates the `all_fasta` and `__dbkeys__` data tables for later use by other data managers.
 
-Example:
+Ephemeris can be used to generate a shed-tool install file to bootstrap the required tools
+and repositories into a target Galaxy for IDC installs.
 
-```yaml
-tools:
-  - name: data_manager_fetch_genome_dbkeys_all_fasta
-    owner: devteam
-    tool_panel_section_label: None
-    tool_shed_url: toolshed.g2.bx.psu.edu
-    tags:
-      - fetch_source
-  - name: data_manager_bowtie2_index_builder
-    owner: devteam
-    tool_panel_section_label: None
-    tool_shed_url: toolshed.g2.bx.psu.edu
-    tags:
-      - genome
-  - name: data_manager_bwa_mem_index_builder
-    owner: devteam
-    tool_panel_section_label: None
-    tool_shed_url: toolshed.g2.bx.psu.edu
-    tags:
-      - genome
-```
-
-### data_managers_genomes.yml
-
-This file contains the details of the data managers that will be run on the fetched genomes to create the various tool indices.
-
-Each data manager is specified by it's **Galaxy id** (not its name) and the mappings of input fields to the appropriate field in the `all_fasta` or `__dbkeys__` data tables. Only data managers tagged with the `genome` tag in the `data_managers_tools.yml` file need to be included here. It does not contain details about the `data_manager_fetch_genome_dbkeys_all_fasta` data manager as this is handled separately.
-
-Format:
-
-```yaml
-data_managers:
-    - id: Galaxy_tool_id_of_the_data_manager # found in Galaxy's shed_data_manager_conf.xml file.
-      params: # a yml array of mappings of data manager's input fields to listings in the genomes.yml file using item.attribute where attribute is the appropriate field in the genomes file.
-        - 'all_fasta_source': '{{ item.id }}'
-        - 'sequence_name': '{{ item.name }}'
-        - 'sequence_id': '{{ item.id }}'
-      data_table_reload: # a list of data tables to reload once this data manager has completed.
-        - name_of_data_table_to_reload
-
-```
-
-Example:
-
-```yaml
-data_managers:
-    - id: toolshed.g2.bx.psu.edu/repos/devteam/data_manager_bowtie2_index_builder/bowtie2_index_builder_data_manager/2.3.4.3
-      params:
-        - 'all_fasta_source': '{{ item.id }}'
-        - 'sequence_name': '{{ item.name }}'
-        - 'sequence_id': '{{ item.id }}'
-      items: "{{ genomes }}"
-      data_table_reload:
-        # Bowtie creates indices for Bowtie and TopHat
-        - bowtie2_indexes
-        - tophat2_indexes
-    - id: toolshed.g2.bx.psu.edu/repos/devteam/data_manager_bwa_mem_index_builder/bwa_mem_index_builder_data_manager/0.0.3
-      params:
-        - 'all_fasta_source': '{{ item.id }}'
-        - 'sequence_name': '{{ item.name }}'
-        - 'sequence_id': '{{ item.id}}'
-      items: "{{ genomes }}"
-      data_table_reload:
-        - bwa_mem_indexes
+```bash
+pip install ephemeris
+_idc-data-managers-to-tools
+# defaults to:
+# _idc-data-managers-to-tools --data-managers-conf=genomes.yml --shed-install-output-conf=tools.yml
+shed-tools install -t tools.yml
 ```
 
 ### genomes.yml
