@@ -19,13 +19,23 @@ parser.add_argument(
     "-p", "--galaxy-password", help="Galaxy user password (or set $IDC_USER_PASS)"
 )
 parser.add_argument(
+    "-a", "--galaxy-api-key", help="Galaxy API key (or set $IDC_API_KEY)"
+)
+parser.add_argument(
     "-n", "--history-name", default="Data Manager History (automatically created)", help="History name"
 )
 args = parser.parse_args()
 
-gi = GalaxyInstance(
-    url=args.galaxy_url, email=args.galaxy_user, password=args.galaxy_password or os.environ.get("IDC_USER_PASS")
-)
+api_key = args.api_key or os.environ.get("IDC_API_KEY")
+password = args.galaxy_password or os.environ.get("IDC_USER_PASS")
+if api_key:
+    auth_kwargs = {"key": api_key}
+elif password:
+    auth_kwargs = {"email": args.galaxy_user, "password": password}
+else:
+    raise RuntimeError("No Galaxy credentials supplied")
+
+gi = GalaxyInstance(url=args.galaxy_url, **auth_kwargs)
 
 history = gi.histories.get_histories(name=args.history_name, deleted=False)[0]
 history_id = history['id']
