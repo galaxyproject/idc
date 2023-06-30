@@ -105,6 +105,7 @@ galaxy_config:
   galaxy:
     server_name: idc-build
     database_connection: "postgresql://idc:{{ galaxy_database_password }}@galaxy-db-02/galaxy_main"
+    install_database_connection: "sqlite:///{{ galaxy_mutable_data_dir }}/install.sqlite?isolation_level=IMMEDIATE"
     conda_auto_init: false
     conda_auto_install: false
     allow_user_creation: false
