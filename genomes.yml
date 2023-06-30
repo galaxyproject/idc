@@ -9,7 +9,7 @@ genomes:
     blob:
     indexers:
       - genome
-    blacklist:
+    skiplist:
       - bfast
   - dbkey: danRer10
     description: Zebrafish Sep. 2014 (GRCz10/danRer10) (danRer10)
@@ -21,7 +21,7 @@ genomes:
     blob:
     indexers:
       - genome
-    blacklist:
+    skiplist:
       - bfast
   - dbkey: sacCer3
     description: "Yeast (Saccharomyces cerevisiae): sacCer3"
@@ -33,7 +33,7 @@ genomes:
     blob:
     indexers:
       - genome
-    blacklist:
+    skiplist:
       - bfast
   - dbkey: Ecoli-O157-H7-Sakai
     description: "Escherichia coli O157-H7 Sakai"
@@ -45,7 +45,7 @@ genomes:
     blob:
     indexers:
       - genome
-    blacklist:
+    skiplist:
       - bfast
   - dbkey: Salm-enterica-Newport
     description: "Salmonella enterica subsp. enterica serovar Newport str. USMARC-S3124.1"
@@ -57,5 +57,5 @@ genomes:
     blob: "Extra information for this genome is at: https://www.ncbi.nlm.nih.gov/genome/152?genome_assembly_id=299243"
     indexers:
       - genome
-    blacklist:
+    skiplist:
       - bfast
