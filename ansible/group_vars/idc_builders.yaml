@@ -20,6 +20,15 @@ minio_secret_key: !vault |
           30396263346464306233646466323162653437663134363261653239366630643935383964666533
           3032646166333162663934623635336630323035336639313163
 
+galaxy_database_password: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          61353439363266313231353362333636633830353237653338643765313963373434303365653734
+          6466336130346536303136386165326665663965313365630a313564326131356237333232623637
+          31656534323962383662663734363430373931646166646663313430366630373561346532353536
+          3763316333343132640a363639663636396665313831323430363038633630613433373230663936
+          61333338623663323432313765613332643530643862383230363033623237313263623162613164
+          3532653230333665313032633133613836653031323965343234
+
 # FIXME: generate a new key for idc
 os_key_name: nate-treehouse
 
@@ -43,12 +52,6 @@ host_directories:
     owner: idc
     group: idc
     mode: "0755"
-
-postgresql_objects_users:
-  - name: idc
-postgresql_objects_databases:
-  - name: idc
-    owner: idc
 
 nginx_flavor: core
 nginx_enable_default_server: false
@@ -100,13 +103,15 @@ galaxy_config:
           - job-handlers
           - workflow-schedulers
   galaxy:
-    database_connection: postgresql:///idc
+    server_name: idc-build
+    database_connection: "postgresql://idc:{{ galaxy_database_password }}@galaxy-db-02/galaxy_main"
     conda_auto_init: false
     conda_auto_install: false
     allow_user_creation: false
     require_login: true
     admin_users:
       - idc@galaxyproject.org
+      - nate+test@bx.psu.edu
     file_path: /jetstream2/scratch/idc/objects
     job_working_directory: /jetstream2/scratch/idc/jobs
     object_store_config_file: "{{ galaxy_config_dir }}/object_store_conf.xml"
@@ -129,7 +134,7 @@ galaxy_config:
           drmaa_library_path: /usr/lib64/libdrmaa.so.1
       handling:
         assign:
-          - db-skip-locked
+          - mem-self
       execution:
         default: tpv_dispatcher
         environments:

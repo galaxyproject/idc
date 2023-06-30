@@ -19,7 +19,7 @@ IMPORT_DOCKER_IMAGE_PULL=true
 GALAXY_TEMPLATE_DB_URL=
 GALAXY_TEMPLATE_DB='galaxy.sqlite'
 
-EPHEMERIS="git+https://github.com/mvdbeek/ephemeris.git@data_manager_mode#egg_name=ephemeris"
+EPHEMERIS="git+https://github.com/jmchilton/ephemeris.git@split_genomes#egg_name=ephemeris"
 BIOBLEND="git+https://github.com/mvdbeek/bioblend.git@idc_data_manager_runs#egg_name=bioblend"
 GALAXY_MAINTENANCE_SCRIPTS="git+https://github.com/mvdbeek/galaxy-maintenance-scripts.git@avoid_galaxy_app#egg_name=galaxy-maintenance-scripts"
 
@@ -376,8 +376,10 @@ function stop_build_galaxy() {
 
 
 function install_data_managers() {
+    log "Generating Data Manager tool list"
+    log_exec _idc-data-managers-to-tools
     log "Installing Data Managers"
-    log_exec shed-tools install -t data_managers_tools.yml -g "$BUILD_GALAXY_URL" -u idc -p "$IDC_USER_PASS"
+    log_exec shed-tools install -t tools.yml -g "$BUILD_GALAXY_URL" -a "$IDC_API_KEY"
 }
 
 
@@ -387,7 +389,7 @@ function run_data_managers() {
     local build_id='dm6'
     log "Running Data Managers"
     log_exec curl -L -o fetch-dm6.yml https://gist.github.com/natefoo/7c8d27ab2460ea11426c724bbafff011/raw/c99029b65fec45b51b7ffc35afbe842caaef4b3b/fetch-dm6.yml
-    log_exec run-data-managers --config fetch-dm6.yml -g "$BUILD_GALAXY_URL" -u idc -p "$IDC_USER_PASS" --data-manager-mode bundle --history-name "${build_id}.${dm_id}"
+    log_exec run-data-managers --config fetch-dm6.yml -g "$BUILD_GALAXY_URL" -a "$IDC_API_KEY" --data-manager-mode bundle --history-name "${build_id}.${dm_id}"
 }
 
 
