@@ -99,12 +99,12 @@ galaxy_config:
     gunicorn:
       bind: localhost:8080
       workers: 1
-    handlers:
-      handler:
-        processes: 1
-        pools:
-          - job-handlers
-          - workflow-schedulers
+    #handlers:
+    # handler:
+    #   processes: 1
+    #   pools:
+    #     - job-handlers
+    #     - workflow-schedulers
   galaxy:
     server_name: idc-build
     database_connection: "postgresql://idc:{{ galaxy_database_password }}@galaxy-db-02/galaxy_main"
