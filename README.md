@@ -75,7 +75,7 @@ genomes:
       checksum: #A SHA256 checksum of the original
       blob: #A blob for any other pertinent information
       indexers: #A list of tags for the types of data managers to be run on this data
-      blacklist: # A list of data managers with the above specified tag NOT to be run on this data
+      skiplist: # A list of data managers with the above specified tag NOT to be run on this data
 
 ```
 
@@ -93,7 +93,7 @@ genomes:
     blob:
     indexers:
       - genome
-    blacklist:
+    skiplist:
       - bfast
   - dbkey: Ecoli-O157-H7-Sakai
     description: "Escherichia coli O157-H7 Sakai"
@@ -105,7 +105,7 @@ genomes:
     blob:
     indexers:
       - genome
-    blacklist:
+    skiplist:
       - bfast
   - dbkey: Salm-enterica-Newport
     description: "Salmonella enterica subsp. enterica serovar Newport str. USMARC-S3124.1"
@@ -117,7 +117,7 @@ genomes:
     blob:
     indexers:
       - genome
-    blacklist:
+    skiplist:
       - bfast
 ```
 
