@@ -24,7 +24,7 @@ Currently, the repository is geared to produce genomic indices for various tools
 
 The resulting genome files and tool indices will be located in the directory specified in the `run_builder.sh` script in the environment variables set at the top.
 
-The three important files are:
+The two important files are:
 
 * `data_managers.yml`
 * `genomes.yml`
