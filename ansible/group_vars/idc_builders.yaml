@@ -118,6 +118,7 @@ galaxy_config:
     #install_database_connection: "sqlite:///{{ galaxy_mutable_data_dir }}/install.sqlite?isolation_level=IMMEDIATE"
     # FIXME: uncomment once it's committed
     #tool_data_table_config_file: /cvmfs/sandbox.galaxyproject.org/config/tool_data_table_conf.xml
+    shed_data_manager_config_file: /cvmfs/main.galaxyproject.org/config/shed_data_manager_conf.xml
     conda_auto_init: false
     conda_auto_install: false
     allow_user_creation: false

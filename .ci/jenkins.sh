@@ -587,7 +587,7 @@ function main() {
     run_build_galaxy
     setup_ephemeris
     wait_for_build_galaxy
-    install_data_managers
+    #install_data_managers
     run_data_managers
     if $USE_LOCAL_OVERLAYFS; then
         do_install_local
