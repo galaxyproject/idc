@@ -26,7 +26,7 @@ parser.add_argument(
 )
 args = parser.parse_args()
 
-api_key = args.api_key or os.environ.get("IDC_API_KEY")
+api_key = args.galaxy_api_key or os.environ.get("IDC_API_KEY")
 password = args.galaxy_password or os.environ.get("IDC_USER_PASS")
 if api_key:
     auth_kwargs = {"key": api_key}
