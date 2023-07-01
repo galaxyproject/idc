@@ -1,6 +1,5 @@
-<data_managers>
-    <data_manager id="fetch_genome_all_fasta_dbkeys" guid="toolshed.g2.bx.psu.edu/repos/devteam/data_manager_fetch_genome_dbkeys_all_fasta/data_manager/fetch_genome_all_fasta_dbkeys/0.0.1">
-        <tool file="/cvmfs/main.galaxyproject.org/shed_tools/toolshed.g2.bx.psu.edu/repos/devteam/data_manager_fetch_genome_dbkeys_all_fasta/4d3eff1bc421/data_manager_fetch_genome_dbkeys_all_fasta/data_manager/data_manager_fetch_genome_all_fasta_dbkeys.xml" guid="toolshed.g2.bx.psu.edu/repos/devteam/data_manager_fetch_genome_dbkeys_all_fasta/data_manager_fetch_genome_all_fasta_dbkey/0.0.4"/>
+<data_managers tool_path="/cvmfs/main.galaxyproject.org/shed_tools">
+    <data_manager id="fetch_genome_all_fasta_dbkeys" guid="toolshed.g2.bx.psu.edu/repos/devteam/data_manager_fetch_genome_dbkeys_all_fasta/data_manager/fetch_genome_all_fasta_dbkeys/0.0.1" tool_file="/cvmfs/main.galaxyproject.org/shed_tools/toolshed.g2.bx.psu.edu/repos/devteam/data_manager_fetch_genome_dbkeys_all_fasta/4d3eff1bc421/data_manager_fetch_genome_dbkeys_all_fasta/data_manager/data_manager_fetch_genome_all_fasta_dbkeys.xml">
         <data_table name="all_fasta">
             <output>
                 <column name="value"/>
