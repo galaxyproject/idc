@@ -114,7 +114,7 @@ galaxy_config:
     conda_auto_init: false
     conda_auto_install: false
     allow_user_creation: false
-    require_login: true
+    #require_login: true
     admin_users:
       - idc@galaxyproject.org
       - nate+test@bx.psu.edu
