@@ -413,7 +413,7 @@ function run_stage0_data_managers() {
     pushd data_manager_tasks
     for dm_config in */data_manager_fetch_genome_dbkeys_all_fasta/run_data_managers.yaml; do
         readarray -td/ a <<<"$dm_config"
-        log_exec run-data-managers --config "$dm_config" -g "$BUILD_GALAXY_URL" -a "$IDC_API_KEY" --data-manager-mode bundle --history-name "idc-${a[0]}-${a[1]}"
+        log_exec run-data-managers --config "$dm_config" -g "$BUILD_GALAXY_URL" -a "$IDC_API_KEY" --data-manager-mode bundle --history-name "idc-${a[0]}-${a[1]}" --overwrite
     done
     popd
 }
