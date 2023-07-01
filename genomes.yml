@@ -8,7 +8,16 @@ genomes:
     checksum:
     blob:
     indexers:
-      - genome
+      - data_manager_bowtie2_index_builder
+      - data_manager_bwa_mem_index_builder
+      - data_manager_hisat_index_builder
+      - data_manager_twobit_builder
+      - data_manager_picard_index_builder
+      - data_manager_sam_fasta_index_builder
+      - data_manager_hisat2_index_builder
+      - data_manager_star_index_builder
+      - data_manager_bowtie_index_builder
+      - data_manager_kallisto_index_builder
     skiplist:
       - bfast
   - dbkey: danRer10
@@ -20,7 +29,16 @@ genomes:
     checksum:
     blob:
     indexers:
-      - genome
+      - data_manager_bowtie2_index_builder
+      - data_manager_bwa_mem_index_builder
+      - data_manager_hisat_index_builder
+      - data_manager_twobit_builder
+      - data_manager_picard_index_builder
+      - data_manager_sam_fasta_index_builder
+      - data_manager_hisat2_index_builder
+      - data_manager_star_index_builder
+      - data_manager_bowtie_index_builder
+      - data_manager_kallisto_index_builder
     skiplist:
       - bfast
   - dbkey: sacCer3
@@ -32,7 +50,16 @@ genomes:
     checksum:
     blob:
     indexers:
-      - genome
+      - data_manager_bowtie2_index_builder
+      - data_manager_bwa_mem_index_builder
+      - data_manager_hisat_index_builder
+      - data_manager_twobit_builder
+      - data_manager_picard_index_builder
+      - data_manager_sam_fasta_index_builder
+      - data_manager_hisat2_index_builder
+      - data_manager_star_index_builder
+      - data_manager_bowtie_index_builder
+      - data_manager_kallisto_index_builder
     skiplist:
       - bfast
   - dbkey: Ecoli-O157-H7-Sakai
@@ -44,7 +71,16 @@ genomes:
     checksum: 1d769fcb47f631c359e0b9407155e34325b223fba4d1f208f7ad8c353f5ab560
     blob:
     indexers:
-      - genome
+      - data_manager_bowtie2_index_builder
+      - data_manager_bwa_mem_index_builder
+      - data_manager_hisat_index_builder
+      - data_manager_twobit_builder
+      - data_manager_picard_index_builder
+      - data_manager_sam_fasta_index_builder
+      - data_manager_hisat2_index_builder
+      - data_manager_star_index_builder
+      - data_manager_bowtie_index_builder
+      - data_manager_kallisto_index_builder
     skiplist:
       - bfast
   - dbkey: Salm-enterica-Newport
@@ -56,6 +92,15 @@ genomes:
     checksum: 8d557e48aa3268afd0177a537a9ae396e6a6c123e4e0d5386bc1fa5a18c3054b
     blob: "Extra information for this genome is at: https://www.ncbi.nlm.nih.gov/genome/152?genome_assembly_id=299243"
     indexers:
-      - genome
+      - data_manager_bowtie2_index_builder
+      - data_manager_bwa_mem_index_builder
+      - data_manager_hisat_index_builder
+      - data_manager_twobit_builder
+      - data_manager_picard_index_builder
+      - data_manager_sam_fasta_index_builder
+      - data_manager_hisat2_index_builder
+      - data_manager_star_index_builder
+      - data_manager_bowtie_index_builder
+      - data_manager_kallisto_index_builder
     skiplist:
       - bfast
