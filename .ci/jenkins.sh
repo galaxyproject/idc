@@ -364,6 +364,18 @@ function run_build_galaxy() {
 }
 
 
+function wait_for_build_galaxy() {
+    log "Waiting for Galaxy"
+    log_exec galaxy-wait -v -g "$BUILD_GALAXY_URL" --timeout 180 || {
+        log_error "Timed out waiting for Galaxy"
+        #exec_on journalctl -u galaxy-gunicorn
+        #log_debug "response from ${IMPORT_GALAXY_URL}";
+        curl "$BUILD_GALAXY_URL";
+        log_exit_error "Terminating build due to previous errors"
+    }
+}
+
+
 function stop_build_galaxy() {
     . ./ansible-venv/bin/activate
     log "Stopping Build Galaxy"
@@ -407,7 +419,7 @@ function run_container_for_preconfigure() {
 
 
 function commit_preconfigured_container() {
-    log "Stopping and committing preconfigured container on Stratum 0"
+    log "Stopping and committing preconfigured container"
     exec_on docker kill "$PRECONFIGURE_CONTAINER_NAME"
     IMPORT_CONTAINER_UP=false
     exec_on docker commit "$PRECONFIGURE_CONTAINER_NAME" "$PRECONFIGURED_IMAGE_NAME"
@@ -546,6 +558,7 @@ function main() {
     prep_for_galaxy_run
     run_build_galaxy
     setup_ephemeris
+    wait_for_build_galaxy
     install_data_managers
     run_data_managers
     if $USE_LOCAL_OVERLAYFS; then
