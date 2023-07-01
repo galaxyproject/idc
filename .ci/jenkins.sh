@@ -19,7 +19,7 @@ IMPORT_DOCKER_IMAGE_PULL=true
 GALAXY_TEMPLATE_DB_URL=
 GALAXY_TEMPLATE_DB='galaxy.sqlite'
 
-EPHEMERIS="git+https://github.com/jmchilton/ephemeris.git@split_genomes#egg_name=ephemeris"
+EPHEMERIS="git+https://github.com/jmchilton/ephemeris.git@idc_2#egg_name=ephemeris"
 BIOBLEND="git+https://github.com/mvdbeek/bioblend.git@idc_data_manager_runs#egg_name=bioblend"
 GALAXY_MAINTENANCE_SCRIPTS="git+https://github.com/mvdbeek/galaxy-maintenance-scripts.git@avoid_galaxy_app#egg_name=galaxy-maintenance-scripts"
 
@@ -413,7 +413,7 @@ function run_stage0_data_managers() {
     pushd data_manager_tasks
     for dm_config in */data_manager_fetch_genome_dbkeys_all_fasta/run_data_managers.yaml; do
         readarray -td/ a <<<"$dm_config"
-        log_exec run-data-managers --config "$dm_config" -g "$BUILD_GALAXY_URL" -a "$IDC_API_KEY" --data-manager-mode bundle --history-name "idc-${a[0]}-${a[1]}" --overwrite
+        log_exec run-data-managers --config "$dm_config" -g "$BUILD_GALAXY_URL" -a "$IDC_API_KEY" --data-manager-mode bundle --history-name "idc-${a[0]}-${a[1]}"
     done
     popd
 }
