@@ -397,7 +397,7 @@ function install_data_managers() {
 
 function run_data_managers() {
     log "Generating Data Manager tasks"
-    log_exec _idc-split-data-manager-genomes -g "$BUILD_GALAXY_URL" -a "$IDC_API_KEY"
+    log_exec _idc-split-data-manager-genomes -g "$BUILD_GALAXY_URL" -a "$IDC_API_KEY" --tool-id-mode short
     # TODO: eventually these will specify their stage somehow
     compgen -G "data_manager_tasks/*/data_manager_fetch_genome_dbkeys_all_fasta/run_data_managers.yaml" >/dev/null && {
         run_stage0_data_managers
