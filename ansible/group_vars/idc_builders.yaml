@@ -53,12 +53,6 @@ host_directories:
     group: idc
     mode: "0755"
 
-postgresql_objects_users:
-  - name: idc
-postgresql_objects_databases:
-  - name: idc
-    owner: idc
-
 nginx_flavor: core
 nginx_enable_default_server: false
 nginx_servers:
@@ -114,8 +108,7 @@ galaxy_config:
   galaxy:
     server_name: idc-build
     database_connection: "postgresql://idc:{{ galaxy_database_password }}@galaxy-db-02/galaxy_main"
-    install_database_connection: "postgresql:///idc"
-    #install_database_connection: "sqlite:///{{ galaxy_mutable_data_dir }}/install.sqlite?isolation_level=IMMEDIATE"
+    install_database_connection: "sqlite:///{{ galaxy_mutable_data_dir }}/install.sqlite?isolation_level=IMMEDIATE"
     # FIXME: uncomment once it's committed
     #tool_data_table_config_file: /cvmfs/sandbox.galaxyproject.org/config/tool_data_table_conf.xml
     shed_data_manager_config_file: /cvmfs/main.galaxyproject.org/config/shed_data_manager_conf.xml
