@@ -396,12 +396,40 @@ function install_data_managers() {
 
 
 function run_data_managers() {
-    # FIXME: this will be generated
-    local dm_id='data_manager_fetch_genome_all_fasta_dbkey'
-    local build_id='dm6'
-    log "Running Data Managers"
-    log_exec curl -L -o fetch-dm6.yml https://gist.github.com/natefoo/7c8d27ab2460ea11426c724bbafff011/raw/c99029b65fec45b51b7ffc35afbe842caaef4b3b/fetch-dm6.yml
-    log_exec run-data-managers --config fetch-dm6.yml -g "$BUILD_GALAXY_URL" -a "$IDC_API_KEY" --data-manager-mode bundle --history-name "${build_id}.${dm_id}"
+    log "Generating Data Manager tasks"
+    log_exec _idc-split-data-manager-genomes -g "$BUILD_GALAXY_URL" -a "$IDC_API_KEY"
+    # TODO: eventually these will specify their stage somehow
+    compgen -G "data_manager_tasks/*/data_manager_fetch_genome_dbkeys_all_fasta/run_data_managers.yaml" >/dev/null && {
+        run_stage0_data_managers
+    } || {
+        run_stage1_data_managers
+    }
+}
+
+
+function run_stage0_data_managers() {
+    local dm_config a
+    log "Running Stage 0 Data Managers"
+    pushd data_manager_tasks
+    for dm_config in */data_manager_fetch_genome_dbkeys_all_fasta/run_data_managers.yaml; do
+        readarray -td/ a <<<"$dm_config"
+        log_exec run-data-managers --config "$dm_config" -g "$BUILD_GALAXY_URL" -a "$IDC_API_KEY" --data-manager-mode bundle --history-name "idc-${a[0]}-${a[1]}"
+    done
+    popd
+}
+
+
+function run_stage1_data_managers() {
+    local dm_config a
+    log "Running Stage 1 Data Managers"
+    pushd data_manager_tasks
+    for dm_config in */*/run_data_managers.yaml; do
+        readarray -td/ a <<<"$dm_config"
+        # this should never be false since we run either/or stage 0 or stage 1 in the caller
+        [ "${a[1]}" != 'data_manager_fetch_genome_dbkeys_all_fasta' ] || continue
+        log_exec run-data-managers --config "$dm_config" -g "$BUILD_GALAXY_URL" -a "$IDC_API_KEY" --data-manager-mode bundle --history-name "idc-${a[0]}-${a[1]}"
+    done
+    popd
 }
 
 
