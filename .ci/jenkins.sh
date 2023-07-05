@@ -549,7 +549,7 @@ function check_for_repo_changes() {
     for config in ${OVERLAYFS_UPPER}/config/*; do
         lower="${OVERLAYFS_LOWER}/${config##*/}"
         [ -f "$lower" ] || lower=/dev/null
-        diff -q "$lower" "$config" || diff -u --color=always "$lower" "$config"
+        diff -q "$lower" "$config" || { diff -u "$lower" "$config" || true; }
     done
 }
 
