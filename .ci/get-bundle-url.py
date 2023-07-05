@@ -54,7 +54,7 @@ if args.record_file:
         fh.write(f"galaxy_url: {args.galaxy_url}\n")
         fh.write(f"history_id: {history_id}\n")
         fh.write(f"history_url: {args.galaxy_url}/{history['url']}\n")
-        fh_write(f"bundle_dataset_id: {dataset_id}\n")
+        fh.write(f"bundle_dataset_id: {dataset_id}\n")
         fh.write(f"bundle_dataset_url: {bundle_url}\n")
 
 print(bundle_url)
