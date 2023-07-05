@@ -517,7 +517,7 @@ function import_tool_data_bundles() {
         exec_on docker exec "$CONTAINER_NAME" mkdir -p "/cvmfs/${REPO}/data" "/cvmfs/${REPO}/record/${build_id}"
         exec_on docker exec "$CONTAINER_NAME" /usr/local/bin/galaxy-import-data-bundle --tool-data-path "/cvmfs/${REPO}/data" --data-table-config-path "/cvmfs/${REPO}/config/tool_data_table_conf.xml" "$bundle_uri"
         exec_on rsync -av "data_manager_tasks/${build_id}/${dm_repo_id}" "${OVERLAYFS_MOUNT}/record/${build_id}"
-    done <ci-import-builds.txt
+    done <data_manager_tasks/ci-import-builds.txt
     # FIXME: this doesn't belong here
     deactivate
 }
@@ -578,6 +578,7 @@ function copy_upper_to_stratum0() {
 
 function do_install_local() {
     mount_overlay
+    # TODO: we could probably replace the import container with whatever cvmfsexec does to fake a mount
     run_import_container
     import_tool_data_bundles
     check_for_repo_changes
