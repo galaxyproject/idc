@@ -5,6 +5,7 @@ set -euo pipefail
 : ${PUBLISH:=false}
 
 BUILD_GALAXY_URL="http://idc-build"
+PUBLISH_GALAXY_URL="https://usegalaxy.org"
 SSH_MASTER_SOCKET_DIR="${HOME}/.cache/idc"
 MAIN_BRANCH='main'
 
@@ -30,6 +31,8 @@ GALAXY_MAINTENANCE_SCRIPTS="git+https://github.com/mvdbeek/galaxy-maintenance-sc
 # performing everything directly on the Stratum 0. Requires preinstallation/preconfiguration of CVMFS and for
 # fuse-overlayfs to be installed on Jenkins workers.
 USE_LOCAL_OVERLAYFS=true
+
+# $EPHEMERIS_API_KEY and $IDC_VAULT_PASS should be set in the environment
 
 #
 # Development/debug options
@@ -413,23 +416,33 @@ function run_stage0_data_managers() {
     pushd data_manager_tasks
     for dm_config in */data_manager_fetch_genome_dbkeys_all_fasta/run_data_managers.yaml; do
         readarray -td/ a <<<"$dm_config"
-        log_exec run-data-managers --config "$dm_config" -g "$BUILD_GALAXY_URL" --data-manager-mode bundle --history-name "idc-${a[0]}-${a[1]}"
+        run_data_manager "${a[0]}" "${a[1]}" "$dm_config"
     done
     popd
 }
 
 
 function run_stage1_data_managers() {
-    local dm_config a
+    local dm_config a record
     log "Running Stage 1 Data Managers"
     pushd data_manager_tasks
     for dm_config in */*/run_data_managers.yaml; do
         readarray -td/ a <<<"$dm_config"
         # this should never be false since we run either/or stage 0 or stage 1 in the caller
         [ "${a[1]}" != 'data_manager_fetch_genome_dbkeys_all_fasta' ] || continue
-        log_exec run-data-managers --config "$dm_config" -g "$BUILD_GALAXY_URL" --data-manager-mode bundle --history-name "idc-${a[0]}-${a[1]}"
+        run_data_manager "${a[0]}" "${a[1]}" "$dm_config"
     done
     popd
+}
+
+
+function run_data_manager() {
+    local build_id="$1"
+    local dm_repo_id="$2"
+    local dm_config="$3"
+    log "Running Data Manager '$dm_repo_id' for build '$build_id'"
+    log_exec run-data-managers --config "$dm_config" -g "$BUILD_GALAXY_URL" --data-manager-mode bundle --history-name "idc-${build_id}-${dm_repo_id}"
+    echo "$build_id $dm_repo_id $dm_config" >>ci-import-builds.txt
 }
 
 
@@ -494,14 +507,18 @@ function stop_import_container() {
 
 
 function import_tool_data_bundles() {
-    # FIXME
-    local dm_id='data_manager_fetch_genome_all_fasta_dbkey'
-    local build_id='dm6'
-    local bundle_uri="$(python3 ./.ci/get-bundle-url.py --galaxy-url "$BUILD_GALAXY_URL" --history-name "${build_id}.${dm_id}")"
-    log_debug "bundle URI is: $bundle_uri"
-    log "Importing data bundles"
-    exec_on docker exec "$CONTAINER_NAME" mkdir -p "/cvmfs/${REPO}/data"
-    exec_on docker exec "$CONTAINER_NAME" /usr/local/bin/galaxy-import-data-bundle --tool-data-path "/cvmfs/${REPO}/data" --data-table-config-path "/cvmfs/${REPO}/config/tool_data_table_conf.xml" "$bundle_uri"
+    local build_id dm_repo_id dm_config bundle_uri record_file
+    while read build_id dm_repo_id dm_config; do
+        record_file="data_manager_tasks/${build_id}/${dm_repo_id}/bundle.txt"
+        log "Importing bundle for Data Manager '$dm_repo_id' of '$build_id'"
+        local bundle_uri="$(python3 ./.ci/get-bundle-url.py --galaxy-url "$BUILD_GALAXY_URL" --history-name "idc-${build_id}-${dm_repo_id}" --record-file="$record_file")"
+        log_debug "bundle URI is: $bundle_uri"
+        sed -i -e "s#${BUILD_GALAXY_URL}#${PUBLISH_GALAXY_URL}#" "$record_file"
+        exec_on docker exec "$CONTAINER_NAME" mkdir -p "/cvmfs/${REPO}/data" "/cvmfs/${REPO}/record/${build_id}"
+        exec_on docker exec "$CONTAINER_NAME" /usr/local/bin/galaxy-import-data-bundle --tool-data-path "/cvmfs/${REPO}/data" --data-table-config-path "/cvmfs/${REPO}/config/tool_data_table_conf.xml" "$bundle_uri"
+        exec_on rsync -av "data_manager_tasks/${build_id}/${dm_repo_id}" "${OVERLAYFS_MOUNT}/record/${build_id}"
+    done <ci-import-builds.txt
+    # FIXME: this doesn't belong here
     deactivate
 }
 

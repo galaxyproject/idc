@@ -24,6 +24,9 @@ parser.add_argument(
 parser.add_argument(
     "-n", "--history-name", default="Data Manager History (automatically created)", help="History name"
 )
+parser.add_argument(
+    "-r", "--record-file", help="Record file"
+)
 args = parser.parse_args()
 
 api_key = args.galaxy_api_key or os.environ.get("EPHEMERIS_API_KEY")
@@ -45,4 +48,13 @@ datasets = gi.datasets.get_datasets(
 dataset_id = datasets[0]['id']
 
 bundle_url = f"{args.galaxy_url}/api/datasets/{dataset_id}/display?to_ext={EXT}"
+
+if args.record_file:
+    with open(args.record_file, "w") as fh:
+        fh.write(f"galaxy_url: {args.galaxy_url}\n")
+        fh.write(f"history_id: {history_id}\n")
+        fh.write(f"history_url: {args.galaxy_url}/{history['url']}\n")
+        fh_write(f"bundle_dataset_id: {dataset_id}\n")
+        fh.write(f"bundle_dataset_url: {bundle_url}\n")
+
 print(bundle_url)
