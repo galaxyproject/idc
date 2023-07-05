@@ -29,8 +29,7 @@ galaxy_database_password: !vault |
           61333338623663323432313765613332643530643862383230363033623237313263623162613164
           3532653230333665313032633133613836653031323965343234
 
-# FIXME: generate a new key for idc
-os_key_name: nate-treehouse
+os_key_name: idc
 
 os_image: usegalaxy-node
 os_flavor: m3.small
