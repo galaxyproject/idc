@@ -391,13 +391,13 @@ function install_data_managers() {
     log "Generating Data Manager tool list"
     log_exec _idc-data-managers-to-tools
     log "Installing Data Managers"
-    log_exec shed-tools install -t tools.yml -g "$BUILD_GALAXY_URL" -a "$IDC_API_KEY"
+    log_exec shed-tools install -t tools.yml -g "$BUILD_GALAXY_URL"
 }
 
 
 function run_data_managers() {
     log "Generating Data Manager tasks"
-    log_exec _idc-split-data-manager-genomes -g "$BUILD_GALAXY_URL" -a "$IDC_API_KEY" --tool-id-mode short
+    log_exec _idc-split-data-manager-genomes -g "$BUILD_GALAXY_URL" --tool-id-mode short
     # TODO: eventually these will specify their stage somehow
     compgen -G "data_manager_tasks/*/data_manager_fetch_genome_dbkeys_all_fasta/run_data_managers.yaml" >/dev/null && {
         run_stage0_data_managers
@@ -413,7 +413,7 @@ function run_stage0_data_managers() {
     pushd data_manager_tasks
     for dm_config in */data_manager_fetch_genome_dbkeys_all_fasta/run_data_managers.yaml; do
         readarray -td/ a <<<"$dm_config"
-        log_exec run-data-managers --config "$dm_config" -g "$BUILD_GALAXY_URL" -a "$IDC_API_KEY" --data-manager-mode bundle --history-name "idc-${a[0]}-${a[1]}"
+        log_exec run-data-managers --config "$dm_config" -g "$BUILD_GALAXY_URL" --data-manager-mode bundle --history-name "idc-${a[0]}-${a[1]}"
     done
     popd
 }
@@ -427,7 +427,7 @@ function run_stage1_data_managers() {
         readarray -td/ a <<<"$dm_config"
         # this should never be false since we run either/or stage 0 or stage 1 in the caller
         [ "${a[1]}" != 'data_manager_fetch_genome_dbkeys_all_fasta' ] || continue
-        log_exec run-data-managers --config "$dm_config" -g "$BUILD_GALAXY_URL" -a "$IDC_API_KEY" --data-manager-mode bundle --history-name "idc-${a[0]}-${a[1]}"
+        log_exec run-data-managers --config "$dm_config" -g "$BUILD_GALAXY_URL" --data-manager-mode bundle --history-name "idc-${a[0]}-${a[1]}"
     done
     popd
 }

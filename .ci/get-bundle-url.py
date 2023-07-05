@@ -19,14 +19,14 @@ parser.add_argument(
     "-p", "--galaxy-password", help="Galaxy user password (or set $IDC_USER_PASS)"
 )
 parser.add_argument(
-    "-a", "--galaxy-api-key", help="Galaxy API key (or set $IDC_API_KEY)"
+    "-a", "--galaxy-api-key", help="Galaxy API key (or set $EPHEMERIS_API_KEY)"
 )
 parser.add_argument(
     "-n", "--history-name", default="Data Manager History (automatically created)", help="History name"
 )
 args = parser.parse_args()
 
-api_key = args.galaxy_api_key or os.environ.get("IDC_API_KEY")
+api_key = args.galaxy_api_key or os.environ.get("EPHEMERIS_API_KEY")
 password = args.galaxy_password or os.environ.get("IDC_USER_PASS")
 if api_key:
     auth_kwargs = {"key": api_key}
