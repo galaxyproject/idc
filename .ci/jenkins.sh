@@ -143,7 +143,9 @@ function check_bot_command() {
     log 'Checking for Github PR Bot commands'
     log_debug "Value of \$ghprbCommentBody is: ${ghprbCommentBody:-UNSET}"
     case "${ghprbCommentBody:-UNSET}" in
-        "@galaxybot deploy"*)
+        # TODO: support test builds
+        #"@galaxybot deploy"*)
+        *)
             PUBLISH=true
             ;;
     esac
