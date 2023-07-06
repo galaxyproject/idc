@@ -383,7 +383,7 @@ function stop_build_galaxy() {
     . ./ansible-venv/bin/activate
     log "Stopping Build Galaxy"
     pushd ansible
-    #log_exec ansible-playbook playbook-teardown.yaml
+    log_exec ansible-playbook playbook-teardown.yaml
     BUILD_GALAXY_UP=false
     popd
     deactivate
