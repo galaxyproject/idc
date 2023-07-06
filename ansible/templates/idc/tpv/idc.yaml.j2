@@ -41,3 +41,19 @@ tools:
     env:
       - name: _JAVA_OPTIONS
         value: $_JAVA_OPTIONS -Xmx{round(mem*0.9*1024)}m -Xms256m
+  .*bowtie2_index_builder_data_manager.*:
+    cores: 16
+  .*bwa_mem_index_builder_data_manager.*:
+    cores: 12
+    mem: 48
+  .*twobit_builder_data_manager.*:
+    cores: 16
+    mem: 36
+  .*picard_index_builder_data_manager.*:
+    mem: 12
+  .*hisat2_index_builder_data_manager.*:
+    cores: 10
+    mem: 120
+  .*rna_star_index_builder_data_manager.*:
+    cores: 10
+    mem: 120
