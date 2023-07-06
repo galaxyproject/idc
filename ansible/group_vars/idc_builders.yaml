@@ -110,7 +110,7 @@ galaxy_config:
     server_name: idc-build
     database_connection: "postgresql://idc:{{ galaxy_database_password }}@galaxy-db-02/galaxy_main"
     install_database_connection: "sqlite:///{{ galaxy_mutable_data_dir }}/install.sqlite?isolation_level=IMMEDIATE"
-    tool_data_table_config_file: /cvmfs/sandbox.galaxyproject.org/config/tool_data_table_conf.xml
+    tool_data_table_config_path: /cvmfs/sandbox.galaxyproject.org/config/tool_data_table_conf.xml
     data_manager_config_file: "{{ galaxy_config_dir }}/data_manager_conf.xml"
     #shed_data_manager_config_file: /cvmfs/main.galaxyproject.org/config/shed_data_manager_conf.xml
     conda_auto_init: false
