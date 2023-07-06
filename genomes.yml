@@ -10,7 +10,6 @@ genomes:
     indexers:
       - data_manager_bowtie2_index_builder
       - data_manager_bwa_mem_index_builder
-      - data_manager_hisat_index_builder
       - data_manager_twobit_builder
       - data_manager_picard_index_builder
       - data_manager_sam_fasta_index_builder
@@ -31,7 +30,6 @@ genomes:
     indexers:
       - data_manager_bowtie2_index_builder
       - data_manager_bwa_mem_index_builder
-      - data_manager_hisat_index_builder
       - data_manager_twobit_builder
       - data_manager_picard_index_builder
       - data_manager_sam_fasta_index_builder
@@ -52,7 +50,6 @@ genomes:
     indexers:
       - data_manager_bowtie2_index_builder
       - data_manager_bwa_mem_index_builder
-      - data_manager_hisat_index_builder
       - data_manager_twobit_builder
       - data_manager_picard_index_builder
       - data_manager_sam_fasta_index_builder
@@ -73,7 +70,6 @@ genomes:
     indexers:
       - data_manager_bowtie2_index_builder
       - data_manager_bwa_mem_index_builder
-      - data_manager_hisat_index_builder
       - data_manager_twobit_builder
       - data_manager_picard_index_builder
       - data_manager_sam_fasta_index_builder
@@ -94,7 +90,6 @@ genomes:
     indexers:
       - data_manager_bowtie2_index_builder
       - data_manager_bwa_mem_index_builder
-      - data_manager_hisat_index_builder
       - data_manager_twobit_builder
       - data_manager_picard_index_builder
       - data_manager_sam_fasta_index_builder
