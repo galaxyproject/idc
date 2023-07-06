@@ -132,6 +132,7 @@ galaxy_config:
       #- type: mulled_singularity
       #  cache_directory: /jetstream2/scratch/idc/singularity
       - type: explicit_singularity
+    cleanup_job: never
     job_config:
       runners:
         local:
