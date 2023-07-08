@@ -1,0 +1,162 @@
+---
+
+tailscale_authkey: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          66613731383264333035343534396237373964343934393666383661303664396532396165306166
+          6538333237353534356433653432356362633336333663380a653837366233373630363139343263
+          39343230383430383130623938336566346437346630653235383565323237353665316236643038
+          3130326631653138310a623562363231366364656336326533643633616535613265653333626134
+          62663638393330393234636564346439663533336335383762316361306261306235653062663139
+          63663963386539386132646563383039633962346166393030376662353132376365323761376362
+          376431356639663937366138383635393037
+
+minio_access_key: idc
+minio_secret_key: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          63343861656633656332623062386662613835383031396531383961623866333734383934323361
+          3232616334626430333463346330363432366137613337390a356264386363303266353964376566
+          32373933663436646566633237313135626265393936656332373633383236616534643864366532
+          6130616466666665330a393833373965623365333239303039383061363334663031646632316333
+          30396263346464306233646466323162653437663134363261653239366630643935383964666533
+          3032646166333162663934623635336630323035336639313163
+
+galaxy_database_password: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          61353439363266313231353362333636633830353237653338643765313963373434303365653734
+          6466336130346536303136386165326665663965313365630a313564326131356237333232623637
+          31656534323962383662663734363430373931646166646663313430366630373561346532353536
+          3763316333343132640a363639663636396665313831323430363038633630613433373230663936
+          61333338623663323432313765613332643530643862383230363033623237313263623162613164
+          3532653230333665313032633133613836653031323965343234
+
+os_key_name: idc
+
+os_image: usegalaxy-node
+os_flavor: m3.small
+os_security_groups: [default, ssh-only]
+
+host_groups:
+  - name: idc
+    gid: 808
+
+host_users:
+  - name: idc
+    home: /home/idc
+    uid: 808
+    group: idc
+    shell: /bin/sh
+
+host_directories:
+  - path: /jetstream2/scratch/idc
+    owner: idc
+    group: idc
+    mode: "0755"
+
+nginx_flavor: core
+nginx_enable_default_server: false
+nginx_servers:
+  - idc-build
+
+galaxy_layout: root-dir
+galaxy_root: /srv/galaxy
+galaxy_user:
+  name: idc
+galaxy_server_dir: /cvmfs/main.galaxyproject.org/galaxy
+galaxy_venv_dir: /cvmfs/main.galaxyproject.org/venv
+galaxy_config_dir: "{{ galaxy_root }}/config"
+galaxy_shed_tools_dir: /jetstream2/scratch/idc/shed_tools
+galaxy_manage_clone: false
+galaxy_manage_download: false
+galaxy_manage_existing: false
+galaxy_manage_paths: true
+galaxy_manage_static_setup: true
+galaxy_manage_mutable_setup: true
+galaxy_manage_database: false
+galaxy_fetch_dependencies: false
+galaxy_build_client: false
+galaxy_backup_configfiles: false
+galaxy_manage_gravity: true
+
+galaxy_privsep_dirs:
+  - "{{ galaxy_config_dir }}"
+  - "{{ galaxy_config_dir }}/tpv"
+galaxy_config_files:
+  - src: files/idc/workflow_schedulers_conf.xml
+    dest: "{{ galaxy_config_dir }}/workflow_schedulers_conf.xml"
+  - src: files/idc/data_manager_conf.xml
+    dest: "{{ galaxy_config_dir }}/data_manager_conf.xml"
+galaxy_config_templates:
+  - src: templates/idc/tpv/idc.yaml.j2
+    dest: "{{ galaxy_config_dir }}/tpv/idc.yaml"
+  - src: templates/idc/object_store_conf.xml.j2
+    dest: "{{ galaxy_config_dir }}/object_store_conf.xml"
+galaxy_config:
+  gravity:
+    process_manager: systemd
+    galaxy_user: idc
+    galaxy_group: idc
+    galaxy_root: "{{ galaxy_server_dir }}"
+    virtualenv: "{{ galaxy_venv_dir }}"
+    gunicorn:
+      bind: localhost:8080
+      workers: 1
+    #handlers:
+    # handler:
+    #   processes: 1
+    #   pools:
+    #     - job-handlers
+    #     - workflow-schedulers
+  galaxy:
+    server_name: idc-build
+    database_connection: "postgresql://idc:{{ galaxy_database_password }}@galaxy-db-02/galaxy_main"
+    install_database_connection: "sqlite:///{{ galaxy_mutable_data_dir }}/install.sqlite?isolation_level=IMMEDIATE"
+    tool_data_table_config_path: /cvmfs/idc.galaxyproject.org/config/tool_data_table_conf.xml
+    data_manager_config_file: "{{ galaxy_config_dir }}/data_manager_conf.xml"
+    #shed_data_manager_config_file: /cvmfs/main.galaxyproject.org/config/shed_data_manager_conf.xml
+    conda_auto_init: false
+    conda_auto_install: false
+    allow_user_creation: false
+    #require_login: true
+    admin_users:
+      - idc@galaxyproject.org
+      - nate+test@bx.psu.edu
+    file_path: /jetstream2/scratch/idc/objects
+    job_working_directory: /jetstream2/scratch/idc/jobs
+    object_store_config_file: "{{ galaxy_config_dir }}/object_store_conf.xml"
+    object_store_store_by: uuid
+    workflow_schedulers_config_file: "{{ galaxy_config_dir }}/workflow_schedulers_conf.xml"
+    container_resolvers:
+      - type: cached_mulled_singularity
+        cache_directory: /cvmfs/singularity.galaxyproject.org/all
+        cache_directory_cacher_type: dir_mtime
+      #- type: mulled_singularity
+      #  cache_directory: /jetstream2/scratch/idc/singularity
+      - type: explicit_singularity
+    cleanup_job: never
+    job_config:
+      runners:
+        local:
+          load: galaxy.jobs.runners.local:LocalJobRunner
+          workers: 1
+        slurm:
+          load: galaxy.jobs.runners.slurm:SlurmJobRunner
+          workers: 2
+          drmaa_library_path: /usr/lib64/libdrmaa.so.1
+      handling:
+        assign:
+          - db-self
+      execution:
+        default: tpv_dispatcher
+        environments:
+          tpv_dispatcher:
+            runner: dynamic
+            type: python
+            function: map_tool_to_destination
+            rules_module: tpv.rules
+            tpv_config_files:
+              - "{{ galaxy_config_dir }}/tpv/idc.yaml"
+
+# need to exclude shed_data_managers_conf.xml or else the role tries to create/chown its parent
+#galaxy_mutable_config_files:
+#  - src: "shed_tool_data_table_conf.xml"
+#    dest: "{{ galaxy_config_merged[galaxy_app_config_section].shed_tool_data_table_config }}"

@@ -1,0 +1,11 @@
+ <object_store type="distributed">
+    <backends search_for_missing="false">
+        <backend id="minio-idc" type="swift" weight="1" store_by="uuid">
+            <auth access_key="{{ minio_access_key }}" secret_key="{{ minio_secret_key }}" />
+            <bucket name="idc" use_reduced_redundancy="False" max_chunk_size="250"/>
+            <connection host="galaxy-db-02" port="9001" is_secure="False" conn_path="" multipart="True"/>
+            <cache path="/jetstream2/scratch/idc/object_store_cache" size="1000" />
+            <extra_dir type="job_work" path="/jetstream2/scratch/idc/jobs"/>
+        </backend>
+    </backends>
+</object_store>

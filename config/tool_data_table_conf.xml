@@ -1,0 +1,78 @@
+<tables>
+    <table name="all_fasta" comment_char="#">
+        <columns>value, dbkey, name, path</columns>
+        <file path="/cvmfs/idc.galaxyproject.org/config/all_fasta.loc" />
+    </table>
+    <table name="__dbkeys__" comment_char="#">
+        <columns>value, name, len_path</columns>
+        <file path="/cvmfs/idc.galaxyproject.org/config/dbkeys.loc" />
+    </table>
+    <table name="bowtie2_indexes" comment_char="#">
+        <columns>value, dbkey, name, path</columns>
+        <file path="/cvmfs/idc.galaxyproject.org/config/bowtie2_indices.loc"/>
+    </table>
+    <table name="bwa_mem_indexes" comment_char="#">
+        <columns>value, dbkey, name, path</columns>
+        <file path="/cvmfs/idc.galaxyproject.org/config/bwa_mem_index.loc"/>
+    </table>
+    <table name="twobit" comment_char="#">
+        <columns>value, path</columns>
+        <file path="/cvmfs/idc.galaxyproject.org/config/twobit.loc"/>
+    </table>
+    <table name="alignseq_seq" comment_char="#">
+        <columns>type, value, path</columns>
+        <file path="/cvmfs/idc.galaxyproject.org/config/alignseq.loc"/>
+    </table>
+    <table name="picard_indexes" comment_char="#">
+        <columns>value, dbkey, name, path</columns>
+        <file path="/cvmfs/idc.galaxyproject.org/config/picard_index.loc"/>
+    </table>
+    <table name="fasta_indexes" comment_char="#">
+        <columns>value, dbkey, name, path</columns>
+        <file path="/cvmfs/idc.galaxyproject.org/config/fasta_indexes.loc"/>
+    </table>
+    <table name="hisat2_indexes" comment_char="#" allow_duplicate_entries="False">
+        <columns>value, dbkey, name, path</columns>
+        <file path="/cvmfs/idc.galaxyproject.org/config/hisat2_indexes.loc"/>
+    </table>
+    <table name="rnastar_index2x_versioned" comment_char="#" allow_duplicate_entries="False">
+        <columns>value, dbkey, name, path, with_gene_model, version</columns>
+        <file path="/cvmfs/idc.galaxyproject.org/config/rnastar_index2x_versioned.loc"/>
+    </table>
+    <table name="bowtie_indexes" comment_char="#" allow_duplicate_entries="False">
+        <columns>value, dbkey, name, path</columns>
+        <file path="/cvmfs/idc.galaxyproject.org/config/bowtie_indices.loc"/>
+    </table>
+    <table name="kallisto_indexes" comment_char="#" allow_duplicate_entries="False">
+        <columns>value, dbkey, name, path</columns>
+        <file path="/cvmfs/idc.galaxyproject.org/config/kallisto_indexes.loc"/>
+    </table>
+    <table name="snpeffv_genomedb" comment_char="#" allow_duplicate_entries="False">
+        <columns>key, version, value, name, path</columns>
+        <file path="/cvmfs/idc.galaxyproject.org/config/snpeffv_genomedb.loc"/>
+    </table>
+    <table name="snpeffv_regulationdb" comment_char="#" allow_duplicate_entries="False">
+        <columns>key, version, genome, value, name</columns>
+        <file path="/cvmfs/idc.galaxyproject.org/config/snpeffv_regulationdb.loc"/>
+    </table>
+    <table name="snpeffv_databases" comment_char="#" allow_duplicate_entries="False">
+        <columns>key, version, value, name</columns>
+        <file path="/cvmfs/idc.galaxyproject.org/config/snpeffv_databases.loc"/>
+    </table>
+    <table name="plant_tribes_scaffolds" comment_char="#">
+        <columns>value, name, path, description</columns>
+        <file path="/cvmfs/idc.galaxyproject.org/config/plant_tribes_scaffolds.loc"/>
+    </table>
+    <table name="ncbi_taxonomy" comment_char="#">
+        <columns>value, name, path</columns>
+        <file path="/cvmfs/idc.galaxyproject.org/config/ncbi_taxonomy.loc"/>
+    </table>
+    <table name="ncbi_accession2taxid" comment_char="#">
+        <columns>value, name, path</columns>
+        <file path="/cvmfs/idc.galaxyproject.org/config/ncbi_accession2taxid.loc"/>
+    </table>
+    <table name="gemini_versioned_databases" comment_char="#" allow_duplicate_entries="False">
+        <columns>value, dbkey, version, name, path</columns>
+        <file path="/cvmfs/idc.galaxyproject.org/config/gemini_versioned_databases.loc"/>
+    </table>
+</tables>

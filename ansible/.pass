@@ -1,0 +1,12 @@
+#!/bin/sh
+
+if [ -z "$IDC_VAULT_PASS" ]; then
+    echo 'WARNING: $IDC_VAULT_PASS is unset, prompting for password' >&2
+    echo -n 'Vault password: ' >&2
+    stty -echo
+    read IDC_VAULT_PASS
+    stty echo
+    echo '' >&2
+fi
+
+echo "$IDC_VAULT_PASS"

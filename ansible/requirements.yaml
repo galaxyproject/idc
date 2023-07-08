@@ -1,0 +1,17 @@
+---
+
+roles:
+  - name: artis3n.tailscale
+    versin: v4.2.2
+  - name: galaxyproject.galaxy
+    version: 0.10.15
+  - name: galaxyproject.nginx
+    version: 0.7.1
+  - name: galaxyproject.postgresql
+    version: 1.1.2
+  - name: galaxyproject.postgresql_objects
+    version: 1.2.0
+
+collections:
+  - name: galaxyproject.general
+    version: 1.0.0
