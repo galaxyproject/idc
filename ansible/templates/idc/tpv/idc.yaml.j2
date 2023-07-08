@@ -13,7 +13,7 @@ destinations:
       tmp_dir: true
       outputs_to_working_directory: true
       singularity_enabled: true
-      singularity_volumes: "$galaxy_root:ro,$tool_directory:ro,$working_directory:rw,$job_directory:rw,/cvmfs/main.galaxyproject.org:ro,/cvmfs/sandbox.galaxyproject.org:ro"
+      singularity_volumes: "$galaxy_root:ro,$tool_directory:ro,$working_directory:rw,$job_directory:rw,/cvmfs/main.galaxyproject.org:ro,/cvmfs/idc.galaxyproject.org:ro"
       singularity_default_container_id: /cvmfs/singularity.galaxyproject.org/all/python:3.8.3
     env:
     - execute: ulimit -c 0

@@ -185,7 +185,7 @@ function detect_changes() {
 #    done < <(git diff --color=never --name-status "$COMMIT_RANGE" -- $(for d in "${!REPOS[@]}"; do echo "${d}/"; done))
 
     # FIXME:
-    REPO=sandbox
+    REPO=idc
 
     log 'Change detection results:'
     declare -p REPO
