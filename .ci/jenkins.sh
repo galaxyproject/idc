@@ -42,6 +42,7 @@ USE_LOCAL_OVERLAYFS=true
 # Ensure that everything is defined for set -u
 #
 
+DM_STAGE=0
 TOOL_YAMLS=()
 REPO_USER=
 REPO_STRATUM0=
@@ -340,7 +341,7 @@ function abort_transaction() {
 
 function publish_transaction() {
     log "Publishing transaction on $REPO"
-    exec_on "cvmfs_server publish -a 'idc-${GIT_COMMIT:0:7}' -m 'Automated data installation for commit ${GIT_COMMIT}' ${REPO}"
+    exec_on "cvmfs_server publish -a 'idc-${GIT_COMMIT:0:7}.${DM_STAGE}' -m 'Automated data installation for commit ${GIT_COMMIT}' ${REPO}"
     CVMFS_TRANSACTION_UP=false
 }
 
@@ -407,7 +408,9 @@ function run_data_managers() {
     compgen -G "data_manager_tasks/*/data_manager_fetch_genome_dbkeys_all_fasta/run_data_managers.yaml" >/dev/null && {
         run_stage0_data_managers
     } || {
-        run_stage1_data_managers
+        compgen -G "data_manager_tasks/*/data_manager_*/run_data_managers.yaml" >/dev/null && {
+            run_stage1_data_managers
+        }
     }
 }
 
@@ -415,6 +418,7 @@ function run_data_managers() {
 function run_stage0_data_managers() {
     local dm_config a
     log "Running Stage 0 Data Managers"
+    DM_STAGE=0
     pushd data_manager_tasks
     for dm_config in */data_manager_fetch_genome_dbkeys_all_fasta/run_data_managers.yaml; do
         readarray -td/ a <<<"$dm_config"
@@ -427,6 +431,7 @@ function run_stage0_data_managers() {
 function run_stage1_data_managers() {
     local dm_config a record
     log "Running Stage 1 Data Managers"
+    DM_STAGE=1
     pushd data_manager_tasks
     for dm_config in */*/run_data_managers.yaml; do
         readarray -td/ a <<<"$dm_config"
