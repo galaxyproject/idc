@@ -19,3 +19,23 @@ genomes:
       #- data_manager_kallisto_index_builder
     skiplist:
       - bfast
+  - dbkey: Salm-enterica-Newport
+    description: "Salmonella enterica subsp. enterica serovar Newport str. USMARC-S3124.1"
+    id: Salm-enterica-Newport
+    source: NC_021902
+    doi:
+    version:
+    checksum: 8d557e48aa3268afd0177a537a9ae396e6a6c123e4e0d5386bc1fa5a18c3054b
+    blob: "Extra information for this genome is at: https://www.ncbi.nlm.nih.gov/genome/152?genome_assembly_id=299243"
+    indexers:
+      - data_manager_bowtie2_index_builder
+      - data_manager_bwa_mem_index_builder
+      - data_manager_twobit_builder
+      - data_manager_picard_index_builder
+      - data_manager_sam_fasta_index_builder
+      - data_manager_hisat2_index_builder
+      - data_manager_star_index_builder
+      - data_manager_bowtie_index_builder
+      #- data_manager_kallisto_index_builder
+    skiplist:
+      - bfast
