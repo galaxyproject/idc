@@ -245,7 +245,7 @@ function verify_cvmfs_revision() {
     local cvmfs_io_sock="${WORKSPACE}/${BUILD_NUMBER}/cvmfs-cache/${REPO}/cvmfs_io.${REPO}"
     local stratum0_published_url="http://${REPO_STRATUM0}/cvmfs/${REPO}/.cvmfspublished"
     local client_rev=$(cvmfs_talk -p "$cvmfs_io_sock" revision)
-    local stratum0_rev=$(curl "$stratum0_published_url" | awk -F '^--$' '{print $1} NF>1{exit}' | grep '^S' | sed 's/^S//')
+    local stratum0_rev=$(curl -s "$stratum0_published_url" | awk -F '^--$' '{print $1} NF>1{exit}' | grep '^S' | sed 's/^S//')
     if [ -z "$client_rev" ]; then
         log_exit_error "Failed to detect client revision"
     elif [ -z "$stratum0_rev" ]; then
@@ -379,7 +379,7 @@ function wait_for_cvmfs_sync() {
         # ensure it's mounted
         ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -l rocky -i ~/.ssh/id_rsa_idc_jetstream2_cvmfs idc-build ls /cvmfs/${REPO} >/dev/null
         local client_rev=$(ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -l rocky -i ~/.ssh/id_rsa_idc_jetstream2_cvmfs idc-build sudo cvmfs_talk -i ${REPO} revision)
-        local stratum0_rev=$(curl "$stratum0_published_url" | awk -F '^--$' '{print $1} NF>1{exit}' | grep '^S' | sed 's/^S//')
+        local stratum0_rev=$(curl -s "$stratum0_published_url" | awk -F '^--$' '{print $1} NF>1{exit}' | grep '^S' | sed 's/^S//')
         if [ "$client_rev" -eq "$stratum0_rev" ]; then
             log "${REPO} is revision ${client_rev}"
             break
@@ -397,7 +397,7 @@ function wait_for_build_galaxy() {
         log_error "Timed out waiting for Galaxy"
         #exec_on journalctl -u galaxy-gunicorn
         #log_debug "response from ${IMPORT_GALAXY_URL}";
-        curl "$BUILD_GALAXY_URL";
+        curl -s "$BUILD_GALAXY_URL";
         log_exit_error "Terminating build due to previous errors"
     }
 }
