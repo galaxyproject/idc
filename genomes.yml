@@ -1,6 +1,6 @@
 genomes:
   - dbkey: dm6
-    description: D. melanogaster Aug. 2014 (BDGP Release 6 + ISO1 MT/dm6) (dm6)
+    description: # set from UCSC
     id: dm6
     source: ucsc
     doi:
