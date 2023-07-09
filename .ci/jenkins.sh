@@ -377,8 +377,8 @@ function wait_for_cvmfs_sync() {
     local stratum0_published_url="http://${REPO_STRATUM0}/cvmfs/${REPO}/.cvmfspublished"
     while true; do
         # ensure it's mounted
-        ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -l rocky -i ~/.ssh/id_rsa_idc_jetstream2_cvmfs idc-build ls /cvmfs/${REPO}.galaxyproject.org >/dev/null
-        local client_rev=$(ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -l rocky -i ~/.ssh/id_rsa_idc_jetstream2_cvmfs idc-build sudo cvmfs_talk -i ${REPO}.galaxyproject.org revision)
+        ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -l rocky -i ~/.ssh/id_rsa_idc_jetstream2_cvmfs idc-build ls /cvmfs/${REPO} >/dev/null
+        local client_rev=$(ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -l rocky -i ~/.ssh/id_rsa_idc_jetstream2_cvmfs idc-build sudo cvmfs_talk -i ${REPO} revision)
         local stratum0_rev=$(curl "$stratum0_published_url" | awk -F '^--$' '{print $1} NF>1{exit}' | grep '^S' | sed 's/^S//')
         if [ "$client_rev" -eq "$stratum0_rev" ]; then
             log "${REPO} is revision ${client_rev}"
