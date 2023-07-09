@@ -251,7 +251,7 @@ function verify_cvmfs_revision() {
     elif [ -z "$stratum0_rev" ]; then
         log_exit_error "Failed to detect Stratum 0 revision"
     elif [ "$client_rev" -ne "$stratum0_rev" ]; then
-        log_exit_error "Client revision '${client_rev}' does not match Stratum 0 revision '${stratum0_rev}'"
+        log_exit_error "Importer client revision '${client_rev}' does not match Stratum 0 revision '${stratum0_rev}'"
     fi
 
     log "${REPO} is revision ${client_rev}"
@@ -367,6 +367,27 @@ function run_build_galaxy() {
     log_exec ansible-playbook playbook-launch.yaml
     popd
     deactivate
+    wait_for_cvmfs_sync
+}
+
+
+function wait_for_cvmfs_sync() {
+    # TODO merge with verify_cvmfs_revision() used by build side
+    # TODO: could avoid the hardcoding by using ansible but the output is harder to process
+    local stratum0_published_url="http://${REPO_STRATUM0}/cvmfs/${REPO}/.cvmfspublished"
+    while true; do
+        # ensure it's mounted
+        ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -l rocky -i ~/.ssh/id_rsa_idc_jetstream2_cvmfs ls /cvmfs/${REPO}.galaxyproject.org >/dev/null
+        local client_rev=$(ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -l rocky -i ~/.ssh/id_rsa_idc_jetstream2_cvmfs sudo cvmfs_talk -i ${REPO}.galaxyproject.org revision)
+        local stratum0_rev=$(curl "$stratum0_published_url" | awk -F '^--$' '{print $1} NF>1{exit}' | grep '^S' | sed 's/^S//')
+        if [ "$client_rev" -eq "$stratum0_rev" ]; then
+            log "${REPO} is revision ${client_rev}"
+            break
+        else
+            log_debug "Builder client revision '${client_rev}' does not match Stratum 0 revision '${stratum0_rev}'"
+            sleep 60
+        fi
+    done
 }
 
 
