@@ -575,7 +575,7 @@ function check_for_repo_changes() {
     show_paths
     # NOTE: this assumes local mode
     for config in ${OVERLAYFS_UPPER}/config/*; do
-        [ -f "$upper" ] || continue
+        [ -f "$config" ] || continue
         lower="${OVERLAYFS_LOWER}/config/${config##*/}"
         [ -f "$lower" ] || lower=/dev/null
         diff -q "$lower" "$config" || { diff -u "$lower" "$config" || true; }
