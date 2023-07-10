@@ -19,6 +19,26 @@ genomes:
       #- data_manager_kallisto_index_builder
     skiplist:
       - bfast
+  - dbkey: danRer10
+    description: # set from UCSC
+    id: danRer10
+    source: ucsc
+    doi:
+    version:
+    checksum:
+    blob:
+    indexers:
+      - data_manager_bowtie2_index_builder
+      - data_manager_bwa_mem_index_builder
+      - data_manager_twobit_builder
+      - data_manager_picard_index_builder
+      - data_manager_sam_fasta_index_builder
+      - data_manager_hisat2_index_builder
+      - data_manager_star_index_builder
+      - data_manager_bowtie_index_builder
+      #- data_manager_kallisto_index_builder
+    skiplist:
+      - bfast
   - dbkey: sacCer3
     description: # set from UCSC
     id: sacCer3
