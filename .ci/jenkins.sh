@@ -245,13 +245,13 @@ function verify_cvmfs_revision() {
     local cvmfs_io_sock="${WORKSPACE}/${BUILD_NUMBER}/cvmfs-cache/${REPO}/cvmfs_io.${REPO}"
     local stratum0_published_url="http://${REPO_STRATUM0}/cvmfs/${REPO}/.cvmfspublished"
     local client_rev=$(cvmfs_talk -p "$cvmfs_io_sock" revision)
-    local stratum0_rev=$(curl "$stratum0_published_url" | awk -F '^--$' '{print $1} NF>1{exit}' | grep '^S' | sed 's/^S//')
+    local stratum0_rev=$(curl -s "$stratum0_published_url" | awk -F '^--$' '{print $1} NF>1{exit}' | grep '^S' | sed 's/^S//')
     if [ -z "$client_rev" ]; then
         log_exit_error "Failed to detect client revision"
     elif [ -z "$stratum0_rev" ]; then
         log_exit_error "Failed to detect Stratum 0 revision"
     elif [ "$client_rev" -ne "$stratum0_rev" ]; then
-        log_exit_error "Client revision '${client_rev}' does not match Stratum 0 revision '${stratum0_rev}'"
+        log_exit_error "Importer client revision '${client_rev}' does not match Stratum 0 revision '${stratum0_rev}'"
     fi
 
     log "${REPO} is revision ${client_rev}"
@@ -367,6 +367,27 @@ function run_build_galaxy() {
     log_exec ansible-playbook playbook-launch.yaml
     popd
     deactivate
+    wait_for_cvmfs_sync
+}
+
+
+function wait_for_cvmfs_sync() {
+    # TODO merge with verify_cvmfs_revision() used by build side
+    # TODO: could avoid the hardcoding by using ansible but the output is harder to process
+    local stratum0_published_url="http://${REPO_STRATUM0}/cvmfs/${REPO}/.cvmfspublished"
+    while true; do
+        # ensure it's mounted
+        ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -l rocky -i ~/.ssh/id_rsa_idc_jetstream2_cvmfs idc-build ls /cvmfs/${REPO} >/dev/null
+        local client_rev=$(ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -l rocky -i ~/.ssh/id_rsa_idc_jetstream2_cvmfs idc-build sudo cvmfs_talk -i ${REPO} revision)
+        local stratum0_rev=$(curl -s "$stratum0_published_url" | awk -F '^--$' '{print $1} NF>1{exit}' | grep '^S' | sed 's/^S//')
+        if [ "$client_rev" -eq "$stratum0_rev" ]; then
+            log "${REPO} is revision ${client_rev}"
+            break
+        else
+            log_debug "Builder client revision '${client_rev}' does not match Stratum 0 revision '${stratum0_rev}'"
+            sleep 60
+        fi
+    done
 }
 
 
@@ -376,7 +397,7 @@ function wait_for_build_galaxy() {
         log_error "Timed out waiting for Galaxy"
         #exec_on journalctl -u galaxy-gunicorn
         #log_debug "response from ${IMPORT_GALAXY_URL}";
-        curl "$BUILD_GALAXY_URL";
+        curl -s "$BUILD_GALAXY_URL";
         log_exit_error "Terminating build due to previous errors"
     }
 }
@@ -554,7 +575,8 @@ function check_for_repo_changes() {
     show_paths
     # NOTE: this assumes local mode
     for config in ${OVERLAYFS_UPPER}/config/*; do
-        lower="${OVERLAYFS_LOWER}/${config##*/}"
+        [ -f "$config" ] || continue
+        lower="${OVERLAYFS_LOWER}/config/${config##*/}"
         [ -f "$lower" ] || lower=/dev/null
         diff -q "$lower" "$config" || { diff -u "$lower" "$config" || true; }
     done
