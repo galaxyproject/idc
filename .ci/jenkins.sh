@@ -427,7 +427,7 @@ function generate_data_manager_tasks() {
     # returns false if there are no data managers to run
     log "Generating Data Manager tasks"
     . ./ephemeris/bin/activate
-    log_exec _idc-split-data-manager-genomes -g "$BUILD_GALAXY_URL" --tool-id-mode short
+    log_exec _idc-split-data-manager-genomes -g "$PUBLISH_GALAXY_URL" --tool-id-mode short
     deactivate
     compgen -G "data_manager_tasks/*/data_manager_*/run_data_managers.yaml" >/dev/null
 }
@@ -561,9 +561,8 @@ function import_tool_data_bundles() {
     while read build_id dm_repo_id dm_config; do
         record_file="import_tasks/${build_id}/${dm_repo_id}/bundle.txt"
         log "Importing bundle for Data Manager '$dm_repo_id' of '$build_id'"
-        local bundle_uri="$(python3 ./.ci/get-bundle-url.py --galaxy-url "$BUILD_GALAXY_URL" --history-name "idc-${build_id}-${dm_repo_id}" --record-file="$record_file")"
+        local bundle_uri="$(python3 ./.ci/get-bundle-url.py --galaxy-url "$PUBLISH_GALAXY_URL" --history-name "idc-${build_id}-${dm_repo_id}" --record-file="$record_file")"
         log_debug "bundle URI is: $bundle_uri"
-        sed -i -e "s#${BUILD_GALAXY_URL}#${PUBLISH_GALAXY_URL}#" "$record_file"
         exec_on docker exec "$CONTAINER_NAME" mkdir -p "/cvmfs/${REPO}/data" "/cvmfs/${REPO}/record/${build_id}"
         exec_on docker exec "$CONTAINER_NAME" /usr/local/bin/galaxy-import-data-bundle --tool-data-path "/cvmfs/${REPO}/data" --data-table-config-path "/cvmfs/${REPO}/config/tool_data_table_conf.xml" "$bundle_uri"
         exec_on rsync -av "import_tasks/${build_id}/${dm_repo_id}" "${OVERLAYFS_MOUNT}/record/${build_id}"
@@ -638,6 +637,7 @@ function do_install_local() {
         post_install
     } || {
         log "Nothing to import"
+        PUBLISH=false
     }
     if $PUBLISH; then
         start_ssh_control
