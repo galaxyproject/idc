@@ -237,6 +237,7 @@ function setup_ephemeris() {
     log_exec pip install --upgrade pip wheel
     log_exec pip install --index-url https://wheels.galaxyproject.org/simple/ \
         --extra-index-url https://pypi.org/simple/ "${BIOBLEND:=bioblend}" "${EPHEMERIS:=ephemeris}"
+    deactivate
 }
 
 
@@ -422,9 +423,18 @@ function install_data_managers() {
 }
 
 
-function run_data_managers() {
+function generate_data_manager_tasks() {
+    # returns false if there are no data managers to run
     log "Generating Data Manager tasks"
+    . ./ephemeris/bin/activate
     log_exec _idc-split-data-manager-genomes -g "$BUILD_GALAXY_URL" --tool-id-mode short
+    deactivate
+    compgen -G "data_manager_tasks/*/data_manager_*/run_data_managers.yaml" >/dev/null
+}
+
+
+function run_data_managers() {
+    . ./ephemeris/bin/activate
     # TODO: eventually these will specify their stage somehow
     compgen -G "data_manager_tasks/*/data_manager_fetch_genome_dbkeys_all_fasta/run_data_managers.yaml" >/dev/null && {
         run_stage0_data_managers
@@ -433,6 +443,7 @@ function run_data_managers() {
             run_stage1_data_managers
         }
     }
+    deactivate
 }
 
 
@@ -504,6 +515,16 @@ function clean_preconfigured_container() {
 }
 
 
+function generate_import_tasks() {
+    # returns false if there is no data manager to import
+    log "Generating import tasks"
+    . ./ephemeris/bin/activate
+    log_exec _idc-split-data-manager-genomes --complete-check-cvmfs "--cvmfs-root=${OVERLAYFS_LOWER}" --split-genomes-path=import_tasks
+    deactivate
+    compgen -G "import_tasks/*/data_manager_*/run_data_managers.yaml" >/dev/null
+}
+
+
 function run_import_container() {
     run_container_for_preconfigure
     log "Installing importer scripts"
@@ -536,17 +557,17 @@ function stop_import_container() {
 
 function import_tool_data_bundles() {
     local build_id dm_repo_id dm_config bundle_uri record_file
+    . ./ephemeris/bin/activate
     while read build_id dm_repo_id dm_config; do
-        record_file="data_manager_tasks/${build_id}/${dm_repo_id}/bundle.txt"
+        record_file="import_tasks/${build_id}/${dm_repo_id}/bundle.txt"
         log "Importing bundle for Data Manager '$dm_repo_id' of '$build_id'"
         local bundle_uri="$(python3 ./.ci/get-bundle-url.py --galaxy-url "$BUILD_GALAXY_URL" --history-name "idc-${build_id}-${dm_repo_id}" --record-file="$record_file")"
         log_debug "bundle URI is: $bundle_uri"
         sed -i -e "s#${BUILD_GALAXY_URL}#${PUBLISH_GALAXY_URL}#" "$record_file"
         exec_on docker exec "$CONTAINER_NAME" mkdir -p "/cvmfs/${REPO}/data" "/cvmfs/${REPO}/record/${build_id}"
         exec_on docker exec "$CONTAINER_NAME" /usr/local/bin/galaxy-import-data-bundle --tool-data-path "/cvmfs/${REPO}/data" --data-table-config-path "/cvmfs/${REPO}/config/tool_data_table_conf.xml" "$bundle_uri"
-        exec_on rsync -av "data_manager_tasks/${build_id}/${dm_repo_id}" "${OVERLAYFS_MOUNT}/record/${build_id}"
+        exec_on rsync -av "import_tasks/${build_id}/${dm_repo_id}" "${OVERLAYFS_MOUNT}/record/${build_id}"
     done <data_manager_tasks/ci-import-builds.txt
-    # FIXME: this doesn't belong here
     deactivate
 }
 
@@ -608,12 +629,16 @@ function copy_upper_to_stratum0() {
 function do_install_local() {
     mount_overlay
     # TODO: we could probably replace the import container with whatever cvmfsexec does to fake a mount
-    run_import_container
-    import_tool_data_bundles
-    check_for_repo_changes
-    stop_import_container
-    clean_preconfigured_container
-    post_install
+    generate_import_tasks && {
+        run_import_container
+        import_tool_data_bundles
+        check_for_repo_changes
+        stop_import_container
+        clean_preconfigured_container
+        post_install
+    } || {
+        log "Nothing to import"
+    }
     if $PUBLISH; then
         start_ssh_control
         begin_transaction 600
@@ -630,12 +655,16 @@ function main() {
     load_repo_configs
     detect_changes
     set_repo_vars
-    prep_for_galaxy_run
-    run_build_galaxy
     setup_ephemeris
-    wait_for_build_galaxy
-    #install_data_managers
-    run_data_managers
+    generate_data_manager_tasks && {
+        prep_for_galaxy_run
+        run_build_galaxy
+        wait_for_build_galaxy
+        #install_data_managers
+        run_data_managers
+    } || {
+        log "Nothing to build, will check for unimported data"
+    }
     if $USE_LOCAL_OVERLAYFS; then
         do_install_local
     else
