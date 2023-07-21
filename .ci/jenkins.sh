@@ -591,6 +591,7 @@ function show_paths() {
 
 function check_for_repo_changes() {
     local lower=
+    local changes=false
     log "Checking for changes to repo"
     show_paths
     # NOTE: this assumes local mode
@@ -598,8 +599,11 @@ function check_for_repo_changes() {
         [ -f "$config" ] || continue
         lower="${OVERLAYFS_LOWER}/config/${config##*/}"
         [ -f "$lower" ] || lower=/dev/null
-        diff -q "$lower" "$config" || { diff -u "$lower" "$config" || true; }
+        diff -q "$lower" "$config" || { changes=true; diff -u "$lower" "$config" || true; }
     done
+    if ! $changes; then
+        log_exit_error "Terminating build: expected changes to ${OVERLAYFS_UPPER}/config/* not found!"
+    fi
 }
 
 
