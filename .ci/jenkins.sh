@@ -481,7 +481,6 @@ function run_data_manager() {
     local dm_config="$3"
     log "Running Data Manager '$dm_repo_id' for build '$build_id'"
     log_exec run-data-managers --config "$dm_config" -g "$BUILD_GALAXY_URL" --data-manager-mode bundle --history-name "idc-${build_id}-${dm_repo_id}"
-    echo "$build_id $dm_repo_id $dm_config" >>ci-import-builds.txt
 }
 
 
@@ -556,9 +555,10 @@ function stop_import_container() {
 
 
 function import_tool_data_bundles() {
-    local build_id dm_repo_id dm_config bundle_uri record_file
+    local dm_config j build_id dm_repo_id bundle_uri record_file
     . ./ephemeris/bin/activate
-    while read build_id dm_repo_id dm_config; do
+    for dm_config in import_tasks/*/data_manager_*/run_data_managers.yaml; do
+        IFS='/' read j build_id dm_repo_id j <<< "$dm_config"
         record_file="import_tasks/${build_id}/${dm_repo_id}/bundle.txt"
         log "Importing bundle for Data Manager '$dm_repo_id' of '$build_id'"
         local bundle_uri="$(python3 ./.ci/get-bundle-url.py --galaxy-url "$PUBLISH_GALAXY_URL" --history-name "idc-${build_id}-${dm_repo_id}" --record-file="$record_file")"
@@ -566,7 +566,7 @@ function import_tool_data_bundles() {
         exec_on docker exec "$CONTAINER_NAME" mkdir -p "/cvmfs/${REPO}/data" "/cvmfs/${REPO}/record/${build_id}"
         exec_on docker exec "$CONTAINER_NAME" /usr/local/bin/galaxy-import-data-bundle --tool-data-path "/cvmfs/${REPO}/data" --data-table-config-path "/cvmfs/${REPO}/config/tool_data_table_conf.xml" "$bundle_uri"
         exec_on rsync -av "import_tasks/${build_id}/${dm_repo_id}" "${OVERLAYFS_MOUNT}/record/${build_id}"
-    done <data_manager_tasks/ci-import-builds.txt
+    done
     deactivate
 }
 
