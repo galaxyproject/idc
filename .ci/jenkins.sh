@@ -629,6 +629,7 @@ function do_install_local() {
     mount_overlay
     # TODO: we could probably replace the import container with whatever cvmfsexec does to fake a mount
     generate_import_tasks && {
+        prep_for_galaxy_run
         run_import_container
         import_tool_data_bundles
         check_for_repo_changes
@@ -657,7 +658,6 @@ function main() {
     set_repo_vars
     setup_ephemeris
     generate_data_manager_tasks && {
-        prep_for_galaxy_run
         run_build_galaxy
         wait_for_build_galaxy
         #install_data_managers
