@@ -394,6 +394,7 @@ function wait_for_cvmfs_sync() {
 
 function wait_for_build_galaxy() {
     log "Waiting for Galaxy"
+    . ./ephemeris/bin/activate
     log_exec galaxy-wait -v -g "$BUILD_GALAXY_URL" --timeout 180 || {
         log_error "Timed out waiting for Galaxy"
         #exec_on journalctl -u galaxy-gunicorn
@@ -401,6 +402,7 @@ function wait_for_build_galaxy() {
         curl -s "$BUILD_GALAXY_URL";
         log_exit_error "Terminating build due to previous errors"
     }
+    deactivate
 }
 
 
