@@ -237,6 +237,7 @@ function setup_ephemeris() {
     log_exec pip install --upgrade pip wheel
     log_exec pip install --index-url https://wheels.galaxyproject.org/simple/ \
         --extra-index-url https://pypi.org/simple/ "${BIOBLEND:=bioblend}" "${EPHEMERIS:=ephemeris}"
+    deactivate
 }
 
 
@@ -263,8 +264,8 @@ function mount_overlay() {
     log_debug "\$JOB_NAME: ${JOB_NAME}, \$WORKSPACE: ${WORKSPACE}, \$BUILD_NUMBER: ${BUILD_NUMBER}"
     log_exec mkdir -p "$OVERLAYFS_LOWER" "$OVERLAYFS_UPPER" "$OVERLAYFS_WORK" "$OVERLAYFS_MOUNT" "$CVMFS_CACHE"
     log_exec cvmfs2 -o config=.ci/cvmfs-fuse.conf,allow_root "$REPO" "$OVERLAYFS_LOWER"
-    verify_cvmfs_revision
     LOCAL_CVMFS_MOUNTED=true
+    verify_cvmfs_revision
     log_exec fuse-overlayfs \
         -o "lowerdir=${OVERLAYFS_LOWER},upperdir=${OVERLAYFS_UPPER},workdir=${OVERLAYFS_WORK},allow_root" \
         "$OVERLAYFS_MOUNT"
@@ -393,6 +394,7 @@ function wait_for_cvmfs_sync() {
 
 function wait_for_build_galaxy() {
     log "Waiting for Galaxy"
+    . ./ephemeris/bin/activate
     log_exec galaxy-wait -v -g "$BUILD_GALAXY_URL" --timeout 180 || {
         log_error "Timed out waiting for Galaxy"
         #exec_on journalctl -u galaxy-gunicorn
@@ -400,6 +402,7 @@ function wait_for_build_galaxy() {
         curl -s "$BUILD_GALAXY_URL";
         log_exit_error "Terminating build due to previous errors"
     }
+    deactivate
 }
 
 
@@ -422,9 +425,18 @@ function install_data_managers() {
 }
 
 
-function run_data_managers() {
+function generate_data_manager_tasks() {
+    # returns false if there are no data managers to run
     log "Generating Data Manager tasks"
-    log_exec _idc-split-data-manager-genomes -g "$BUILD_GALAXY_URL" --tool-id-mode short
+    . ./ephemeris/bin/activate
+    log_exec _idc-split-data-manager-genomes -g "$PUBLISH_GALAXY_URL" --tool-id-mode short
+    deactivate
+    compgen -G "data_manager_tasks/*/data_manager_*/run_data_managers.yaml" >/dev/null
+}
+
+
+function run_data_managers() {
+    . ./ephemeris/bin/activate
     # TODO: eventually these will specify their stage somehow
     compgen -G "data_manager_tasks/*/data_manager_fetch_genome_dbkeys_all_fasta/run_data_managers.yaml" >/dev/null && {
         run_stage0_data_managers
@@ -433,6 +445,7 @@ function run_data_managers() {
             run_stage1_data_managers
         }
     }
+    deactivate
 }
 
 
@@ -470,7 +483,6 @@ function run_data_manager() {
     local dm_config="$3"
     log "Running Data Manager '$dm_repo_id' for build '$build_id'"
     log_exec run-data-managers --config "$dm_config" -g "$BUILD_GALAXY_URL" --data-manager-mode bundle --history-name "idc-${build_id}-${dm_repo_id}"
-    echo "$build_id $dm_repo_id $dm_config" >>ci-import-builds.txt
 }
 
 
@@ -501,6 +513,16 @@ function clean_preconfigured_container() {
     exec_on docker kill "$PRECONFIGURE_CONTAINER_NAME" || true
     exec_on docker rm -v "$PRECONFIGURE_CONTAINER_NAME" || true
     exec_on docker rmi -f "$PRECONFIGURED_IMAGE_NAME" || true
+}
+
+
+function generate_import_tasks() {
+    # returns false if there is no data manager to import
+    log "Generating import tasks"
+    . ./ephemeris/bin/activate
+    log_exec _idc-split-data-manager-genomes --complete-check-cvmfs "--cvmfs-root=${OVERLAYFS_LOWER}" --split-genomes-path=import_tasks
+    deactivate
+    compgen -G "import_tasks/*/data_manager_*/run_data_managers.yaml" >/dev/null
 }
 
 
@@ -535,18 +557,19 @@ function stop_import_container() {
 
 
 function import_tool_data_bundles() {
-    local build_id dm_repo_id dm_config bundle_uri record_file
-    while read build_id dm_repo_id dm_config; do
-        record_file="data_manager_tasks/${build_id}/${dm_repo_id}/bundle.txt"
+    local dm_config j build_id dm_repo_id bundle_uri record_file
+    . ./ephemeris/bin/activate
+    for dm_config in import_tasks/*/data_manager_*/run_data_managers.yaml; do
+        IFS='/' read j build_id dm_repo_id j <<< "$dm_config"
+        record_file="import_tasks/${build_id}/${dm_repo_id}/bundle.txt"
         log "Importing bundle for Data Manager '$dm_repo_id' of '$build_id'"
-        local bundle_uri="$(python3 ./.ci/get-bundle-url.py --galaxy-url "$BUILD_GALAXY_URL" --history-name "idc-${build_id}-${dm_repo_id}" --record-file="$record_file")"
+        local bundle_uri="$(python3 ./.ci/get-bundle-url.py --galaxy-url "$PUBLISH_GALAXY_URL" --history-name "idc-${build_id}-${dm_repo_id}" --record-file="$record_file")"
+        [ -n "$bundle_uri" ] || log_exit_error "Could not determine bundle URI!"
         log_debug "bundle URI is: $bundle_uri"
-        sed -i -e "s#${BUILD_GALAXY_URL}#${PUBLISH_GALAXY_URL}#" "$record_file"
         exec_on docker exec "$CONTAINER_NAME" mkdir -p "/cvmfs/${REPO}/data" "/cvmfs/${REPO}/record/${build_id}"
         exec_on docker exec "$CONTAINER_NAME" /usr/local/bin/galaxy-import-data-bundle --tool-data-path "/cvmfs/${REPO}/data" --data-table-config-path "/cvmfs/${REPO}/config/tool_data_table_conf.xml" "$bundle_uri"
-        exec_on rsync -av "data_manager_tasks/${build_id}/${dm_repo_id}" "${OVERLAYFS_MOUNT}/record/${build_id}"
-    done <data_manager_tasks/ci-import-builds.txt
-    # FIXME: this doesn't belong here
+        exec_on rsync -av "import_tasks/${build_id}/${dm_repo_id}" "${OVERLAYFS_MOUNT}/record/${build_id}"
+    done
     deactivate
 }
 
@@ -571,6 +594,7 @@ function show_paths() {
 
 function check_for_repo_changes() {
     local lower=
+    local changes=false
     log "Checking for changes to repo"
     show_paths
     # NOTE: this assumes local mode
@@ -578,8 +602,11 @@ function check_for_repo_changes() {
         [ -f "$config" ] || continue
         lower="${OVERLAYFS_LOWER}/config/${config##*/}"
         [ -f "$lower" ] || lower=/dev/null
-        diff -q "$lower" "$config" || { diff -u "$lower" "$config" || true; }
+        diff -q "$lower" "$config" || { changes=true; diff -u "$lower" "$config" || true; }
     done
+    if ! $changes; then
+        log_exit_error "Terminating build: expected changes to ${OVERLAYFS_UPPER}/config/* not found!"
+    fi
 }
 
 
@@ -608,12 +635,18 @@ function copy_upper_to_stratum0() {
 function do_install_local() {
     mount_overlay
     # TODO: we could probably replace the import container with whatever cvmfsexec does to fake a mount
-    run_import_container
-    import_tool_data_bundles
-    check_for_repo_changes
-    stop_import_container
-    clean_preconfigured_container
-    post_install
+    generate_import_tasks && {
+        prep_for_galaxy_run
+        run_import_container
+        import_tool_data_bundles
+        check_for_repo_changes
+        stop_import_container
+        clean_preconfigured_container
+        post_install
+    } || {
+        log "Nothing to import"
+        PUBLISH=false
+    }
     if $PUBLISH; then
         start_ssh_control
         begin_transaction 600
@@ -630,12 +663,15 @@ function main() {
     load_repo_configs
     detect_changes
     set_repo_vars
-    prep_for_galaxy_run
-    run_build_galaxy
     setup_ephemeris
-    wait_for_build_galaxy
-    #install_data_managers
-    run_data_managers
+    generate_data_manager_tasks && {
+        run_build_galaxy
+        wait_for_build_galaxy
+        #install_data_managers
+        run_data_managers
+    } || {
+        log "Nothing to build, will check for unimported data"
+    }
     if $USE_LOCAL_OVERLAYFS; then
         do_install_local
     else
