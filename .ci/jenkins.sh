@@ -256,7 +256,7 @@ function setup_remote_ephemeris() {
     exec_on "${EPHEMERIS_BIN}/pip" install --upgrade pip wheel
     # urllib3 v2.0 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'OpenSSL 1.0.2k-fips  26 Jan 2017'. See: https://github.com/urllib3/urllib3/issues/2168
     exec_on "${EPHEMERIS_BIN}/pip" install --index-url https://wheels.galaxyproject.org/simple/ \
-        --extra-index-url https://pypi.org/simple/ "${BIOBLEND:=bioblend}" "${EPHEMERIS:=ephemeris}" "urllib3<2"
+        --extra-index-url https://pypi.org/simple/ "${BIOBLEND:=bioblend}" "${EPHEMERIS:=ephemeris}" "'urllib3<2'"
 }
 
 
@@ -544,7 +544,8 @@ function generate_import_tasks() {
     # returns false if there is no data manager to import
     log "Generating import tasks"
     copy_to genomes.yml
-    exec_on "${EPHEMERIS_BIN}/_idc-split-data-manager-genomes" --complete-check-cvmfs "--cvmfs-root=${OVERLAYFS_LOWER}" "--merged-genomes-path=${WORKDIR}/genomes.yml" "--split-genomes-path=${WORKDIR}/import_tasks"
+    copy_to data_managers.yml
+    exec_on "${EPHEMERIS_BIN}/_idc-split-data-manager-genomes" --complete-check-cvmfs "--cvmfs-root=${OVERLAYFS_LOWER}" "--merged-genomes-path=${WORKDIR}/genomes.yml" "--data-managers-path=${WORKDIR}/data_managers.yml" "--split-genomes-path=${WORKDIR}/import_tasks"
     exec_on bash -c "compgen -G '${WORKDIR}/import_tasks/*/data_manager_*/run_data_managers.yaml'" >/dev/null
 }
 
