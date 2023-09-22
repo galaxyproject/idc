@@ -254,8 +254,9 @@ function setup_remote_ephemeris() {
     log "Setting up remote Ephemeris"
     exec_on "$REMOTE_PYTHON" -m venv "${WORKDIR}/ephemeris"
     exec_on "${EPHEMERIS_BIN}/pip" install --upgrade pip wheel
+    # urllib3 v2.0 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'OpenSSL 1.0.2k-fips  26 Jan 2017'. See: https://github.com/urllib3/urllib3/issues/2168
     exec_on "${EPHEMERIS_BIN}/pip" install --index-url https://wheels.galaxyproject.org/simple/ \
-        --extra-index-url https://pypi.org/simple/ "${BIOBLEND:=bioblend}" "${EPHEMERIS:=ephemeris}"
+        --extra-index-url https://pypi.org/simple/ "${BIOBLEND:=bioblend}" "${EPHEMERIS:=ephemeris}" "urllib3<2"
 }
 
 
