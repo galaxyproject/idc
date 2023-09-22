@@ -147,15 +147,6 @@ function copy_to() {
 }
 
 
-function rsync_to() {
-    if $USE_LOCAL_OVERLAYFS && ! $SSH_MASTER_UP; then
-        log_exec rsync "$@"
-    else
-        log_exec rsync -e "ssh -o 'ControlPath=$SSH_MASTER_SOCKET'" "$@"
-    fi
-}
-
-
 function check_bot_command() {
     log 'Checking for Github PR Bot commands'
     log_debug "Value of \$ghprbCommentBody is: ${ghprbCommentBody:-UNSET}"
@@ -248,13 +239,22 @@ function setup_ansible() {
 
 function setup_ephemeris() {
     # Sets global $EPHEMERIS_BIN
-    local venv="${1:-.}/ephemeris"
-    local python="${2:-python3}"
-    EPHEMERIS_BIN="${venv}/bin"
+    EPHEMERIS_BIN="./ephemeris/bin"
     log "Setting up Ephemeris"
-    exec_on "$python" -m venv "$venv"
-    exec_on "${venv}/bin/pip" install --upgrade pip wheel
-    exec_on "${venv}/bin/pip" install --index-url https://wheels.galaxyproject.org/simple/ \
+    log_exec python3 -m venv ephemeris
+    log_exec "${EPHEMERIS_BIN}/pip" install --upgrade pip wheel
+    log_exec "${EPHEMERIS_BIN}/pip" install --index-url https://wheels.galaxyproject.org/simple/ \
+        --extra-index-url https://pypi.org/simple/ "${BIOBLEND:=bioblend}" "${EPHEMERIS:=ephemeris}"
+}
+
+
+function setup_remote_ephemeris() {
+    # Sets global $EPHEMERIS_BIN
+    EPHEMERIS_BIN="${WORKDIR}/ephemeris/bin"
+    log "Setting up remote Ephemeris"
+    exec_on "$REMOTE_PYTHON" -m venv "${WORKDIR}/ephemeris"
+    exec_on "${EPHEMERIS_BIN}/pip" install --upgrade pip wheel
+    exec_on "${EPHEMERIS_BIN}/pip" install --index-url https://wheels.galaxyproject.org/simple/ \
         --extra-index-url https://pypi.org/simple/ "${BIOBLEND:=bioblend}" "${EPHEMERIS:=ephemeris}"
 }
 
@@ -322,8 +322,7 @@ function start_ssh_control() {
     log "Starting SSH control connection to Stratum 0"
     SSH_MASTER_SOCKET="${SSH_MASTER_SOCKET_DIR}/ssh-tunnel-${REPO_USER}-${REPO_STRATUM0}.sock"
     log_exec mkdir -p "$SSH_MASTER_SOCKET_DIR"
-    $USE_LOCAL_OVERLAYFS || port_forward_flag="-L 127.0.0.1:${LOCAL_PORT}:127.0.0.1:${REMOTE_PORT}"
-    log_exec ssh -S "$SSH_MASTER_SOCKET" -M ${port_forward_flag:-} -Nfn -l "$REPO_USER" "$REPO_STRATUM0"
+    log_exec ssh -S "$SSH_MASTER_SOCKET" -Nfn -l "$REPO_USER" "$REPO_STRATUM0"
     USER_UID=$(exec_on id -u)
     USER_GID=$(exec_on id -g)
     SSH_MASTER_UP=true
@@ -543,8 +542,9 @@ function clean_preconfigured_container() {
 function generate_import_tasks() {
     # returns false if there is no data manager to import
     log "Generating import tasks"
-    log_exec "${EPHEMERIS_BIN}/_idc-split-data-manager-genomes" --complete-check-cvmfs "--cvmfs-root=${OVERLAYFS_LOWER}" --split-genomes-path=import_tasks
-    compgen -G "import_tasks/*/data_manager_*/run_data_managers.yaml" >/dev/null
+    copy_to genomes.yml
+    exec_on "${EPHEMERIS_BIN}/_idc-split-data-manager-genomes" --complete-check-cvmfs "--cvmfs-root=${OVERLAYFS_LOWER}" "--merged-genomes-path=${WORKDIR}/genomes.yml" "--split-genomes-path=${WORKDIR}/import_tasks"
+    exec_on bash -c "compgen -G '${WORKDIR}/import_tasks/*/data_manager_*/run_data_managers.yaml'" >/dev/null
 }
 
 
@@ -580,12 +580,13 @@ function stop_import_container() {
 
 function import_tool_data_bundles() {
     local dm_config j build_id dm_repo_id bundle_uri record_file
-    . "${EPHEMERIS_BIN}/activate"
-    for dm_config in import_tasks/*/data_manager_*/run_data_managers.yaml; do
+    copy_to .ci/get-bundle-url.py
+    # FIXME: this only works for remote
+    for dm_config in $(exec_on bash -c "compgen -G '${WORKDIR}/import_tasks/*/data_manager_*/run_data_managers.yaml'"); do
         IFS='/' read j build_id dm_repo_id j <<< "$dm_config"
-        record_file="import_tasks/${build_id}/${dm_repo_id}/bundle.txt"
+        record_file="${WORKDIR}/import_tasks/${build_id}/${dm_repo_id}/bundle.txt"
         log "Importing bundle for Data Manager '$dm_repo_id' of '$build_id'"
-        local bundle_uri="$(python3 ./.ci/get-bundle-url.py --galaxy-url "$PUBLISH_GALAXY_URL" --history-name "idc-${build_id}-${dm_repo_id}" --record-file="$record_file")"
+        local bundle_uri="$(exec_on ${EPHEMERIS_BIN}/python3 ${WORKDIR}/.ci/get-bundle-url.py --galaxy-url "$PUBLISH_GALAXY_URL" --history-name "idc-${build_id}-${dm_repo_id}" --record-file="$record_file")"
         [ -n "$bundle_uri" ] || log_exit_error "Could not determine bundle URI!"
         log_debug "bundle URI is: $bundle_uri"
         if $USE_DOCKER; then
@@ -595,10 +596,9 @@ function import_tool_data_bundles() {
         else
             exec_on mkdir -p "/cvmfs/${REPO}/data" "/cvmfs/${REPO}/record/${build_id}"
             exec_on "${GALAXY_MAINTENANCE_SCRIPTS_BIN}/galaxy-import-data-bundle" --tool-data-path "/cvmfs/${REPO}/data" --data-table-config-path "/cvmfs/${REPO}/config/tool_data_table_conf.xml" "$bundle_uri"
-            rsync_to -av "import_tasks/${build_id}/${dm_repo_id}" "${OVERLAYFS_MOUNT}/record/${build_id}"
+            exec_on rsync -av "${WORKDIR}/import_tasks/${build_id}/${dm_repo_id}" "${OVERLAYFS_MOUNT}/record/${build_id}"
         fi
     done
-    deactivate
 }
 
 
@@ -689,6 +689,8 @@ function do_import_remote() {
     start_ssh_control
     prep_for_galaxy_run
     #setup_ephemeris "$WORKDIR" "$REMOTE_PYTHON"
+    setup_remote_ephemeris
+    # from this point forward $EPHEMERIS_BIN refers to remote
     generate_import_tasks && {
         setup_galaxy_maintenance_scripts "$WORKDIR" "$REMOTE_PYTHON"
         begin_transaction
