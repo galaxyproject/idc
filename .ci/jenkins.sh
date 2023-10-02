@@ -589,7 +589,8 @@ function import_tool_data_bundles() {
         IFS='/' read j build_id dm_repo_id j <<< "$dm_config"
         record_file="${WORKDIR}/import_tasks/${build_id}/${dm_repo_id}/bundle.txt"
         log "Importing bundle for Data Manager '$dm_repo_id' of '$build_id'"
-        local bundle_uri="$(exec_on ${EPHEMERIS_BIN}/python3 ${WORKDIR}/get-bundle-url.py --galaxy-url "$PUBLISH_GALAXY_URL" --history-name "idc-${build_id}-${dm_repo_id}" --record-file="$record_file")"
+        # FIXME: DO NOT MERGE: exposes API key
+        local bundle_uri="$(exec_on ${EPHEMERIS_BIN}/python3 ${WORKDIR}/get-bundle-url.py --galaxy-url "$PUBLISH_GALAXY_URL" --history-name "idc-${build_id}-${dm_repo_id}" --record-file="$record_file" --galaxy-api-key="$EPHEMERIS_API_KEY")"
         [ -n "$bundle_uri" ] || log_exit_error "Could not determine bundle URI!"
         log_debug "bundle URI is: $bundle_uri"
         if $USE_DOCKER; then
