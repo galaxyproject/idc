@@ -268,7 +268,8 @@ function setup_galaxy_maintenance_scripts() {
     log "Setting up Galaxy Maintenance Scripts"
     exec_on "$python" -m venv "$venv"
     exec_on "${venv}/bin/pip" install --upgrade pip wheel
-    exec_on "${venv}/bin/pip" install "$GALAXY_MAINTENANCE_SCRIPTS"
+    exec_on "${venv}/bin/pip" install --index-url https://wheels.galaxyproject.org/simple/ \
+        --extra-index-url https://pypi.org/simple/ "$GALAXY_MAINTENANCE_SCRIPTS"
 }
 
 
