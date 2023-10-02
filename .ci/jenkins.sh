@@ -586,7 +586,7 @@ function import_tool_data_bundles() {
     copy_to .ci/get-bundle-url.py
     # FIXME: this only works for remote
     for dm_config in $(exec_on "compgen -G '${WORKDIR}/import_tasks/*/data_manager_*/run_data_managers.yaml'"); do
-        IFS='/' read j build_id dm_repo_id j <<< "$dm_config"
+        IFS='/' read build_id dm_repo_id j <<< "${dm_config##${WORKDIR}/import_tasks/}"
         record_file="${WORKDIR}/import_tasks/${build_id}/${dm_repo_id}/bundle.txt"
         log "Importing bundle for Data Manager '$dm_repo_id' of '$build_id'"
         # FIXME: DO NOT MERGE: exposes API key
