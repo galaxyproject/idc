@@ -547,7 +547,7 @@ function generate_import_tasks() {
     copy_to genomes.yml
     copy_to data_managers.yml
     exec_on "${EPHEMERIS_BIN}/_idc-split-data-manager-genomes" --complete-check-cvmfs "--cvmfs-root=${OVERLAYFS_LOWER}" "--merged-genomes-path=${WORKDIR}/genomes.yml" "--data-managers-path=${WORKDIR}/data_managers.yml" "--split-genomes-path=${WORKDIR}/import_tasks"
-    exec_on bash -c "compgen -G '${WORKDIR}/import_tasks/*/data_manager_*/run_data_managers.yaml'" >/dev/null
+    exec_on "compgen -G '${WORKDIR}/import_tasks/*/data_manager_*/run_data_managers.yaml'" >/dev/null
 }
 
 
@@ -585,7 +585,7 @@ function import_tool_data_bundles() {
     local dm_config j build_id dm_repo_id bundle_uri record_file
     copy_to .ci/get-bundle-url.py
     # FIXME: this only works for remote
-    for dm_config in $(exec_on bash -c "compgen -G '${WORKDIR}/import_tasks/*/data_manager_*/run_data_managers.yaml'"); do
+    for dm_config in $(exec_on "compgen -G '${WORKDIR}/import_tasks/*/data_manager_*/run_data_managers.yaml'"); do
         IFS='/' read j build_id dm_repo_id j <<< "$dm_config"
         record_file="${WORKDIR}/import_tasks/${build_id}/${dm_repo_id}/bundle.txt"
         log "Importing bundle for Data Manager '$dm_repo_id' of '$build_id'"
@@ -628,7 +628,7 @@ function check_for_repo_changes() {
     local changes=false
     log "Checking for changes to repo"
     show_paths
-    for config in $(exec_on bash -c "compgen -G '${OVERLAYFS_UPPER}/config/*'"); do
+    for config in $(exec_on "compgen -G '${OVERLAYFS_UPPER}/config/*'"); do
         [ -f "$config" ] || continue
         lower="${OVERLAYFS_LOWER}/config/${config##*/}"
         [ -f "$lower" ] || lower=/dev/null
