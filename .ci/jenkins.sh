@@ -269,7 +269,7 @@ function setup_galaxy_maintenance_scripts() {
     exec_on "$python" -m venv "$venv"
     exec_on "${venv}/bin/pip" install --upgrade pip wheel
     exec_on "${venv}/bin/pip" install --index-url https://wheels.galaxyproject.org/simple/ \
-        --extra-index-url https://pypi.org/simple/ "$GALAXY_MAINTENANCE_SCRIPTS"
+        --extra-index-url https://pypi.org/simple/ "$GALAXY_MAINTENANCE_SCRIPTS" "'urllib3<2'"
 }
 
 
