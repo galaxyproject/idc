@@ -561,7 +561,7 @@ function generate_import_tasks() {
     log "Generating import tasks"
     copy_to genomes.yml
     copy_to data_managers.yml
-    exec_on "${EPHEMERIS_BIN}/_idc-split-data-manager-genomes" --complete-check-cvmfs "--cvmfs-root=${OVERLAYFS_LOWER}" "--merged-genomes-path=${REMOTE_WORKDIR}/genomes.yml" "--data-managers-path=${REMOTE_WORKDIR}/data_managers.yml" "--split-genomes-path=${WORKDIR}/import_tasks"
+    exec_on "${EPHEMERIS_BIN}/_idc-split-data-manager-genomes" --complete-check-cvmfs "--cvmfs-root=${OVERLAYFS_LOWER}" "--merged-genomes-path=${REMOTE_WORKDIR}/genomes.yml" "--data-managers-path=${REMOTE_WORKDIR}/data_managers.yml" "--split-genomes-path=${REMOTE_WORKDIR}/import_tasks"
     exec_on "compgen -G '${REMOTE_WORKDIR}/import_tasks/*/data_manager_*/run_data_managers.yaml'" >/dev/null
 }
 
