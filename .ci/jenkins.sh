@@ -36,6 +36,7 @@ USE_LOCAL_OVERLAYFS=false
 USE_DOCKER="$USE_LOCAL_OVERLAYFS"
 
 REMOTE_PYTHON=/opt/rh/rh-python38/root/usr/bin/python3
+REMOTE_WORKDIR_PARENT=/srv/idc
 
 # $EPHEMERIS_API_KEY and $IDC_VAULT_PASS should be set in the environment
 
@@ -53,6 +54,7 @@ REPO_USER=
 REPO_STRATUM0=
 SSH_MASTER_SOCKET=
 WORKDIR=
+REMOTE_WORKDIR=
 USER_UID="$(id -u)"
 USER_GID="$(id -g)"
 OVERLAYFS_UPPER=
@@ -81,6 +83,8 @@ function trap_handler() {
     $CVMFS_TRANSACTION_UP && abort_transaction
     $BUILD_GALAXY_UP && stop_build_galaxy
     clean_workspace
+    [ -n "$WORKSPACE" ] && log_exec rm -rf "$WORKSPACE"
+    $SSH_MASTER_UP && [ -n "$REMOTE_WORKSPACE" ] && exec_on rm -rf "$REMOTE_WORKSPACE"
     $SSH_MASTER_UP && stop_ssh_control
     return 0
 }
@@ -142,7 +146,7 @@ function copy_to() {
     if $USE_LOCAL_OVERLAYFS && ! $SSH_MASTER_UP; then
         log_exec cp "$file" "${WORKDIR}/${file##*}"
     else
-        log_exec scp -o "ControlPath=$SSH_MASTER_SOCKET" "$file" "${REPO_USER}@${REPO_STRATUM0}:${WORKDIR}/${file##*/}"
+        log_exec scp -o "ControlPath=$SSH_MASTER_SOCKET" "$file" "${REPO_USER}@${REPO_STRATUM0}:${REMOTE_WORKDIR}/${file##*/}"
     fi
 }
 
@@ -250,9 +254,9 @@ function setup_ephemeris() {
 
 function setup_remote_ephemeris() {
     # Sets global $EPHEMERIS_BIN
-    EPHEMERIS_BIN="${WORKDIR}/ephemeris/bin"
+    EPHEMERIS_BIN="${REMOTE_WORKDIR}/ephemeris/bin"
     log "Setting up remote Ephemeris"
-    exec_on "$REMOTE_PYTHON" -m venv "${WORKDIR}/ephemeris"
+    exec_on "$REMOTE_PYTHON" -m venv "${REMOTE_WORKDIR}/ephemeris"
     exec_on "${EPHEMERIS_BIN}/pip" install --upgrade pip wheel
     # urllib3 v2.0 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'OpenSSL 1.0.2k-fips  26 Jan 2017'. See: https://github.com/urllib3/urllib3/issues/2168
     exec_on "${EPHEMERIS_BIN}/pip" install --index-url https://wheels.galaxyproject.org/simple/ \
@@ -378,10 +382,21 @@ function publish_transaction() {
 }
 
 
-function prep_for_galaxy_run() {
-    # Sets globals $WORKDIR
-    log "Copying configs to Stratum 0"
-    WORKDIR=$(exec_on mktemp -d -t idc.work.XXXXXX)
+function create_workdir() {
+    # Sets global $WORKDIR
+    log "Creating local workdir"
+    WORKDIR=$(log_exec mktemp -d -t idc.work.XXXXXX)
+}
+
+
+function create_remote_workdir() {
+    # Sets global $REMOTE_WORKDIR
+    log "Creating remote workdir"
+    REMOTE_WORKDIR=$(exec_on mktemp -d -p "$REMOTE_WORKDIR_PARENT" -t idc.work.XXXXXX)
+}
+
+
+function prep_docker_image() {
     if $USE_DOCKER && $IMPORT_DOCKER_IMAGE_PULL; then
         log "Fetching latest Galaxy image"
         exec_on docker pull "$IMPORT_DOCKER_IMAGE"
@@ -546,8 +561,8 @@ function generate_import_tasks() {
     log "Generating import tasks"
     copy_to genomes.yml
     copy_to data_managers.yml
-    exec_on "${EPHEMERIS_BIN}/_idc-split-data-manager-genomes" --complete-check-cvmfs "--cvmfs-root=${OVERLAYFS_LOWER}" "--merged-genomes-path=${WORKDIR}/genomes.yml" "--data-managers-path=${WORKDIR}/data_managers.yml" "--split-genomes-path=${WORKDIR}/import_tasks"
-    exec_on "compgen -G '${WORKDIR}/import_tasks/*/data_manager_*/run_data_managers.yaml'" >/dev/null
+    exec_on "${EPHEMERIS_BIN}/_idc-split-data-manager-genomes" --complete-check-cvmfs "--cvmfs-root=${OVERLAYFS_LOWER}" "--merged-genomes-path=${REMOTE_WORKDIR}/genomes.yml" "--data-managers-path=${REMOTE_WORKDIR}/data_managers.yml" "--split-genomes-path=${WORKDIR}/import_tasks"
+    exec_on "compgen -G '${REMOTE_WORKDIR}/import_tasks/*/data_manager_*/run_data_managers.yaml'" >/dev/null
 }
 
 
@@ -561,7 +576,7 @@ function run_import_container() {
 
     # update tool_data_table_conf.xml from repo
     copy_to config/tool_data_table_conf.xml
-    exec_on diff -q "${WORKDIR}/tool_data_table_conf.xml" "/cvmfs/${REPO}/config/tool_data_table_conf.xml" || { exec_on mkdir -p "${OVERLAYFS_MOUNT}/config" && exec_on cp "${WORKDIR}/tool_data_table_conf.xml" "${OVERLAYFS_MOUNT}/config/tool_data_table_conf.xml"; }
+    exec_on diff -q "${REMOTE_WORKDIR}/tool_data_table_conf.xml" "/cvmfs/${REPO}/config/tool_data_table_conf.xml" || { exec_on mkdir -p "${OVERLAYFS_MOUNT}/config" && exec_on cp "${REMOTE_WORKDIR}/tool_data_table_conf.xml" "${OVERLAYFS_MOUNT}/config/tool_data_table_conf.xml"; }
 
     log "Starting importer container"
     exec_on docker run -d --user "${USER_UID}:${USER_GID}" --name="${CONTAINER_NAME}" \
@@ -585,12 +600,12 @@ function import_tool_data_bundles() {
     local dm_config j build_id dm_repo_id bundle_uri record_file
     copy_to .ci/get-bundle-url.py
     # FIXME: this only works for remote
-    for dm_config in $(exec_on "compgen -G '${WORKDIR}/import_tasks/*/data_manager_*/run_data_managers.yaml'"); do
-        IFS='/' read build_id dm_repo_id j <<< "${dm_config##${WORKDIR}/import_tasks/}"
-        record_file="${WORKDIR}/import_tasks/${build_id}/${dm_repo_id}/bundle.txt"
+    for dm_config in $(exec_on "compgen -G '${REMOTE_WORKDIR}/import_tasks/*/data_manager_*/run_data_managers.yaml'"); do
+        IFS='/' read build_id dm_repo_id j <<< "${dm_config##${REMOTE_WORKDIR}/import_tasks/}"
+        record_file="${REMOTE_WORKDIR}/import_tasks/${build_id}/${dm_repo_id}/bundle.txt"
         log "Importing bundle for Data Manager '$dm_repo_id' of '$build_id'"
         # FIXME: DO NOT MERGE: exposes API key
-        local bundle_uri="$(exec_on ${EPHEMERIS_BIN}/python3 ${WORKDIR}/get-bundle-url.py --galaxy-url "$PUBLISH_GALAXY_URL" --history-name "idc-${build_id}-${dm_repo_id}" --record-file="$record_file" --galaxy-api-key="$EPHEMERIS_API_KEY")"
+        local bundle_uri="$(exec_on ${EPHEMERIS_BIN}/python3 ${REMOTE_WORKDIR}/get-bundle-url.py --galaxy-url "$PUBLISH_GALAXY_URL" --history-name "idc-${build_id}-${dm_repo_id}" --record-file="$record_file" --galaxy-api-key="$EPHEMERIS_API_KEY")"
         [ -n "$bundle_uri" ] || log_exit_error "Could not determine bundle URI!"
         log_debug "bundle URI is: $bundle_uri"
         if $USE_DOCKER; then
@@ -600,7 +615,7 @@ function import_tool_data_bundles() {
         else
             exec_on mkdir -p "/cvmfs/${REPO}/data" "/cvmfs/${REPO}/record/${build_id}"
             exec_on "${GALAXY_MAINTENANCE_SCRIPTS_BIN}/galaxy-import-data-bundle" --tool-data-path "/cvmfs/${REPO}/data" --data-table-config-path "/cvmfs/${REPO}/config/tool_data_table_conf.xml" "$bundle_uri"
-            exec_on rsync -av "${WORKDIR}/import_tasks/${build_id}/${dm_repo_id}" "${OVERLAYFS_MOUNT}/record/${build_id}"
+            exec_on rsync -av "${REMOTE_WORKDIR}/import_tasks/${build_id}/${dm_repo_id}" "${OVERLAYFS_MOUNT}/record/${build_id}"
         fi
     done
 }
@@ -650,7 +665,6 @@ function post_install() {
     log "Running post-installation tasks"
     exec_on "find '$OVERLAYFS_UPPER' -perm -u+r -not -perm -o+r -not -type l -print0 | xargs -0 --no-run-if-empty chmod go+r"
     exec_on "find '$OVERLAYFS_UPPER' -perm -u+rx -not -perm -o+rx -not -type l -print0 | xargs -0 --no-run-if-empty chmod go+rx"
-    [ -n "${WORKDIR:-}" ] && exec_on rm -rf "$WORKDIR"
 }
 
 
@@ -667,6 +681,7 @@ function do_import_local() {
     mount_overlay
     # TODO: we could probably replace the import container with whatever cvmfsexec does to fake a mount
     generate_import_tasks && {
+        create_workdir
         prep_for_galaxy_run
         run_import_container
         import_tool_data_bundles
@@ -691,8 +706,7 @@ function do_import_local() {
 
 function do_import_remote() {
     start_ssh_control
-    prep_for_galaxy_run
-    #setup_ephemeris "$WORKDIR" "$REMOTE_PYTHON"
+    create_remote_workdir
     setup_remote_ephemeris
     # from this point forward $EPHEMERIS_BIN refers to remote
     generate_import_tasks && {
