@@ -1,8 +1,10 @@
-# IDC - Intergalactic (reference) Data Commission
+# IDC - Simon's Data Club
 
-What the [IUC](https://github.com/galaxyproject/tools-iuc) (Intergalactic Utilities Commission) is for Galaxy tools is the IDC for (reference) Data.
+In memory of our friend and reference data champion, [Simon Gladman](https://www.biocommons.org.au/news/simon-gladman).
 
-**[WIP]**
+Formerly the Intergalactic (reference) Data Commission
+
+The IDC is for Galaxy reference data what the [IUC](https://github.com/galaxyproject/tools-iuc) for Galaxy tools: A project by the Galaxy Team and Community to produce, host, and distribute reference data for use in Galaxy servers. Community contributions and Pull Request reviews are encouraged! Details on how to contribute can be found below.
 
 ### Summary
 
