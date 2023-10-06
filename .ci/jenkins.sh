@@ -243,7 +243,7 @@ function setup_ansible() {
 
 function setup_ephemeris() {
     # Sets global $EPHEMERIS_BIN
-    EPHEMERIS_BIN="./ephemeris/bin"
+    EPHEMERIS_BIN="$(pwd)/ephemeris/bin"
     log "Setting up Ephemeris"
     log_exec python3 -m venv ephemeris
     log_exec "${EPHEMERIS_BIN}/pip" install --upgrade pip wheel
