@@ -84,7 +84,7 @@ function trap_handler() {
     $BUILD_GALAXY_UP && stop_build_galaxy
     clean_workspace
     [ -n "$WORKSPACE" ] && log_exec rm -rf "$WORKSPACE"
-    $SSH_MASTER_UP && [ -n "$REMOTE_WORKSPACE" ] && exec_on rm -rf "$REMOTE_WORKSPACE"
+    $SSH_MASTER_UP && [ -n "$REMOTE_WORKDIR" ] && exec_on rm -rf "$REMOTE_WORKDIR"
     $SSH_MASTER_UP && stop_ssh_control
     return 0
 }
