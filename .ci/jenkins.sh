@@ -30,7 +30,13 @@ GALAXY_MAINTENANCE_SCRIPTS="git+https://github.com/mvdbeek/galaxy-maintenance-sc
 # Set to true to perform everything on the Jenkins worker and copy results to the Stratum 0 for publish, instead of
 # performing everything directly on the Stratum 0. Requires preinstallation/preconfiguration of CVMFS and for
 # fuse-overlayfs to be installed on Jenkins workers.
-USE_LOCAL_OVERLAYFS=true
+USE_LOCAL_OVERLAYFS=false
+
+# Set to true to run the importer in a docker container
+USE_DOCKER="$USE_LOCAL_OVERLAYFS"
+
+REMOTE_PYTHON=/opt/rh/rh-python38/root/usr/bin/python3
+REMOTE_WORKDIR_PARENT=/srv/idc
 
 # $EPHEMERIS_API_KEY and $IDC_VAULT_PASS should be set in the environment
 
@@ -48,12 +54,15 @@ REPO_USER=
 REPO_STRATUM0=
 SSH_MASTER_SOCKET=
 WORKDIR=
+REMOTE_WORKDIR=
 USER_UID="$(id -u)"
 USER_GID="$(id -g)"
 OVERLAYFS_UPPER=
 OVERLAYFS_LOWER=
 OVERLAYFS_WORK=
 OVERLAYFS_MOUNT=
+EPHEMERIS_BIN=
+GALAXY_MAINTENANCE_SCRIPTS_BIN=
 
 SSH_MASTER_UP=false
 CVMFS_TRANSACTION_UP=false
@@ -74,6 +83,8 @@ function trap_handler() {
     $CVMFS_TRANSACTION_UP && abort_transaction
     $BUILD_GALAXY_UP && stop_build_galaxy
     clean_workspace
+    [ -n "$WORKSPACE" ] && log_exec rm -rf "$WORKSPACE"
+    $SSH_MASTER_UP && [ -n "$REMOTE_WORKDIR" ] && exec_on rm -rf "$REMOTE_WORKDIR"
     $SSH_MASTER_UP && stop_ssh_control
     return 0
 }
@@ -135,7 +146,7 @@ function copy_to() {
     if $USE_LOCAL_OVERLAYFS && ! $SSH_MASTER_UP; then
         log_exec cp "$file" "${WORKDIR}/${file##*}"
     else
-        log_exec scp -o "ControlPath=$SSH_MASTER_SOCKET" "$file" "${REPO_USER}@${REPO_STRATUM0}:${WORKDIR}/${file##*/}"
+        log_exec scp -o "ControlPath=$SSH_MASTER_SOCKET" "$file" "${REPO_USER}@${REPO_STRATUM0}:${REMOTE_WORKDIR}/${file##*/}"
     fi
 }
 
@@ -144,13 +155,16 @@ function check_bot_command() {
     log 'Checking for Github PR Bot commands'
     log_debug "Value of \$ghprbCommentBody is: ${ghprbCommentBody:-UNSET}"
     case "${ghprbCommentBody:-UNSET}" in
-        # TODO: support test builds
-        #"@galaxybot deploy"*)
-        *)
+        "@galaxybot deploy"*)
             PUBLISH=true
             ;;
     esac
-    $PUBLISH && log_debug "Changes will be published" || log_debug "Test installation, changes will be discarded"
+    if $PUBLISH; then
+        log "Publish requested; running build and import"
+    else
+        log "Publish not requested, exiting"
+        exit 0
+    fi
 }
 
 
@@ -161,38 +175,9 @@ function load_repo_configs() {
 
 
 function detect_changes() {
-#    log 'Detecting changes to genome files...'
-#    log_exec git remote set-branches --add origin "$MAIN_BRANCH"
-#    log_exec git fetch origin
-#    COMMIT_RANGE="origin/${MAIN_BRANCH}..."
-#
-#    log 'Change detection limited to directories:'
-#    for d in "${!REPOS[@]}"; do
-#        echo "${d}/"
-#    done
-#
-#    REPO= ;
-#    while read op path; do
-#        if [ -n "$REPO" -a "$REPO" != "${path%%/*}" ]; then
-#            log_exit_error "Changes to data in multiple repos found: ${REPO} != ${path%%/*}"
-#        elif [ -z "$REPO" ]; then
-#            REPO="${path%%/*}"
-#        fi
-#        case "$op" in
-#            A|M)
-#                echo "$op $path"
-#                ;;
-#        esac
-#    done < <(git diff --color=never --name-status "$COMMIT_RANGE" -- $(for d in "${!REPOS[@]}"; do echo "${d}/"; done))
-
-    # FIXME:
     REPO=idc
 
-    log 'Change detection results:'
-    declare -p REPO
-
     log "Getting repo for: ${REPO}"
-    # set -u will force exit here if $TOOLSET is invalid
     REPO="${REPOS[$REPO]}"
     declare -p REPO
 }
@@ -231,13 +216,38 @@ function setup_ansible() {
 
 
 function setup_ephemeris() {
+    # Sets global $EPHEMERIS_BIN
+    EPHEMERIS_BIN="$(pwd)/ephemeris/bin"
     log "Setting up Ephemeris"
     log_exec python3 -m venv ephemeris
-    . ./ephemeris/bin/activate
-    log_exec pip install --upgrade pip wheel
-    log_exec pip install --index-url https://wheels.galaxyproject.org/simple/ \
+    log_exec "${EPHEMERIS_BIN}/pip" install --upgrade pip wheel
+    log_exec "${EPHEMERIS_BIN}/pip" install --index-url https://wheels.galaxyproject.org/simple/ \
         --extra-index-url https://pypi.org/simple/ "${BIOBLEND:=bioblend}" "${EPHEMERIS:=ephemeris}"
-    deactivate
+}
+
+
+function setup_remote_ephemeris() {
+    # Sets global $EPHEMERIS_BIN
+    EPHEMERIS_BIN="${REMOTE_WORKDIR}/ephemeris/bin"
+    log "Setting up remote Ephemeris"
+    exec_on "$REMOTE_PYTHON" -m venv "${REMOTE_WORKDIR}/ephemeris"
+    exec_on "${EPHEMERIS_BIN}/pip" install --upgrade pip wheel
+    # urllib3 v2.0 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'OpenSSL 1.0.2k-fips  26 Jan 2017'. See: https://github.com/urllib3/urllib3/issues/2168
+    exec_on "${EPHEMERIS_BIN}/pip" install --index-url https://wheels.galaxyproject.org/simple/ \
+        --extra-index-url https://pypi.org/simple/ "${BIOBLEND:=bioblend}" "${EPHEMERIS:=ephemeris}" "'urllib3<2'"
+}
+
+
+function setup_galaxy_maintenance_scripts() {
+    # Sets global $GALAXY_MAINTENANCE_SCRIPTS
+    local venv="${1:-.}/galaxy-maintenance-scripts"
+    local python="${2:-python3}"
+    GALAXY_MAINTENANCE_SCRIPTS_BIN="${venv}/bin"
+    log "Setting up Galaxy Maintenance Scripts"
+    exec_on "$python" -m venv "$venv"
+    exec_on "${venv}/bin/pip" install --upgrade pip wheel
+    exec_on "${venv}/bin/pip" install --index-url https://wheels.galaxyproject.org/simple/ \
+        --extra-index-url https://pypi.org/simple/ "$GALAXY_MAINTENANCE_SCRIPTS" "'urllib3<2'"
 }
 
 
@@ -292,8 +302,7 @@ function start_ssh_control() {
     log "Starting SSH control connection to Stratum 0"
     SSH_MASTER_SOCKET="${SSH_MASTER_SOCKET_DIR}/ssh-tunnel-${REPO_USER}-${REPO_STRATUM0}.sock"
     log_exec mkdir -p "$SSH_MASTER_SOCKET_DIR"
-    $USE_LOCAL_OVERLAYFS || port_forward_flag="-L 127.0.0.1:${LOCAL_PORT}:127.0.0.1:${REMOTE_PORT}"
-    log_exec ssh -S "$SSH_MASTER_SOCKET" -M ${port_forward_flag:-} -Nfn -l "$REPO_USER" "$REPO_STRATUM0"
+    log_exec ssh -S "$SSH_MASTER_SOCKET" -Nfn -l "$REPO_USER" "$REPO_STRATUM0"
     USER_UID=$(exec_on id -u)
     USER_GID=$(exec_on id -g)
     SSH_MASTER_UP=true
@@ -347,11 +356,22 @@ function publish_transaction() {
 }
 
 
-function prep_for_galaxy_run() {
-    # Sets globals $WORKDIR
-    log "Copying configs to Stratum 0"
-    WORKDIR=$(exec_on mktemp -d -t idc.work.XXXXXX)
-    if $IMPORT_DOCKER_IMAGE_PULL; then
+function create_workdir() {
+    # Sets global $WORKDIR
+    log "Creating local workdir"
+    WORKDIR=$(log_exec mktemp -d -t idc.work.XXXXXX)
+}
+
+
+function create_remote_workdir() {
+    # Sets global $REMOTE_WORKDIR
+    log "Creating remote workdir"
+    REMOTE_WORKDIR=$(exec_on mktemp -d -p "$REMOTE_WORKDIR_PARENT" -t idc.work.XXXXXX)
+}
+
+
+function prep_docker_image() {
+    if $USE_DOCKER && $IMPORT_DOCKER_IMAGE_PULL; then
         log "Fetching latest Galaxy image"
         exec_on docker pull "$IMPORT_DOCKER_IMAGE"
     fi
@@ -394,15 +414,13 @@ function wait_for_cvmfs_sync() {
 
 function wait_for_build_galaxy() {
     log "Waiting for Galaxy"
-    . ./ephemeris/bin/activate
-    log_exec galaxy-wait -v -g "$BUILD_GALAXY_URL" --timeout 180 || {
+    log_exec "${EPHEMERIS_BIN}/galaxy-wait" -v -g "$BUILD_GALAXY_URL" --timeout 180 || {
         log_error "Timed out waiting for Galaxy"
         #exec_on journalctl -u galaxy-gunicorn
         #log_debug "response from ${IMPORT_GALAXY_URL}";
         curl -s "$BUILD_GALAXY_URL";
         log_exit_error "Terminating build due to previous errors"
     }
-    deactivate
 }
 
 
@@ -428,15 +446,12 @@ function install_data_managers() {
 function generate_data_manager_tasks() {
     # returns false if there are no data managers to run
     log "Generating Data Manager tasks"
-    . ./ephemeris/bin/activate
-    log_exec _idc-split-data-manager-genomes -g "$PUBLISH_GALAXY_URL" --tool-id-mode short
-    deactivate
+    log_exec "${EPHEMERIS_BIN}/_idc-split-data-manager-genomes" -g "$PUBLISH_GALAXY_URL" --tool-id-mode short
     compgen -G "data_manager_tasks/*/data_manager_*/run_data_managers.yaml" >/dev/null
 }
 
 
 function run_data_managers() {
-    . ./ephemeris/bin/activate
     # TODO: eventually these will specify their stage somehow
     compgen -G "data_manager_tasks/*/data_manager_fetch_genome_dbkeys_all_fasta/run_data_managers.yaml" >/dev/null && {
         run_stage0_data_managers
@@ -445,7 +460,6 @@ function run_data_managers() {
             run_stage1_data_managers
         }
     }
-    deactivate
 }
 
 
@@ -482,7 +496,7 @@ function run_data_manager() {
     local dm_repo_id="$2"
     local dm_config="$3"
     log "Running Data Manager '$dm_repo_id' for build '$build_id'"
-    log_exec run-data-managers --config "$dm_config" -g "$BUILD_GALAXY_URL" --data-manager-mode bundle --history-name "idc-${build_id}-${dm_repo_id}"
+    log_exec "${EPHEMERIS_BIN}/run-data-managers" --config "$dm_config" -g "$BUILD_GALAXY_URL" --data-manager-mode bundle --history-name "idc-${build_id}-${dm_repo_id}"
 }
 
 
@@ -519,10 +533,10 @@ function clean_preconfigured_container() {
 function generate_import_tasks() {
     # returns false if there is no data manager to import
     log "Generating import tasks"
-    . ./ephemeris/bin/activate
-    log_exec _idc-split-data-manager-genomes --complete-check-cvmfs "--cvmfs-root=${OVERLAYFS_LOWER}" --split-genomes-path=import_tasks
-    deactivate
-    compgen -G "import_tasks/*/data_manager_*/run_data_managers.yaml" >/dev/null
+    copy_to genomes.yml
+    copy_to data_managers.yml
+    exec_on "${EPHEMERIS_BIN}/_idc-split-data-manager-genomes" --complete-check-cvmfs "--cvmfs-root=${OVERLAYFS_LOWER}" "--merged-genomes-path=${REMOTE_WORKDIR}/genomes.yml" "--data-managers-path=${REMOTE_WORKDIR}/data_managers.yml" "--split-genomes-path=${REMOTE_WORKDIR}/import_tasks"
+    exec_on "compgen -G '${REMOTE_WORKDIR}/import_tasks/*/data_manager_*/run_data_managers.yaml'" >/dev/null
 }
 
 
@@ -536,7 +550,7 @@ function run_import_container() {
 
     # update tool_data_table_conf.xml from repo
     copy_to config/tool_data_table_conf.xml
-    exec_on diff -q "${WORKDIR}/tool_data_table_conf.xml" "/cvmfs/${REPO}/config/tool_data_table_conf.xml" || { exec_on mkdir -p "${OVERLAYFS_MOUNT}/config" && exec_on cp "${WORKDIR}/tool_data_table_conf.xml" "${OVERLAYFS_MOUNT}/config/tool_data_table_conf.xml"; }
+    exec_on diff -q "${REMOTE_WORKDIR}/tool_data_table_conf.xml" "/cvmfs/${REPO}/config/tool_data_table_conf.xml" || { exec_on mkdir -p "${OVERLAYFS_MOUNT}/config" && exec_on cp "${REMOTE_WORKDIR}/tool_data_table_conf.xml" "${OVERLAYFS_MOUNT}/config/tool_data_table_conf.xml"; }
 
     log "Starting importer container"
     exec_on docker run -d --user "${USER_UID}:${USER_GID}" --name="${CONTAINER_NAME}" \
@@ -558,19 +572,25 @@ function stop_import_container() {
 
 function import_tool_data_bundles() {
     local dm_config j build_id dm_repo_id bundle_uri record_file
-    . ./ephemeris/bin/activate
-    for dm_config in import_tasks/*/data_manager_*/run_data_managers.yaml; do
-        IFS='/' read j build_id dm_repo_id j <<< "$dm_config"
-        record_file="import_tasks/${build_id}/${dm_repo_id}/bundle.txt"
+    copy_to .ci/get-bundle-url.py
+    for dm_config in $(exec_on "compgen -G '${REMOTE_WORKDIR}/import_tasks/*/data_manager_*/run_data_managers.yaml'"); do
+        IFS='/' read build_id dm_repo_id j <<< "${dm_config##${REMOTE_WORKDIR}/import_tasks/}"
+        record_file="${REMOTE_WORKDIR}/import_tasks/${build_id}/${dm_repo_id}/bundle.txt"
         log "Importing bundle for Data Manager '$dm_repo_id' of '$build_id'"
-        local bundle_uri="$(python3 ./.ci/get-bundle-url.py --galaxy-url "$PUBLISH_GALAXY_URL" --history-name "idc-${build_id}-${dm_repo_id}" --record-file="$record_file")"
+        # API key is filtered from output by Jenkins
+        local bundle_uri="$(exec_on ${EPHEMERIS_BIN}/python3 ${REMOTE_WORKDIR}/get-bundle-url.py --galaxy-url "$PUBLISH_GALAXY_URL" --history-name "idc-${build_id}-${dm_repo_id}" --record-file="$record_file" --galaxy-api-key="$EPHEMERIS_API_KEY")"
         [ -n "$bundle_uri" ] || log_exit_error "Could not determine bundle URI!"
         log_debug "bundle URI is: $bundle_uri"
-        exec_on docker exec "$CONTAINER_NAME" mkdir -p "/cvmfs/${REPO}/data" "/cvmfs/${REPO}/record/${build_id}"
-        exec_on docker exec "$CONTAINER_NAME" /usr/local/bin/galaxy-import-data-bundle --tool-data-path "/cvmfs/${REPO}/data" --data-table-config-path "/cvmfs/${REPO}/config/tool_data_table_conf.xml" "$bundle_uri"
-        exec_on rsync -av "import_tasks/${build_id}/${dm_repo_id}" "${OVERLAYFS_MOUNT}/record/${build_id}"
+        if $USE_DOCKER; then
+            exec_on docker exec "$CONTAINER_NAME" mkdir -p "/cvmfs/${REPO}/data" "/cvmfs/${REPO}/record/${build_id}"
+            exec_on docker exec "$CONTAINER_NAME" /usr/local/bin/galaxy-import-data-bundle --tool-data-path "/cvmfs/${REPO}/data" --data-table-config-path "/cvmfs/${REPO}/config/tool_data_table_conf.xml" "$bundle_uri"
+            exec_on rsync -av "import_tasks/${build_id}/${dm_repo_id}" "${OVERLAYFS_MOUNT}/record/${build_id}"
+        else
+            exec_on mkdir -p "/cvmfs/${REPO}/data" "/cvmfs/${REPO}/record/${build_id}"
+            exec_on "TMPDIR=${REMOTE_WORKDIR} ${GALAXY_MAINTENANCE_SCRIPTS_BIN}/galaxy-import-data-bundle" --tool-data-path "/cvmfs/${REPO}/data" --data-table-config-path "/cvmfs/${REPO}/config/tool_data_table_conf.xml" "$bundle_uri"
+            exec_on rsync -av "${REMOTE_WORKDIR}/import_tasks/${build_id}/${dm_repo_id}" "${OVERLAYFS_MOUNT}/record/${build_id}"
+        fi
     done
-    deactivate
 }
 
 
@@ -597,12 +617,11 @@ function check_for_repo_changes() {
     local changes=false
     log "Checking for changes to repo"
     show_paths
-    # NOTE: this assumes local mode
-    for config in ${OVERLAYFS_UPPER}/config/*; do
-        [ -f "$config" ] || continue
+    for config in $(exec_on "compgen -G '${OVERLAYFS_UPPER}/config/*'"); do
+        exec_on test -f "$config" || continue
         lower="${OVERLAYFS_LOWER}/config/${config##*/}"
-        [ -f "$lower" ] || lower=/dev/null
-        diff -q "$lower" "$config" || { changes=true; diff -u "$lower" "$config" || true; }
+        exec_on test -f "$lower" || lower=/dev/null
+        exec_on diff -q "$lower" "$config" || { changes=true; exec_on diff -u "$lower" "$config" || true; }
     done
     if ! $changes; then
         log_exit_error "Terminating build: expected changes to ${OVERLAYFS_UPPER}/config/* not found!"
@@ -619,7 +638,6 @@ function post_install() {
     log "Running post-installation tasks"
     exec_on "find '$OVERLAYFS_UPPER' -perm -u+r -not -perm -o+r -not -type l -print0 | xargs -0 --no-run-if-empty chmod go+r"
     exec_on "find '$OVERLAYFS_UPPER' -perm -u+rx -not -perm -o+rx -not -type l -print0 | xargs -0 --no-run-if-empty chmod go+rx"
-    [ -n "${WORKDIR:-}" ] && exec_on rm -rf "$WORKDIR"
 }
 
 
@@ -632,10 +650,11 @@ function copy_upper_to_stratum0() {
 }
 
 
-function do_install_local() {
+function do_import_local() {
     mount_overlay
     # TODO: we could probably replace the import container with whatever cvmfsexec does to fake a mount
     generate_import_tasks && {
+        create_workdir
         prep_for_galaxy_run
         run_import_container
         import_tool_data_bundles
@@ -658,6 +677,26 @@ function do_install_local() {
 }
 
 
+function do_import_remote() {
+    start_ssh_control
+    create_remote_workdir
+    setup_remote_ephemeris
+    # from this point forward $EPHEMERIS_BIN refers to remote
+    generate_import_tasks && {
+        setup_galaxy_maintenance_scripts "$WORKDIR" "$REMOTE_PYTHON"
+        begin_transaction
+        import_tool_data_bundles
+        check_for_repo_changes
+        post_install
+    } || {
+        log "Nothing to import"
+        PUBLISH=false
+    }
+    $PUBLISH && publish_transaction || abort_transaction
+    stop_ssh_control
+}
+
+
 function main() {
     check_bot_command
     load_repo_configs
@@ -673,9 +712,9 @@ function main() {
         log "Nothing to build, will check for unimported data"
     }
     if $USE_LOCAL_OVERLAYFS; then
-        do_install_local
+        do_import_local
     else
-        log_exit_error "Remote mode was not ported from usegalaxy-tools"
+        do_import_remote
     fi
     stop_build_galaxy
     clean_workspace
