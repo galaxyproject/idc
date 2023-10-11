@@ -155,13 +155,16 @@ function check_bot_command() {
     log 'Checking for Github PR Bot commands'
     log_debug "Value of \$ghprbCommentBody is: ${ghprbCommentBody:-UNSET}"
     case "${ghprbCommentBody:-UNSET}" in
-        # TODO: support test builds
-        #"@galaxybot deploy"*)
-        *)
-            PUBLISH=false
+        "@galaxybot deploy"*)
+            PUBLISH=true
             ;;
     esac
-    $PUBLISH && log_debug "Changes will be published" || log_debug "Test installation, changes will be discarded"
+    if $PUBLISH; then
+        log "Publish requested; running build and import"
+    else
+        log "Publish not requested, exiting"
+        exit 0
+    fi
 }
 
 
@@ -172,38 +175,9 @@ function load_repo_configs() {
 
 
 function detect_changes() {
-#    log 'Detecting changes to genome files...'
-#    log_exec git remote set-branches --add origin "$MAIN_BRANCH"
-#    log_exec git fetch origin
-#    COMMIT_RANGE="origin/${MAIN_BRANCH}..."
-#
-#    log 'Change detection limited to directories:'
-#    for d in "${!REPOS[@]}"; do
-#        echo "${d}/"
-#    done
-#
-#    REPO= ;
-#    while read op path; do
-#        if [ -n "$REPO" -a "$REPO" != "${path%%/*}" ]; then
-#            log_exit_error "Changes to data in multiple repos found: ${REPO} != ${path%%/*}"
-#        elif [ -z "$REPO" ]; then
-#            REPO="${path%%/*}"
-#        fi
-#        case "$op" in
-#            A|M)
-#                echo "$op $path"
-#                ;;
-#        esac
-#    done < <(git diff --color=never --name-status "$COMMIT_RANGE" -- $(for d in "${!REPOS[@]}"; do echo "${d}/"; done))
-
-    # FIXME:
     REPO=idc
 
-    log 'Change detection results:'
-    declare -p REPO
-
     log "Getting repo for: ${REPO}"
-    # set -u will force exit here if $TOOLSET is invalid
     REPO="${REPOS[$REPO]}"
     declare -p REPO
 }
@@ -599,12 +573,11 @@ function stop_import_container() {
 function import_tool_data_bundles() {
     local dm_config j build_id dm_repo_id bundle_uri record_file
     copy_to .ci/get-bundle-url.py
-    # FIXME: this only works for remote
     for dm_config in $(exec_on "compgen -G '${REMOTE_WORKDIR}/import_tasks/*/data_manager_*/run_data_managers.yaml'"); do
         IFS='/' read build_id dm_repo_id j <<< "${dm_config##${REMOTE_WORKDIR}/import_tasks/}"
         record_file="${REMOTE_WORKDIR}/import_tasks/${build_id}/${dm_repo_id}/bundle.txt"
         log "Importing bundle for Data Manager '$dm_repo_id' of '$build_id'"
-        # FIXME: DO NOT MERGE: exposes API key
+        # API key is filtered from output by Jenkins
         local bundle_uri="$(exec_on ${EPHEMERIS_BIN}/python3 ${REMOTE_WORKDIR}/get-bundle-url.py --galaxy-url "$PUBLISH_GALAXY_URL" --history-name "idc-${build_id}-${dm_repo_id}" --record-file="$record_file" --galaxy-api-key="$EPHEMERIS_API_KEY")"
         [ -n "$bundle_uri" ] || log_exit_error "Could not determine bundle URI!"
         log_debug "bundle URI is: $bundle_uri"
@@ -645,9 +618,9 @@ function check_for_repo_changes() {
     log "Checking for changes to repo"
     show_paths
     for config in $(exec_on "compgen -G '${OVERLAYFS_UPPER}/config/*'"); do
-        [ -f "$config" ] || continue
+        exec_on test -f "$config" || continue
         lower="${OVERLAYFS_LOWER}/config/${config##*/}"
-        [ -f "$lower" ] || lower=/dev/null
+        exec_on test -f "$lower" || lower=/dev/null
         exec_on diff -q "$lower" "$config" || { changes=true; exec_on diff -u "$lower" "$config" || true; }
     done
     if ! $changes; then
