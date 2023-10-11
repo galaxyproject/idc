@@ -15,7 +15,7 @@ genomes:
       - data_manager_sam_fasta_index_builder
       - data_manager_hisat2_index_builder
       - data_manager_star_index_builder
-      - data_manager_bowtie_index_builder
+      #- data_manager_bowtie_index_builder
       #- data_manager_kallisto_index_builder
     skiplist:
       - bfast
@@ -35,7 +35,7 @@ genomes:
       - data_manager_sam_fasta_index_builder
       - data_manager_hisat2_index_builder
       - data_manager_star_index_builder
-      - data_manager_bowtie_index_builder
+      #- data_manager_bowtie_index_builder
       #- data_manager_kallisto_index_builder
     skiplist:
       - bfast
@@ -55,7 +55,7 @@ genomes:
       - data_manager_sam_fasta_index_builder
       - data_manager_hisat2_index_builder
       - data_manager_star_index_builder
-      - data_manager_bowtie_index_builder
+      #- data_manager_bowtie_index_builder
       #- data_manager_kallisto_index_builder
     skiplist:
       - bfast
@@ -75,7 +75,7 @@ genomes:
       - data_manager_sam_fasta_index_builder
       - data_manager_hisat2_index_builder
       - data_manager_star_index_builder
-      - data_manager_bowtie_index_builder
+      #- data_manager_bowtie_index_builder
       #- data_manager_kallisto_index_builder
     skiplist:
       - bfast
@@ -95,7 +95,7 @@ genomes:
       - data_manager_sam_fasta_index_builder
       - data_manager_hisat2_index_builder
       - data_manager_star_index_builder
-      - data_manager_bowtie_index_builder
+      #- data_manager_bowtie_index_builder
       #- data_manager_kallisto_index_builder
     skiplist:
       - bfast
