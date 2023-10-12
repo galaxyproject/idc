@@ -19,6 +19,10 @@
         <columns>value, path</columns>
         <file path="/cvmfs/idc.galaxyproject.org/config/twobit.loc"/>
     </table>
+    <table name="lastz_seqs" comment_char="#">
+        <columns>value, name, path</columns>
+        <file path="/cvmfs/idc.galaxyproject.org/config/lastz_seqs.loc" />
+    </table>
     <table name="alignseq_seq" comment_char="#">
         <columns>type, value, path</columns>
         <file path="/cvmfs/idc.galaxyproject.org/config/alignseq.loc"/>
