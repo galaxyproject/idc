@@ -587,7 +587,7 @@ function import_tool_data_bundles() {
             exec_on rsync -av "import_tasks/${build_id}/${dm_repo_id}" "${OVERLAYFS_MOUNT}/record/${build_id}"
         else
             exec_on mkdir -p "/cvmfs/${REPO}/data" "/cvmfs/${REPO}/record/${build_id}"
-            exec_on "TMPDIR=${REMOTE_WORKDIR} ${GALAXY_MAINTENANCE_SCRIPTS_BIN}/galaxy-import-data-bundle" --tool-data-path "/cvmfs/${REPO}/data" --data-table-config-path "/cvmfs/${REPO}/config/tool_data_table_conf.xml" "$bundle_uri"
+            exec_on "TMPDIR=${REMOTE_WORKDIR}" "${GALAXY_MAINTENANCE_SCRIPTS_BIN}/galaxy-import-data-bundle" --tool-data-path "/cvmfs/${REPO}/data" --data-table-config-path "/cvmfs/${REPO}/config/tool_data_table_conf.xml" "$bundle_uri"
             exec_on rsync -av "${REMOTE_WORKDIR}/import_tasks/${build_id}/${dm_repo_id}" "${OVERLAYFS_MOUNT}/record/${build_id}"
         fi
     done
@@ -653,7 +653,7 @@ function copy_upper_to_stratum0() {
 function do_import_local() {
     mount_overlay
     # TODO: we could probably replace the import container with whatever cvmfsexec does to fake a mount
-    generate_import_tasks && {
+    if generate_import_tasks; then
         create_workdir
         prep_for_galaxy_run
         run_import_container
@@ -662,10 +662,10 @@ function do_import_local() {
         stop_import_container
         clean_preconfigured_container
         post_install
-    } || {
+    else
         log "Nothing to import"
         PUBLISH=false
-    }
+    fi
     if $PUBLISH; then
         start_ssh_control
         begin_transaction 600
@@ -682,16 +682,16 @@ function do_import_remote() {
     create_remote_workdir
     setup_remote_ephemeris
     # from this point forward $EPHEMERIS_BIN refers to remote
-    generate_import_tasks && {
+    if generate_import_tasks; then
         setup_galaxy_maintenance_scripts "$WORKDIR" "$REMOTE_PYTHON"
         begin_transaction
         import_tool_data_bundles
         check_for_repo_changes
         post_install
-    } || {
+    else
         log "Nothing to import"
         PUBLISH=false
-    }
+    fi
     $PUBLISH && publish_transaction || abort_transaction
     stop_ssh_control
 }
@@ -703,14 +703,14 @@ function main() {
     detect_changes
     set_repo_vars
     setup_ephemeris
-    generate_data_manager_tasks && {
+    if generate_data_manager_tasks; then
         run_build_galaxy
         wait_for_build_galaxy
         #install_data_managers
         run_data_managers
-    } || {
+    else
         log "Nothing to build, will check for unimported data"
-    }
+    fi
     if $USE_LOCAL_OVERLAYFS; then
         do_import_local
     else
