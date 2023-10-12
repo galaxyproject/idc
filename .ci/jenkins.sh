@@ -75,7 +75,7 @@ BUILD_GALAXY_UP=false
 function trap_handler() {
     { set +x; } 2>/dev/null
     # return to original dir
-    while popd; do :; done || true
+    while popd 2>/dev/null; do :; done || true
     $IMPORT_CONTAINER_UP && stop_import_container
     clean_preconfigured_container
     $LOCAL_CVMFS_MOUNTED && unmount_overlay
@@ -302,7 +302,7 @@ function start_ssh_control() {
     log "Starting SSH control connection to Stratum 0"
     SSH_MASTER_SOCKET="${SSH_MASTER_SOCKET_DIR}/ssh-tunnel-${REPO_USER}-${REPO_STRATUM0}.sock"
     log_exec mkdir -p "$SSH_MASTER_SOCKET_DIR"
-    log_exec ssh -S "$SSH_MASTER_SOCKET" -Nfn -l "$REPO_USER" "$REPO_STRATUM0"
+    log_exec ssh -M -S "$SSH_MASTER_SOCKET" -Nfn -l "$REPO_USER" "$REPO_STRATUM0"
     USER_UID=$(exec_on id -u)
     USER_GID=$(exec_on id -g)
     SSH_MASTER_UP=true
