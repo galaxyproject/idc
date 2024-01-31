@@ -20,8 +20,7 @@ IMPORT_DOCKER_IMAGE_PULL=true
 GALAXY_TEMPLATE_DB_URL=
 GALAXY_TEMPLATE_DB='galaxy.sqlite'
 
-EPHEMERIS="git+https://github.com/jmchilton/ephemeris.git@idc_2#egg_name=ephemeris"
-BIOBLEND="git+https://github.com/mvdbeek/bioblend.git@idc_data_manager_runs#egg_name=bioblend"
+EPHEMERIS="ephemeris==0.10.10"
 GALAXY_MAINTENANCE_SCRIPTS="git+https://github.com/mvdbeek/galaxy-maintenance-scripts.git@avoid_galaxy_app#egg_name=galaxy-maintenance-scripts"
 
 # Should be set by Jenkins, so the default here is for development
@@ -222,7 +221,7 @@ function setup_ephemeris() {
     log_exec python3 -m venv ephemeris
     log_exec "${EPHEMERIS_BIN}/pip" install --upgrade pip wheel
     log_exec "${EPHEMERIS_BIN}/pip" install --index-url https://wheels.galaxyproject.org/simple/ \
-        --extra-index-url https://pypi.org/simple/ "${BIOBLEND:=bioblend}" "${EPHEMERIS:=ephemeris}"
+        --extra-index-url https://pypi.org/simple/ "${EPHEMERIS:=ephemeris}"
 }
 
 
