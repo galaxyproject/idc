@@ -99,3 +99,11 @@ genomes:
       #- data_manager_kallisto_index_builder
     skiplist:
       - bfast
+  - dbkey: 2022-02-02T162959Z_silva_kmer-len_35_minimizer-len_31_minimizer-spaces_6_load-factor_0.7
+    description: "Silva (Created: 2022-02-02T162959Z, kmer-len=35, minimizer-len=31, minimizer-spaces=6) load-factor=0.7"
+    id: 2022-02-02T162959Z_silva_kmer-len_35_minimizer-len_31_minimizer-spaces_6_load-factor_0.7
+    skiplist:
+      - genome
+    indexers:
+      - data_manager_build_kraken2_database
+      - data_manager_build_bracken_database
