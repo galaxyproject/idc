@@ -10,6 +10,8 @@ data_manager_bwa_mem_index_builder:
   tool_id: 'toolshed.g2.bx.psu.edu/repos/devteam/data_manager_bwa_mem_index_builder/bwa_mem_index_builder_data_manager/0.0.3'
   tags:
     - genome
+  parameters:
+    index_algorithm: bwtsw
 data_manager_hisat_index_builder:
   tool_id: 'toolshed.g2.bx.psu.edu/repos/devteam/data_manager_hisat_index_builder/hisat_index_builder_data_manager/1.0.0'
   tags:
@@ -64,5 +66,8 @@ data_manager_build_kraken2_database:
     - kraken2
 data_manager_build_bracken_database:
   tool_id: toolshed.g2.bx.psu.edu/repos/iuc/data_manager_build_bracken_database/bracken_build_database/2.8+galaxy0
+  parameters:
+    kraken_db: {{ item.id }}
+    check_prebuilt: yes
   tags:
     - bracken

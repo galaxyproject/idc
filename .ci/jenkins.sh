@@ -20,7 +20,7 @@ IMPORT_DOCKER_IMAGE_PULL=true
 GALAXY_TEMPLATE_DB_URL=
 GALAXY_TEMPLATE_DB='galaxy.sqlite'
 
-EPHEMERIS="ephemeris==0.10.10"
+EPHEMERIS="git+https://github.com/mvdbeek/ephemeris.git@dm_parameters#egg_name=ephemeris"
 GALAXY_MAINTENANCE_SCRIPTS="git+https://github.com/mvdbeek/galaxy-maintenance-scripts.git@avoid_galaxy_app#egg_name=galaxy-maintenance-scripts"
 
 # Should be set by Jenkins, so the default here is for development
