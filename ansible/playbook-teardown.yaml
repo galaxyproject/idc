@@ -1,4 +1,4 @@
-- name: Clean up instane
+- name: Clean up instance
   hosts: idc_builders
   tasks:
     - name: Remove scratch directory
@@ -8,6 +8,16 @@
       diff: false
     - name: Log out from tailnet
       command: tailscale logout
+    - name: Create logs directory
+      file:
+        path: /jetstream2/scratch/idc-build-logs
+        owner: idc
+        group: idc
+        mode: "0755"
+        state: directory
+    - name: Dump gunicorn logs
+      shell: journalctl -u galaxy-gunicorn.service > /jetstream2/scratch/idc-build-logs/gunicorn-{{ lookup('ansible.builtin.env', 'BUILD_NUMBER') | default('unknown') }}.log
+      become_user: idc
 
 - name: Destroy instance
   hosts: idc_builders
