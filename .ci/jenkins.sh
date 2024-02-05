@@ -539,6 +539,12 @@ function generate_import_tasks() {
 }
 
 
+function update_tool_data_table_conf() {
+    # update tool_data_table_conf.xml from repo
+    copy_to config/tool_data_table_conf.xml
+    exec_on diff -q "${REMOTE_WORKDIR}/tool_data_table_conf.xml" "/cvmfs/${REPO}/config/tool_data_table_conf.xml" || { exec_on mkdir -p "${OVERLAYFS_MOUNT}/config" && exec_on cp "${REMOTE_WORKDIR}/tool_data_table_conf.xml" "${OVERLAYFS_MOUNT}/config/tool_data_table_conf.xml"; }
+}
+
 function run_import_container() {
     run_container_for_preconfigure
     log "Installing importer scripts"
@@ -546,10 +552,6 @@ function run_import_container() {
     exec_on docker exec "$PRECONFIGURE_CONTAINER_NAME" pip3 install --upgrade pip wheel setuptools
     exec_on docker exec "$PRECONFIGURE_CONTAINER_NAME" /usr/local/bin/pip install "$GALAXY_MAINTENANCE_SCRIPTS"
     commit_preconfigured_container
-
-    # update tool_data_table_conf.xml from repo
-    copy_to config/tool_data_table_conf.xml
-    exec_on diff -q "${REMOTE_WORKDIR}/tool_data_table_conf.xml" "/cvmfs/${REPO}/config/tool_data_table_conf.xml" || { exec_on mkdir -p "${OVERLAYFS_MOUNT}/config" && exec_on cp "${REMOTE_WORKDIR}/tool_data_table_conf.xml" "${OVERLAYFS_MOUNT}/config/tool_data_table_conf.xml"; }
 
     log "Starting importer container"
     exec_on docker run -d --user "${USER_UID}:${USER_GID}" --name="${CONTAINER_NAME}" \
@@ -655,6 +657,7 @@ function do_import_local() {
     if generate_import_tasks; then
         create_workdir
         prep_for_galaxy_run
+        update_tool_data_table_conf
         run_import_container
         import_tool_data_bundles
         check_for_repo_changes
@@ -684,6 +687,7 @@ function do_import_remote() {
     if generate_import_tasks; then
         setup_galaxy_maintenance_scripts "$WORKDIR" "$REMOTE_PYTHON"
         begin_transaction
+        update_tool_data_table_conf
         import_tool_data_bundles
         check_for_repo_changes
         post_install
