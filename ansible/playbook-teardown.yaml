@@ -6,18 +6,18 @@
         path: /jetstream2/scratch/idc
         state: absent
       diff: false
-    - name: Log out from tailnet
-      command: tailscale logout
     - name: Create logs directory
       file:
         path: /jetstream2/scratch/idc-build-logs
-        owner: idc
-        group: idc
+        owner: rocky
+        group: rocky
         mode: "0755"
         state: directory
     - name: Dump gunicorn logs
       shell: journalctl -u galaxy-gunicorn.service > /jetstream2/scratch/idc-build-logs/gunicorn-{{ lookup('ansible.builtin.env', 'BUILD_NUMBER') | default('unknown') }}.log
-      become_user: idc
+      become_user: rocky
+    - name: Log out from tailnet
+      command: tailscale logout
 
 - name: Destroy instance
   hosts: idc_builders
