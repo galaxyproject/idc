@@ -3,10 +3,10 @@
 destinations:
   jetstream2:
     runner: slurm
-    max_accepted_cores: 32
-    max_accepted_mem: 125
+    max_accepted_cores: 64
+    max_accepted_mem: 244
     context:
-      partition: tpv
+      partition: priority
       time: 24:00:00
     params:
       native_specification: "--nodes=1 --ntasks={cores} --mem={round(mem*1024)} --time={time} --partition={partition}"
@@ -57,3 +57,6 @@ tools:
   .*rna_star_index_builder_data_manager.*:
     cores: 10
     mem: 120
+  .*kraken2_build_database.*:
+    cores: 64
+    mem: 240
