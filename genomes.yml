@@ -60,7 +60,7 @@ genomes:
     skiplist:
       - bfast
   - dbkey: GCA_900093555.2
-    description: “Plasmodium vivax (malaria parasite P. vivax)”
+    description: “Plasmodium vivax (malaria parasite P. vivax/ASM241v2)”
     id: GCA_900093555.2
     source: https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/900/093/555/GCA_900093555.2_GCA_900093555/GCA_900093555.2_GCA_900093555_genomic.fna.gz
     doi:
