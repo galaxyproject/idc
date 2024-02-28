@@ -59,6 +59,26 @@ genomes:
       #- data_manager_kallisto_index_builder
     skiplist:
       - bfast
+  - dbkey: GCA_900093555.2
+    description: “Plasmodium vivax (malaria parasite P. vivax)”
+    id: GCA_900093555.2
+    source: https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/900/093/555/GCA_900093555.2_GCA_900093555/GCA_900093555.2_GCA_900093555_genomic.fna.gz
+    doi:
+    version:
+    checksum: bb25e2146e4450dc5b1225db75888537
+    blob: https://www.ncbi.nlm.nih.gov/datasets/genome/GCA_900093555.2/
+    indexers:
+      - data_manager_bowtie2_index_builder
+      - data_manager_bwa_mem_index_builder
+      - data_manager_twobit_builder
+      - data_manager_picard_index_builder
+      - data_manager_sam_fasta_index_builder
+      - data_manager_hisat2_index_builder
+      - data_manager_star_index_builder
+      #- data_manager_bowtie_index_builder
+      #- data_manager_kallisto_index_builder
+    skiplist:
+      - bfast
   - dbkey: Ecoli-O157-H7-Sakai
     description: "Escherichia coli O157-H7 Sakai"
     id: Ecoli-O157-H7-Sakai
