@@ -19,6 +19,10 @@
         <columns>value, path</columns>
         <file path="/cvmfs/idc.galaxyproject.org/config/twobit.loc"/>
     </table>
+    <table name="lastz_seqs" comment_char="#">
+        <columns>value, name, path</columns>
+        <file path="/cvmfs/idc.galaxyproject.org/config/lastz_seqs.loc" />
+    </table>
     <table name="alignseq_seq" comment_char="#">
         <columns>type, value, path</columns>
         <file path="/cvmfs/idc.galaxyproject.org/config/alignseq.loc"/>
@@ -74,5 +78,13 @@
     <table name="gemini_versioned_databases" comment_char="#" allow_duplicate_entries="False">
         <columns>value, dbkey, version, name, path</columns>
         <file path="/cvmfs/idc.galaxyproject.org/config/gemini_versioned_databases.loc"/>
+    </table>
+    <table name="kraken2_databases" comment_char="#">
+        <columns>value, name, path</columns>
+        <file path="/cvmfs/idc.galaxyproject.org/config/kraken2_databases.loc"/>
+    </table>
+    <table name="bracken_databases" comment_char="#">
+        <columns>value, name, path</columns>
+        <file path="/cvmfs/idc.galaxyproject.org/config/bracken_databases.loc"/>
     </table>
 </tables>
