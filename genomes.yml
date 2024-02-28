@@ -59,7 +59,7 @@ genomes:
       #- data_manager_kallisto_index_builder
     skiplist:
       - bfast
-      - dbkey: sacCer3
+  - dbkey: sacCer3
     description: # set from UCSC
     id: sacCer3
     source: ucsc
