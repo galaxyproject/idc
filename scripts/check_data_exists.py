@@ -165,6 +165,14 @@ def main(argv: list[str] | None = None) -> int:
     if args.all:
         paths = iter_request_files()
     else:
+        # A path named on the command line that is not there is a typo or a
+        # stale checkout, not "absent data": dropping it would let
+        # --expect-exists pass having checked nothing. --from-file (the build's
+        # candidate list) keeps ignoring paths that are not files.
+        missing = [r for r in args.requests if not Path(r).is_file()]
+        if missing:
+            print(f"::error:: no such request file: {', '.join(missing)}", file=sys.stderr)
+            return 2
         raw = list(args.requests)
         if args.from_file:
             raw += [ln.strip() for ln in Path(args.from_file).read_text().splitlines() if ln.strip()]
