@@ -15,9 +15,8 @@ Human docs are in `docs/` (published as <https://galaxyproject.github.io/idc/>;
 
 ## Skills
 
-Task playbooks for agents are in `.claude/skills/<name>/SKILL.md` (Claude Code
-discovers them automatically; other agents should read the matching file before
-starting the task):
+Task playbooks are in `.claude/skills/<name>/SKILL.md`. Read the matching file
+before starting one of these tasks:
 
 - `.claude/skills/request-reference-data/SKILL.md`: request a new reference
   database version, from "I need X version Y" to a linted request file and a

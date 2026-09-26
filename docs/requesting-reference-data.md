@@ -475,9 +475,9 @@ version is a new file. Requesting the same file name again does nothing.
 ## Using an agent
 
 [`.claude/skills/`](https://github.com/galaxyproject/idc/tree/main/.claude/skills)
-has two skills, which Claude Code picks up automatically and which
-[`AGENTS.md`](https://github.com/galaxyproject/idc/blob/main/AGENTS.md) points
-other agents to. `request-reference-data` goes from "I need database X, version
+has two skills, listed in
+[`AGENTS.md`](https://github.com/galaxyproject/idc/blob/main/AGENTS.md), which
+coding agents read when they work in the repository. `request-reference-data` goes from "I need database X, version
 Y" to a linted request and a drafted PR, and `check-reference-data-request`
 finds out how far a request has got. Both use the scripts described on this
 page and neither needs an API key.
