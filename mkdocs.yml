@@ -10,7 +10,7 @@ nav:
   - Using IDC data in Galaxy: using-idc-data.md
   - Catalog: catalog.md
   - Requesting reference data: requesting-reference-data.md
-  - Genome indexing: genome-indexing.md
+  - Genomes: genome-indexing.md
   - How it works: architecture.md
   - Maintainers:
       - Publishing to CVMFS: cvmfs-publish-actions.md

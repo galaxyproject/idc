@@ -1,90 +1,76 @@
-# Genome indexing
+# Genomes
 
-The IDC's original pipeline: fetch genomes and build the standard indexes for
-them (Bowtie2, BWA-MEM, HISAT2, STAR, Picard, samtools faidx, 2bit, ...) with
-Galaxy data managers, and publish the results on `idc.galaxyproject.org`. It is
-driven by two files at the root of the repository.
+Genomes and their indexes are requested like any other reference data, with one
+file per data manager run under `data-managers/`, built and published as
+described in [Requesting reference data](requesting-reference-data.md). This
+page covers what is specific to them.
 
-For databases that aren't per-genome indexes (MetaPhlAn, mOTUs, ...), see
-[Requesting reference data](requesting-reference-data.md) instead.
+## The genome itself
 
-## `genomes.yml`
-
-The genomes to fetch and index:
-
-```yaml
-genomes:
-  - dbkey: dm6          # the genome's dbkey in Galaxy
-    description:        # set from UCSC for UCSC genomes
-    id: dm6             # unique id of the data in Galaxy
-    source: ucsc        # 'ucsc', an NCBI accession, or a URL to a FASTA file
-    doi:
-    version:
-    checksum:
-    blob:
-    indexers:           # data managers (from data_managers.yml) to run on it
-      - data_manager_bowtie2_index_builder
-      - data_manager_bwa_mem_index_builder
-    skiplist:           # data managers NOT to run on it
-      - bfast
-```
-
-Only `dbkey`, `description`, `id`, `source` and `indexers` are used today; the
-other fields are there for provenance the IDC would like to record. The
-[catalog](catalog.md#genomes) lists the genomes currently in the file.
-
-## `data_managers.yml`
-
-The data managers used to build the genome data, by the name `indexers` refer
-to:
+A genome is fetched by the `data_manager_fetch_genome_dbkeys_all_fasta` data
+manager, which writes the `all_fasta` and `__dbkeys__` tables. The request goes
+in `data-managers/all_fasta/`, named after the dbkey:
 
 ```yaml
-data_manager_bwa_mem_index_builder:
-  tool_id: 'toolshed.g2.bx.psu.edu/repos/devteam/data_manager_bwa_mem_index_builder/bwa_mem_index_builder_data_manager/0.0.3'
-  tags:
-    - genome          # "genome" (an indexer) or "fetch_source"
-  parameters:         # optional, passed to the data manager
-    index_algorithm: bwtsw
+# data-managers/all_fasta/GCF_000001405.40.yaml
+# yaml-language-server: $schema=https://raw.githubusercontent.com/galaxyproject/idc/main/schemas/request.schema.json
+tool_id: toolshed.g2.bx.psu.edu/repos/devteam/data_manager_fetch_genome_dbkeys_all_fasta/data_manager_fetch_genome_all_fasta_dbkey/0.0.3
+data_tables:
+  - all_fasta
+  - __dbkeys__
+params:
+  dbkey_source:
+    dbkey_source_selector: new
+    dbkey: GCF_000001405.40
+    dbkey_name: "Homo sapiens (GRCh38.p14)"
+  reference_source:
+    reference_source_selector: ncbi      # or ucsc, url
+    requested_identifier: GCF_000001405.40
+  sequence_id: GCF_000001405.40
+  sequence_name: "Homo sapiens (GRCh38.p14)"
+description: Human reference genome GRCh38.p14 (RefSeq)
 ```
 
-The `fetch_source` data manager (`data_manager_fetch_genome_dbkeys_all_fasta`)
-comes first: it downloads each genome and fills the `all_fasta` and
-`__dbkeys__` tables that the indexers then read from.
+`python scripts/tool_schemas.py <tool_id>` lists the other sources and options,
+such as fetching from UCSC by its dbkey or from a URL. Test.galaxyproject.org
+already has several thousand genomes in `all_fasta`, so check
+`https://test.galaxyproject.org/api/tool_data/all_fasta` for your dbkey first.
 
-## How a genome gets built
+## Indexes
 
-1. A PR changes `genomes.yml` (or `data_managers.yml`), is reviewed, and a
-   maintainer comments `@galaxybot deploy` on it. That comment is what starts
-   the Jenkins job (`.ci/jenkins.sh`); without it the job exits.
-2. Ephemeris (`_idc-split-data-manager-genomes`) splits the two files into one
-   task per genome and data manager, leaving out what already exists.
-3. Jenkins launches a short-lived build Galaxy with the playbooks in
-   [`ansible/`](https://github.com/galaxyproject/idc/tree/main/ansible), with
-   the IDC repository mounted, and waits until its CVMFS client is at the
-   current revision, so it sees everything already published.
-4. The data managers run in *bundle* mode (Ephemeris
-   `run-data-managers --data-manager-mode bundle`), one stage per job: while any
-   genome still needs fetching, a job runs only the fetch data manager; once
-   all genomes are fetched (and published), the next job runs the indexers.
-   Each task's output lands in a history `idc-<genome>-<data manager>`.
-5. On the Stratum 0, the job opens a CVMFS transaction, syncs
-   `config/tool_data_table_conf.xml`, imports every new bundle with
-   `galaxy-import-data-bundle` (which moves the data under `data/` and appends
-   the `.loc` rows), writes a `record/<genome>/<data manager>` marker so it is
-   never imported twice, and publishes.
-6. The build Galaxy is torn down. The Stratum 1s and Galaxy servers pick the new
-   revision up as for any other publish; see
-   [Using IDC data in Galaxy](using-idc-data.md#4-pick-up-new-data).
+An index is built from a genome in `all_fasta`, so its request names the genome
+with `depends_on` and goes in the index's table, again named after the dbkey:
 
-The same Jenkins job also has a reference-data-only mode
-(`@galaxybot deploy reference-data`), kept as a fallback for publishing
-[versioned reference data](requesting-reference-data.md); the normal path for
-that is the GitHub Actions workflow described in
-[Publishing to CVMFS](cvmfs-publish-actions.md).
+```yaml
+# data-managers/bowtie2_indexes/GCF_000001405.40.yaml
+tool_id: toolshed.g2.bx.psu.edu/repos/devteam/data_manager_bowtie2_index_builder/bowtie2_index_builder_data_manager/2.3.4.3
+data_tables:
+  - bowtie2_indexes
+depends_on:
+  all_fasta: GCF_000001405.40
+params: {}
+```
 
-## Building locally
+If test already serves the genome, the build indexes that copy. Otherwise the
+genome is fetched first, in the same workflow.
 
-`run_builder.sh` runs the same idea on one machine with Docker: it starts a
-Galaxy container, installs the data managers, and fetches and indexes the
-genomes from `genomes.yml`. Edit the variables at the top of the script first.
-Some genomes need a lot of memory to index (more than 64 GB).
+Each indexer needs a `CHAIN_WIRING` entry in
+[`scripts/generate_build.py`](https://github.com/galaxyproject/idc/blob/main/scripts/generate_build.py)
+the first time it's requested, naming the input that takes the `all_fasta`
+entry. Most indexers have no conditional to set, so the entry is short. For
+Bowtie2 it is
+
+```python
+("bowtie2_indexes", "all_fasta"): {
+    "tool_state": {},
+    "connect_param": "all_fasta_source",
+},
+```
+
+## genomes.yml and data_managers.yml
+
+The genomes listed in `genomes.yml` were built by the IDC's earlier pipeline,
+which combined that file with the indexers in `data_managers.yml` and ran them
+from Jenkins (`.ci/jenkins.sh`). The files are still in the repository and the
+[catalog](catalog.md#genomes-in-genomesyml) lists their genomes, but new genomes
+and indexes are requested as above.

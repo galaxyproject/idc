@@ -3,8 +3,8 @@
 
 The catalog lists what has been requested (every ``data-managers/<table>/<version>.yaml``),
 the data tables the IDC serves (``config/tool_data_table_conf.xml``), the data
-managers a request can use (``schemas/data_managers.yml``) and the genomes of
-the genome-indexing pipeline (``genomes.yml``). It is generated on every site
+managers a request can use (``schemas/data_managers.yml``) and the genomes in
+``genomes.yml`` from the earlier Jenkins pipeline. It is generated on every site
 build, so it cannot drift from those files.
 
 It is a *request* catalog: whether a version has been published is only known
@@ -179,12 +179,13 @@ def render_installed() -> list[str]:
 def render_genomes() -> list[str]:
     genomes = (yaml.safe_load(GENOMES.read_text()) or {}).get("genomes", [])
     lines = [
-        "## Genomes",
+        "## Genomes in genomes.yml",
         "",
         f"The {len(genomes)} genome(s) in [`genomes.yml`]({REPO_URL}/blob/main/genomes.yml), "
-        "indexed by the data managers in "
-        f"[`data_managers.yml`]({REPO_URL}/blob/main/data_managers.yml) "
-        "(see [Genome indexing](genome-indexing.md)).",
+        "built with the indexers in "
+        f"[`data_managers.yml`]({REPO_URL}/blob/main/data_managers.yml) by the earlier "
+        "Jenkins pipeline. New genomes are requested like other data; see "
+        "[Genomes](genome-indexing.md).",
         "",
         "| dbkey | description | source | indexers |",
         "|---|---|---|---|",

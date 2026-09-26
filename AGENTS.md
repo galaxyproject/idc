@@ -1,14 +1,13 @@
 # Agent notes for the IDC repository
 
 The IDC builds and distributes Galaxy reference data on the
-`idc.galaxyproject.org` CVMFS repository. Two pipelines live here:
-
-- **Genome indexes**: `genomes.yml` × `data_managers.yml`, built and imported
-  by Jenkins (`.ci/jenkins.sh`, `@galaxybot deploy` on a PR).
-- **Versioned reference data**: one request file per database version,
-  `data-managers/<data_table>/<version>.yaml`, linted on the PR
-  (`.github/workflows/lint.yml`), built on test.galaxyproject.org on merge
-  (`build.yml`) and published to CVMFS by a maintainer (`deploy.yml`).
+`idc.galaxyproject.org` CVMFS repository. Everything is requested as one file
+per data manager run, `data-managers/<data_table>/<version>.yaml`, which is
+linted on the PR (`.github/workflows/lint.yml`), built on test.galaxyproject.org
+after the merge (`build.yml`) and published to CVMFS by a maintainer
+(`deploy.yml`). Genomes and indexes work the same way (`docs/genome-indexing.md`);
+`genomes.yml`, `data_managers.yml` and `.ci/jenkins.sh` belong to the earlier
+Jenkins pipeline.
 
 Human docs are in `docs/` (published as <https://galaxyproject.github.io/idc/>;
 `pip install -r requirements-docs.txt && mkdocs build --strict`). The requester guide is

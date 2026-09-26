@@ -82,7 +82,7 @@ tool offers; an older tool version may not offer the newest database.
 
 Not listed means not installed on the build Galaxy. The request can't build
 until the data manager is added to usegalaxy-tools'
-`test.galaxyproject.org/data_managers.yml`; see "Adding a brand-new data
+`test.galaxyproject.org/data_managers.yml`; see "Adding a new data
 manager" in the guide. Tell the user; you can still prepare the idc side
 (steps 3 to 7) if they want, and note the dependency in the PR.
 
@@ -210,6 +210,14 @@ ls data-managers/<upstream_table>/                                        # upst
   once, because the first import writes its record marker. That's expected; if
   the upstream is large, mention the extra build time in the PR.
 
+Genomes and indexes are chains too: a genome is a request in `all_fasta` for
+the `data_manager_fetch_genome_dbkeys_all_fasta` data manager, named after the
+dbkey, and each index is a request in the index's table with
+`depends_on: {all_fasta: <dbkey>}`. Every indexer needs a `CHAIN_WIRING` entry
+the first time (for Bowtie2, `tool_state: {}` and
+`connect_param: all_fasta_source`); `docs/genome-indexing.md` has the example
+files.
+
 ## 6. Write the file
 
 Copy the shape of the closest real request:
@@ -247,8 +255,8 @@ python scripts/check_data_exists.py <files>
 python -m pytest tests/ -q
 ```
 
-- `request_models.py` errors map one-to-one to the guide's "FAQ and
-  troubleshooting" section; the params messages list the allowed names/values.
+- `request_models.py` errors map one-to-one to the guide's "Lint
+  errors" section; the params messages list the allowed names/values.
 - `generate_schema.py --check` reporting "stale": the `tool_id` isn't in the
   committed editor schema. Run `python scripts/generate_schema.py`, check the
   diff only adds that tool, and commit `schemas/request.schema.json` with the

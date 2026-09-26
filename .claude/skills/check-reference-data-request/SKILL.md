@@ -9,8 +9,8 @@ A request (`data-managers/<table>/<version>.yaml`) goes: PR lint → merge →
 build on test.galaxyproject.org → (maintainer) bundle check → publish to CVMFS
 → Stratum 1 snapshot → data table reload → visible. This skill works out which
 of those it has reached and, if it's stuck, why. Background is in
-`docs/requesting-reference-data.md` ("What happens after the PR" and "Checking
-the status of a request").
+`docs/requesting-reference-data.md` ("After the merge" and "Checking on a
+request").
 
 Ground rules:
 
@@ -50,7 +50,7 @@ Failing "Lint reference-data requests": read the failed step's log
 gh run view <run id> --repo galaxyproject/idc --log-failed
 ```
 
-and map the message to the guide's "FAQ and troubleshooting" section. To
+and map the message to the guide's "Lint errors" section. To
 reproduce locally from a checkout of the PR branch, run the same commands as
 the `request-reference-data` skill's step 7. A `::warning::` that the data
 "already exists" doesn't fail the lint but means the build will skip it: say
@@ -178,7 +178,7 @@ Published but not visible yet? In order:
    that's a request/identity problem for the maintainers, not a propagation
    delay. SameStr built from mOTUs (`samestr_db/marker_db_motus_*`) is a known
    case: its row carries the mOTUs `db_from_...` value, which the check can't
-   match (see "Known gap" in the guide). Confirm it by eye from the table
+   match (see "How the existence check works" in the guide). Confirm it by eye from the table
    instead: a row whose `value` is the mOTUs value the chain used.
 
 For a server other than test, repeat step 6 with `--reference-galaxy <url>`;

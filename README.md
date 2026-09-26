@@ -125,23 +125,20 @@ genomes:
 
 ## Contributing versioned reference data (workflow bundles)
 
-Beyond the genome-indexing pipeline above, the IDC builds **versioned reference
-databases** with data managers, e.g. `metaphlan_database_versioned`,
-`motus_db_versioned` and `samestr_db`. A request is a single YAML file,
-`data-managers/<data_table>/<version>.yaml`, added by pull request: CI lints it,
-merging builds it on [test.galaxyproject.org](https://test.galaxyproject.org) as
-a Galaxy data-manager bundle workflow, and a maintainer publishes the result to
-the `idc.galaxyproject.org` CVMFS repository.
+Reference data, from databases such as MetaPhlAn's to genomes and their
+indexes, is requested with a pull request that adds one YAML file,
+`data-managers/<data_table>/<version>.yaml`, naming a data manager and its
+parameters. The request is linted on the PR and built on
+[test.galaxyproject.org](https://test.galaxyproject.org) as a data-manager
+bundle workflow after the merge, and a maintainer publishes the result to the
+`idc.galaxyproject.org` CVMFS repository.
 
-**[docs/requesting-reference-data.md](docs/requesting-reference-data.md)** is the
-full guide: checking the data isn't already served, finding the data manager's
-`tool_id` and parameters, choosing the version identity, chained builds, local
-lint, what happens after the PR and how to check a request's status. Publishing
-is documented in [docs/cvmfs-publish-actions.md](docs/cvmfs-publish-actions.md).
-Both are also published, with the rest of the IDC documentation, at
-<https://galaxyproject.github.io/idc/>.
-Coding agents can follow the skills in [`.claude/skills/`](.claude/skills/)
-(see [AGENTS.md](AGENTS.md)).
+[docs/requesting-reference-data.md](docs/requesting-reference-data.md) explains
+how to write and check a request and what happens to it afterwards, and
+[docs/cvmfs-publish-actions.md](docs/cvmfs-publish-actions.md) covers
+publishing. The same documentation is published at
+<https://galaxyproject.github.io/idc/>, and coding agents can use the skills in
+[`.claude/skills/`](.claude/skills/) (see [AGENTS.md](AGENTS.md)).
 
 To lint requests locally:
 

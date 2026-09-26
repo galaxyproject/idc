@@ -1,10 +1,9 @@
 # How it works
 
-How a versioned reference-data request travels from a pull request to a Galaxy
-tool, for contributors and maintainers who want the whole picture. The
-step-by-step for contributors is
-[Requesting reference data](requesting-reference-data.md); the publish job is
-described in [Publishing to CVMFS](cvmfs-publish-actions.md).
+This page follows a request from the pull request to a Galaxy tool. How to
+write a request is covered in
+[Requesting reference data](requesting-reference-data.md), and the publish job
+in [Publishing to CVMFS](cvmfs-publish-actions.md).
 
 ## The pieces
 
@@ -15,9 +14,9 @@ described in [Publishing to CVMFS](cvmfs-publish-actions.md).
 | `scripts/generate_build.py` | turns a request into a gxformat2 data-manager-bundle workflow and a job file |
 | `scripts/check_data_exists.py` | asks a Galaxy's public data table API whether the data is already served |
 | `scripts/import_bundles.py`, `scripts/get_bundle_urls.py` | resolve a finished build's bundles and import them onto CVMFS |
-| `.github/workflows/lint.yml` | Stage 1, on pull requests |
-| `.github/workflows/build.yml` | Stage 2, on merge to `main` |
-| `.github/workflows/deploy.yml` | Stage 3, dispatched by a maintainer |
+| `.github/workflows/lint.yml` | lint, on pull requests |
+| `.github/workflows/build.yml` | build, on merge to `main` |
+| `.github/workflows/deploy.yml` | publish, started by a maintainer |
 | test.galaxyproject.org | the build Galaxy, and the reference for "does this exist?" |
 | `idc.galaxyproject.org` | the CVMFS repository: Stratum 0 (where publishes happen) and Stratum 1 replicas (what clients read) |
 
@@ -39,17 +38,12 @@ flowchart TD
   lint -- yes --> review(["Maintainer review and merge"])
 ```
 
-A request is a single flat YAML file. Its **directory** is the data manager's
-primary data table and must be one of its `data_tables`; its **file name** is
-the version identity, which keys the build history (`idc-<table>-<version>`)
-and the record marker on CVMFS (`record/<table>/<version>`). `tool_id` is a
-version-pinned production Tool Shed GUID, and `params` are validated against the
-parameter schema the Tool Shed serves for exactly that tool version.
-
-The one rule that shapes everything else: **don't duplicate data a Galaxy
-already serves.** The only "already exists" signal is the build Galaxy's public
-data table API, which covers every source it loads; there is deliberately no
-in-repo list of published versions.
+The request's directory is the data manager's primary data table, and its file
+name is the version identity, which names the build history
+(`idc-<table>-<version>`) and the record marker on CVMFS
+(`record/<table>/<version>`). Whether data already exists is decided by the
+build Galaxy's public data table API, which covers every source that Galaxy
+loads, so data that's already served somewhere isn't built again.
 
 ## Maintainer flow
 
@@ -72,27 +66,28 @@ flowchart TD
   supersede["Replacing an existing entry?<br/>manual Stratum 0 transaction:<br/>comment .loc row, remove data + record marker"] -.-> rehearse
 ```
 
-1. **Review.** Lint is green. The identity makes sense, and the `value` the data
-   manager will write matches what other servers use for the same data (which is
-   why the mOTUs request pins `db_value` to usegalaxy.eu's identifier). The data
-   manager is installed on test and its jobs can run there.
-2. **Merge.** `build.yml` starts by itself. `--no_use_cache` matters: without it
-   Galaxy's job cache could hand back a copy of an earlier, possibly broken,
-   bundle instead of running the data manager again.
-3. **Watch the build.** Minutes for small databases, hours for large ones. Check
-   the bundle by its index,
-   `GET /api/datasets/<id>/display?filename=_gx_data_bundle_index.json`: paths
-   must be relative and `value` as expected. (`display?preview=true` shows the
-   data manager's primary output instead, with absolute job paths; it says
-   nothing about the bundle.)
-4. **Rehearse, then publish.** The publish workflow with `publish=false` does a
-   full import into a CVMFS transaction and aborts it; its summary shows what
-   would be imported and what skipped. Then run it with `publish=true`.
-5. **Get it to users.** The Stratum 1s pick the new revision up on their hourly
-   snapshot; Galaxy servers then reload the table or restart.
-6. **Replacing an existing entry** isn't automated: it's a manual Stratum 0
-   transaction (comment out the `.loc` row, remove the data directory and the
-   `record/` marker), after which the normal publish imports the replacement.
+Reviewers check that the lint is green, that the file name matches what the
+data manager will write, and that the `value` matches what other servers use for
+the same data, which is why the mOTUs request pins `db_value` to usegalaxy.eu's
+identifier. The data manager has to be installed on test and able to run jobs
+there.
+
+The build starts by itself on merge. It runs planemo with `--no_use_cache`,
+because Galaxy's job cache could otherwise hand back a copy of an earlier,
+possibly broken, bundle instead of running the data manager again. Builds take
+minutes for small databases and hours for large ones. A maintainer then checks
+the bundle through its index,
+`GET /api/datasets/<id>/display?filename=_gx_data_bundle_index.json`, where the
+paths should be relative and `value` as expected. `display?preview=true` isn't
+useful for this: it shows the data manager's primary output, which has absolute
+job paths.
+
+Publishing starts with a rehearsal (`publish=false`), which imports everything
+into a CVMFS transaction and aborts it, and whose summary shows what would be
+imported and what skipped. The real publish follows. Replacing an entry that's
+already published isn't automated; a maintainer comments out the `.loc` row and
+removes the data directory and the record marker in a Stratum 0 transaction,
+and the next publish imports the replacement.
 
 ## End to end
 
@@ -135,59 +130,47 @@ sequenceDiagram
   G-->>C: new entry selectable in tools
 ```
 
-### Stage 1: Lint
+### Lint
 
-`lint.yml`, on pull requests and pushes to `main`:
+`lint.yml` runs on pull requests and on pushes to `main`. It validates every
+request with `scripts/request_models.py`, checks with
+`scripts/generate_schema.py --check --refresh` that the committed editor schema
+still matches the model and the Tool Shed, generates and gxformat2-validates
+every build workflow, runs the unit tests, and warns about requests whose data
+already exists. It needs no secrets, so it runs on pull requests from forks.
 
-- `scripts/request_models.py` validates every request;
-- `scripts/generate_schema.py --check --refresh` confirms the committed editor
-  schema matches the model and what the Tool Shed serves;
-- `scripts/generate_build.py --all` generates every build workflow and
-  gxformat2-validates it;
-- the unit tests run;
-- `scripts/check_data_exists.py --all --warn` warns about data that already
-  exists.
+### Build
 
-None of this needs secrets, so it runs safely on pull requests from forks.
+`build.yml` runs on pushes to `main` that change `data-managers/`, and can be
+started by hand for a single request. It drops requests whose data test already
+serves, and for a chained request whose upstream is already served it uses that
+entry instead of building it again. Each data manager runs in bundle mode and
+writes the data together with `_gx_data_bundle_index.json`, which describes the
+new rows with paths relative to the bundle. In a chained build, the upstream
+step's bundle goes straight into the downstream data manager. planemo returns
+once the workflow is scheduled, and the build carries on in the history
+`idc-<table>-<version>`.
 
-### Stage 2: Build
+### Publish
 
-`build.yml`, on a push to `main` that touches `data-managers/**`, or dispatched
-by hand for one request. It runs with the build account's test.galaxyproject.org
-key. `check_data_exists.py --print-new` drops requests whose data is already
-served; for a chained request whose upstream is served, `generate_build.py`
-references that entry instead of rebuilding it.
+`deploy.yml` is started by a maintainer once the builds are green, since they
+finish hours after the merge. It runs on a self-hosted runner that can reach the
+Stratum 0, with its credentials in a protected GitHub environment. The job opens
+a CVMFS transaction, syncs `config/tool_data_table_conf.xml`, and resolves each
+request's bundles from its build history, refusing datasets that aren't `ok`.
+Requests that already have a record marker are skipped, and so is a chain's
+upstream when it has one, so an upstream built both on its own and inside a
+chain is imported once. `galaxy-import-data-bundle` moves the data under
+`/cvmfs/idc.galaxyproject.org/data/` and appends the `.loc` rows, the record
+marker is written, and the transaction is published, or aborted for a
+rehearsal.
 
-Each data manager runs with `__data_manager_mode: bundle` and writes a bundle
-dataset: the data files plus `_gx_data_bundle_index.json`, which describes the
-data table rows with paths relative to the bundle. In a chained build the
-upstream step's bundle is wired straight into the downstream data manager's
-input. `planemo run --no_wait` returns once the workflow is scheduled; the
-build itself carries on in the history `idc-<table>-<version>`.
+### Distribution
 
-### Stage 3: Publish
-
-`deploy.yml`, dispatched by a maintainer once the build histories are green.
-It isn't triggered by the merge because the build finishes hours later and a
-publish on merge would race it. It runs on a self-hosted runner that can reach
-the Stratum 0, with its credentials held in a protected GitHub environment.
-The job opens a CVMFS transaction,
-syncs `config/tool_data_table_conf.xml`, and for each request resolves the
-bundles from its build history, refusing any dataset that isn't `ok`. A request
-whose `record/<table>/<version>` marker exists is skipped, as is a chain's
-upstream if its own marker exists (so an upstream built both for its own
-request and inside a chain is imported once). `galaxy-import-data-bundle` then moves the
-data under `/cvmfs/idc.galaxyproject.org/data/` and appends the `.loc` rows, the
-record marker is written, and the transaction is published (or aborted, for a
-rehearsal). The Jenkins job runs the same code and remains a fallback.
-
-### Stage 4: Distribution
-
-The Stratum 1 replicas snapshot the Stratum 0 every hour, and CVMFS clients pick
-up the new revision within minutes after that. A Galaxy server needs the IDC's
-`tool_data_table_conf.xml` in its `tool_data_table_config_path`, its job
-containers need `/cvmfs/idc.galaxyproject.org` bound in, and it has to reload
-the table (or restart) before tools offer the new entry; see
+The Stratum 1 replicas take a snapshot of the Stratum 0 every hour, and CVMFS
+clients see the new revision a few minutes later. A Galaxy server that loads the
+IDC's `tool_data_table_conf.xml` then has to reload the table, or restart,
+before its tools offer the new entry; see
 [Using IDC data in Galaxy](using-idc-data.md).
 <!-- TODO(merge post-publish-wait-and-reload): add that deploy.yml's
 after-publish job waits for the Stratum 1s, then reloads and verifies the
