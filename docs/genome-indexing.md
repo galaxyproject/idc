@@ -32,8 +32,8 @@ description: Human reference genome GRCh38.p14 (RefSeq)
 ```
 
 `python scripts/tool_schemas.py <tool_id>` lists the other sources and options,
-such as fetching from UCSC by its dbkey or from a URL. Test.galaxyproject.org
-already has several thousand genomes in `all_fasta`, so check
+such as fetching from UCSC by its dbkey or from a URL. Many genomes are already
+served, so check
 `https://test.galaxyproject.org/api/tool_data/all_fasta` for your dbkey first.
 
 ## Indexes
@@ -51,8 +51,8 @@ depends_on:
 params: {}
 ```
 
-If test already serves the genome, the build indexes that copy. Otherwise the
-genome is fetched first, in the same workflow.
+If the genome is already served, the build indexes that copy; otherwise it's
+fetched first, in the same workflow.
 
 Each indexer needs a `CHAIN_WIRING` entry in
 [`scripts/generate_build.py`](https://github.com/galaxyproject/idc/blob/main/scripts/generate_build.py)

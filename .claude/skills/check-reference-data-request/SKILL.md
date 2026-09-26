@@ -178,7 +178,7 @@ Published but not visible yet? In order:
    that's a request/identity problem for the maintainers, not a propagation
    delay. SameStr built from mOTUs (`samestr_db/marker_db_motus_*`) is a known
    case: its row carries the mOTUs `db_from_...` value, which the check can't
-   match (see "How the existence check works" in the guide). Confirm it by eye from the table
+   match. Confirm it by eye from the table
    instead: a row whose `value` is the mOTUs value the chain used.
 
 For a server other than test, repeat step 6 with `--reference-galaxy <url>`;

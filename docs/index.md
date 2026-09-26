@@ -14,8 +14,8 @@ without downloading or indexing anything itself.
 The data is built by Galaxy data managers. To get something built, you open a
 pull request against [galaxyproject/idc](https://github.com/galaxyproject/idc)
 that adds a YAML file naming the data manager and its parameters. The request is
-linted on the PR and built on test.galaxyproject.org after the merge, and a
-maintainer publishes the result to CVMFS. Reviews of other people's requests
+linted on the PR and built after the merge, and a maintainer publishes the
+result to CVMFS. Reviews of other people's requests
 are as welcome as new ones.
 
 | to | read |

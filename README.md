@@ -128,10 +128,9 @@ genomes:
 Reference data, from databases such as MetaPhlAn's to genomes and their
 indexes, is requested with a pull request that adds one YAML file,
 `data-managers/<data_table>/<version>.yaml`, naming a data manager and its
-parameters. The request is linted on the PR and built on
-[test.galaxyproject.org](https://test.galaxyproject.org) as a data-manager
-bundle workflow after the merge, and a maintainer publishes the result to the
-`idc.galaxyproject.org` CVMFS repository.
+parameters. The request is linted on the PR and built after the merge, and a
+maintainer publishes the result to the `idc.galaxyproject.org` CVMFS
+repository.
 
 [docs/requesting-reference-data.md](docs/requesting-reference-data.md) explains
 how to write and check a request and what happens to it afterwards, and

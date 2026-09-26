@@ -172,6 +172,18 @@ clients see the new revision a few minutes later. A Galaxy server that loads the
 IDC's `tool_data_table_conf.xml` then has to reload the table, or restart,
 before its tools offer the new entry; see
 [Using IDC data in Galaxy](using-idc-data.md).
+
+### The list of data managers
+
+`schemas/data_managers.yml` lists the data managers installed on the build
+Galaxy, and the editor schema includes their parameters. When the installed set
+changes in usegalaxy-tools, a maintainer refreshes both with
+
+```bash
+python scripts/generate_schema.py --from-lock https://raw.githubusercontent.com/galaxyproject/usegalaxy-tools/master/test.galaxyproject.org/data_managers.yml.lock
+```
+
+and commits the two files it rewrites.
 <!-- TODO(merge post-publish-wait-and-reload): add that deploy.yml's
 after-publish job waits for the Stratum 1s, then reloads and verifies the
 tables on test.galaxyproject.org, and show it in the diagrams above. -->

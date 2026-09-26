@@ -3,9 +3,8 @@
 Everything the IDC builds, from a MetaPhlAn database to a genome and its
 Bowtie2 index, is produced by a Galaxy data manager and requested the same way:
 a pull request that adds one YAML file describing which data manager to run and
-with which parameters. The file is linted on the PR and, once merged, built on
-[test.galaxyproject.org](https://test.galaxyproject.org) as a data-manager bundle
-workflow. A maintainer then publishes the result to the `idc.galaxyproject.org`
+with which parameters. The file is linted on the PR and built after the merge,
+and a maintainer then publishes the result to the `idc.galaxyproject.org`
 CVMFS repository, where any Galaxy server that mounts it can use it.
 
 This page covers writing that file, checking it locally, and following it
@@ -16,10 +15,9 @@ show what works. If you use a coding agent, the repository has
 
 ## Before you start: does it already exist?
 
-Don't request data that a Galaxy already serves. Whether it does is answered by
-the build Galaxy's public data table API, which lists what test.galaxyproject.org
-can use from every source it loads, the IDC included. There is no separate list
-of published versions in this repository.
+Don't request data that is already served. You can check with the data table
+API of test.galaxyproject.org, which shows the IDC's data along with the other
+galaxyproject.org reference data:
 
 ```bash
 curl -s https://test.galaxyproject.org/api/tool_data/metaphlan_database_versioned
@@ -36,9 +34,7 @@ If one of the rows has a field equal to your version (for MetaPhlAn that's
 `dbkey`, for mOTUs `version`), or a `value` that is your version followed by
 `-<date>`, the data is already there. If it's served by another repository and
 you think it belongs in the IDC, open an issue; moving data is a maintainer
-decision. A 404 means the table isn't configured on test at all, which is
-expected for a data manager nobody has requested from yet (see
-[Adding a new data manager](#adding-a-new-data-manager)).
+decision. A 404 means nobody has requested data from that data manager yet.
 
 Search the open PRs as well
 (`gh pr list --repo galaxyproject/idc --search "<table>"`) and the
@@ -46,12 +42,9 @@ Search the open PRs as well
 
 ## 1. Find the data manager
 
-The data manager has to be installed on test.galaxyproject.org, which is
-managed in usegalaxy-tools'
-[`test.galaxyproject.org/data_managers.yml`](https://github.com/galaxyproject/usegalaxy-tools/blob/master/test.galaxyproject.org/data_managers.yml).
 [`schemas/data_managers.yml`](https://github.com/galaxyproject/idc/blob/main/schemas/data_managers.yml)
-in this repository lists the same set with full tool GUIDs, so you can usually
-copy `tool_id` from there:
+lists the data managers you can request from, with their full tool GUIDs, so you
+can usually copy `tool_id` from there:
 
 ```bash
 grep -n metaphlan schemas/data_managers.yml
@@ -77,7 +70,7 @@ the repository's source lives:
 curl -s 'https://toolshed.g2.bx.psu.edu/api/repositories?name=data_manager_motus&owner=bgruening'
 ```
 
-If the data manager isn't installed yet, see
+If the data manager you need isn't listed, see
 [Adding a new data manager](#adding-a-new-data-manager).
 
 ## 2. Name the file
@@ -86,16 +79,16 @@ A request lives at `data-managers/<data_table>/<version>.yaml`.
 
 The directory is the data manager's primary data table, the one tools pick the
 data from, and it has to be one of the request's `data_tables`. The file name is
-the version identity. It names the build history on test
-(`idc-<data_table>-<version>`) and the marker the publish writes on CVMFS
-(`record/<data_table>/<version>`), which is what stops the same version from
-being imported twice, so it has to be unique within the table.
+the version identity and has to be unique within the table.
 
 Use the name the data manager itself gives the data, such as MetaPhlAn's index
-name (`mpa_vJan21_CHOCOPhlAnSGB_202103`) or the mOTUs release (`3.1.0`). After
-the build, the existence check looks for the file name, the `params` values and
-the `depends_on` versions in the row the data manager wrote, and a name that
-appears nowhere in that row is never recognised as built.
+name (`mpa_vJan21_CHOCOPhlAnSGB_202103`) or the mOTUs release (`3.1.0`). The
+pipeline recognises published data by finding the file name, a `params` value
+or a `depends_on` version in the data table row, either as a whole field or as
+the start of `value` followed by `-`. To see whether that works for your
+request, run the existence check against a server that already has the same
+data, e.g.
+`python scripts/check_data_exists.py --reference-galaxy https://usegalaxy.eu <file>`.
 
 Data without a version of its own, like whatever BLAST `nr` is on the day it's
 downloaded, gets a date: `nr_2026-09-21`, with a `description` saying what the
@@ -132,15 +125,13 @@ If you start the file with
 ```
 
 VS Code (with the Red Hat YAML extension) and JetBrains IDEs complete and check
-`params` as you type, for every data manager installed on test and every
-`tool_id` a request already uses.
+`params` as you type.
 
 ### Matching another server's identifier
 
 The `value` column of a data table is what workflows and tool runs refer to. If
 another Galaxy, usegalaxy.eu say, already has the same data, the IDC should
-write the same `value`, or a workflow built there won't find its data here. You
-can look it up the same way as on test:
+write the same `value`, or a workflow built there won't find its data here:
 
 ```bash
 curl -s https://usegalaxy.eu/api/tool_data/motus_db_versioned
@@ -174,11 +165,8 @@ depends_on:
 ```
 
 A request file for the upstream has to exist, and if the upstream version is new
-too, both files go in the same PR. If test already serves the upstream, the build
-uses that entry. Otherwise the upstream data manager runs first in the same
-workflow and its output feeds the downstream one. When both are new, the upstream
-is built twice on test (once for its own request, once inside the chain), and
-the publish imports it once.
+too, both files go in the same PR. If the upstream is already served, the build
+uses it; otherwise it's built first, in the same workflow.
 
 `depends_on` also decides which input of the downstream tool the upstream goes
 into. `CHAIN_WIRING` in
@@ -257,7 +245,7 @@ pip install "pydantic>=2" pyyaml jsonschema gxformat2 pytest
 
 python scripts/request_models.py <files>
 python scripts/generate_schema.py --check
-python scripts/generate_build.py <files> --outdir build --reference-galaxy https://test.galaxyproject.org
+python scripts/generate_build.py <files> --outdir build
 python scripts/check_data_exists.py <files>
 ```
 
@@ -270,15 +258,13 @@ request uses a `tool_id` it doesn't know. Run `python scripts/generate_schema.py
 and commit the updated `schemas/request.schema.json` with the request.
 
 `generate_build.py` writes `build/<table>/<version>/workflow.gxwf.yml` and
-`job.yml`, the workflow and inputs that will run on test after the merge, and
-validates the workflow with gxformat2. With `--reference-galaxy` it uses an
-upstream test already has instead of adding a step for it, as the real build
-does.
+`job.yml`, the workflow and inputs the build will run after the merge, and
+validates the workflow with gxformat2.
 
 `check_data_exists.py` prints `No requested reference data already exists on
-...` if test doesn't have the data. It exits 1 if test has it, and also if test
-didn't answer (`cannot tell whether this already exists`), in which case try
-again later.
+...` if the data isn't served yet. It exits 1 if it is, or if the server didn't
+answer (`cannot tell whether this already exists`), in which case try again
+later.
 
 CI additionally runs `generate_schema.py --check --refresh`, the unit tests and
 `generate_build.py --all`.
@@ -295,40 +281,19 @@ build are if you know. Reviewers plan publishes around builds that take hours.
 
 ```mermaid
 flowchart LR
-  pr(["PR"]) --> lint["Lint<br/>(on the PR)"]
+  pr(["PR"]) --> lint["Lint"]
   lint --> merge["Review + merge"]
-  merge --> build["Build on test<br/>(on merge)"]
+  merge --> build["Build"]
   build --> publish["Publish to CVMFS<br/>(maintainer)"]
-  publish --> s1["Stratum 1 snapshot<br/>(hourly)"]
-  s1 --> reload["Data table reload<br/>on each Galaxy"]
-  reload --> done(["Usable in tools"])
+  publish --> done(["Available on<br/>Galaxy servers"])
 ```
 
-Merging starts the build workflow (`build.yml`). It skips requests whose data
-test already has, generates the bundle workflow for the rest and starts it on
-test.galaxyproject.org in the history `idc-<table>-<version>`. Each data manager
-runs in bundle mode and writes a bundle dataset: the data plus
-`_gx_data_bundle_index.json`, which describes the new data table rows with paths
-relative to the bundle. The GitHub job finishes once the workflow is scheduled;
-the build itself takes minutes for small databases and hours for large ones.
-
-When the history is green, a maintainer checks the bundle index for relative
-paths and the expected `value` and runs the publish workflow (`deploy.yml`),
-first as a rehearsal and then for real. It imports each bundle into the CVMFS
-repository, appends the rows to the `.loc` files and writes the
-`record/<table>/<version>` marker; see
-[Publishing to CVMFS](cvmfs-publish-actions.md). Publishing isn't triggered by
-the merge because the build finishes hours later.
-
-Galaxy servers read CVMFS through the Stratum 1 replicas, which pick up a new
-revision on their hourly snapshot. Galaxy also keeps data tables in memory, so
-each server has to reload the table (`GET /api/tool_data/<table>/reload`, as an
-admin) or restart before tools show the new entry. On test.galaxyproject.org a
-maintainer does that after publishing.
-<!-- TODO(merge post-publish-wait-and-reload): say that deploy.yml's
-after-publish job waits for the Stratum 1s and reloads the tables on test. -->
-
-[How it works](architecture.md) has the full picture.
+Merging starts the build, which takes minutes for small databases and hours for
+large ones. When it's done, a maintainer checks the result and publishes it to
+CVMFS; see [Publishing to CVMFS](cvmfs-publish-actions.md). Galaxy servers that
+use the IDC see new data within about an hour of the publish, once the CVMFS
+replicas have updated and the server has reloaded its data tables.
+[How it works](architecture.md) describes each stage in detail.
 
 ## Checking on a request
 
@@ -338,53 +303,16 @@ None of this needs a Galaxy API key.
 |---|---|
 | lint | the PR's checks, or `gh pr checks <number> --repo galaxyproject/idc` |
 | build started | the *Build reference-data bundles* run for the merge (`gh run list --repo galaxyproject/idc --workflow build.yml`). Its "Select requests to build" step lists what it built and what it skipped. |
-| build finished | the history on test belongs to the build account, so ask on the PR |
+| build finished | ask on the PR |
 | published | `curl -s https://test.galaxyproject.org/api/tool_data/<table>` shows the row, or `python scripts/check_data_exists.py --expect-exists <file>` prints `ok: <table>/<version> is present` |
-
-## How the existence check works
-
-`scripts/check_data_exists.py` asks test's data table API, and it is used three
-times: the lint warns if a request's data already exists, the build skips such
-requests, and the publish has nothing to import for them because no build
-history exists.
-
-Matching a request to a row is a heuristic, because data managers keep the
-version in different columns. A request counts as present if its file name, one
-of its `params` values or one of its `depends_on` versions equals a whole field
-of a row, or if the row's `value` starts with one of them followed by `-`. To
-see how the check will treat a request once it's built, run it against a server
-that already has the same data:
-
-```bash
-python scripts/check_data_exists.py --reference-galaxy https://usegalaxy.eu <file>
-```
-
-A few consequences follow from relying on the data table:
-
-- Test has to load the IDC's own `tool_data_table_conf.xml`, which it does, or
-  the check can't see what the IDC has published.
-- A row only shows up after the Stratum 1 snapshot and a table reload. A build
-  that runs in between rebuilds data that is already on CVMFS, but the record
-  markers keep it from being imported twice.
-- If test doesn't answer, the check fails instead of assuming the data is
-  missing, so an outage stops the build rather than rebuilding everything.
-- After a publish, `python scripts/check_data_exists.py --all --expect-exists`
-  confirms that every request is found under the name it was requested with.
-
-SameStr built from mOTUs isn't recognised at the moment. Its row carries the
-mOTUs `value` (`db_from_…`) and a free-text name, so neither
-`marker_db_motus_3.1.0` nor `3.1.0` matches a field, even where the data is
-served. Such a request is rebuilt if its file changes, although it isn't
-imported twice. SameStr built from MetaPhlAn is matched, because the MetaPhlAn
-`value` starts with the index name.
 
 ## Adding a new data manager
 
-A data manager that isn't installed on test yet has to be added to
+A data manager that isn't in `schemas/data_managers.yml` has to be installed
+first, by adding it to
 [usegalaxy-tools](https://github.com/galaxyproject/usegalaxy-tools)'
-`test.galaxyproject.org/data_managers.yml` first, and its jobs have to be able to
-run on test. That PR has to be merged and deployed before a build can run,
-though the lint here works without it.
+[`test.galaxyproject.org/data_managers.yml`](https://github.com/galaxyproject/usegalaxy-tools/blob/master/test.galaxyproject.org/data_managers.yml).
+The lint here works before that's merged, but the build doesn't.
 
 In this repository, its data tables go in
 [`config/tool_data_table_conf.xml`](https://github.com/galaxyproject/idc/blob/main/config/tool_data_table_conf.xml),
@@ -393,15 +321,8 @@ of the data manager's `tool_data_table_conf.xml.sample` and
 `allow_duplicate_entries="False"`. If it's built from another database, it needs
 a `CHAIN_WIRING` entry naming the conditional to set (if any) and the input that
 receives the upstream bundle. The table, the wiring and the first request can
-share a PR. If the tool isn't in `schemas/data_managers.yml`, regenerate the
-editor schema with `python scripts/generate_schema.py` and commit it too.
-
-When the installed set changes, maintainers refresh `schemas/data_managers.yml`
-and the editor schema with
-
-```bash
-python scripts/generate_schema.py --from-lock https://raw.githubusercontent.com/galaxyproject/usegalaxy-tools/master/test.galaxyproject.org/data_managers.yml.lock
-```
+share a PR. Regenerate the editor schema with
+`python scripts/generate_schema.py` and commit it too.
 
 ## Lint errors
 
@@ -456,7 +377,7 @@ in use, and `python scripts/generate_schema.py --refresh` picks that up.
 
 ## Other questions
 
-**The lint warns that my data already exists.** Test serves it from some
+**The lint warns that my data already exists.** It's already served from some
 source. If the existing entry is wrong or should move into the IDC, say so on
 the PR; replacing an entry is done by hand by a maintainer.
 
@@ -464,8 +385,8 @@ the PR; replacing an entry is done by hand by a maintainer.
 build" step says which requests it skipped and why. A maintainer can re-run the
 build for a single request once a failure is fixed.
 
-**It's published, but my Galaxy doesn't show it.** Give the Stratum 1s up to an
-hour, then reload the table on that Galaxy or restart it. The server also has
+**It's published, but my Galaxy doesn't show it.** Give it up to an hour, then
+reload the table on that Galaxy or restart it. The server also has
 to load the IDC's `tool_data_table_conf.xml`; see
 [Using IDC data in Galaxy](using-idc-data.md).
 
@@ -474,10 +395,9 @@ version is a new file. Requesting the same file name again does nothing.
 
 ## Using an agent
 
-[`.claude/skills/`](https://github.com/galaxyproject/idc/tree/main/.claude/skills)
-has two skills, listed in
-[`AGENTS.md`](https://github.com/galaxyproject/idc/blob/main/AGENTS.md), which
-coding agents read when they work in the repository. `request-reference-data` goes from "I need database X, version
-Y" to a linted request and a drafted PR, and `check-reference-data-request`
-finds out how far a request has got. Both use the scripts described on this
-page and neither needs an API key.
+Coding agents working in the repository can follow two skills, described in
+[`AGENTS.md`](https://github.com/galaxyproject/idc/blob/main/AGENTS.md).
+`request-reference-data` goes from "I need database X, version Y" to a linted
+request and a drafted PR, and `check-reference-data-request` finds out how far a
+request has got. Both use the scripts described on this page and neither needs
+an API key.
