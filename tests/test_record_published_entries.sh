@@ -42,8 +42,8 @@ mkdir -p "$OVERLAYFS_UPPER/config" "$OVERLAYFS_LOWER/config"
 T=$'\t'
 
 # A .loc the transaction created: every row is new, comments and blanks are not rows.
-printf '%s\n' "#value${T}name" "fresh${T}q" "  # indented comment${T}x" "" "   " "crlf${T}row"$'\r' \
-    > "$OVERLAYFS_UPPER/config/new.loc"
+printf '%s\n' "#value${T}name" "fresh${T}q" "  # indented comment${T}x" "${T} # tab-indented comment" \
+    "" "   " "${T}  " "crlf${T}row"$'\r' "crcr${T}row"$'\r\r' > "$OVERLAYFS_UPPER/config/new.loc"
 # An edited row (same value, new path) plus an unchanged one.
 printf '%s\n' "#c" "3.0.1${T}3.0.1${T}old${T}/data/3.0.1" "3.1.0${T}3.1.0${T}mOTUs${T}/old" \
     > "$OVERLAYFS_LOWER/config/edited.loc"
@@ -58,7 +58,8 @@ touch "$OVERLAYFS_UPPER/config/tool_data_table_conf.xml"
 record_published_entries > /dev/null
 # compgen -G does not promise an order across files, so compare sorted.
 check "added and changed rows, whole" \
-    "edited.loc${T}3.1.0${T}3.1.0${T}mOTUs${T}/new"$'\n'"new.loc${T}crlf${T}row"$'\n'"new.loc${T}fresh${T}q" \
+    "$(printf '%s\n' "edited.loc${T}3.1.0${T}3.1.0${T}mOTUs${T}/new" \
+        "new.loc${T}crcr${T}row" "new.loc${T}crlf${T}row" "new.loc${T}fresh${T}q")" \
     "$(LC_ALL=C sort <<< "$PUBLISHED_ENTRIES")"
 
 # Handed to Actions only through $GITHUB_OUTPUT, as a multi-line output.

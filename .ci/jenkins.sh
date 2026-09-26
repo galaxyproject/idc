@@ -762,9 +762,10 @@ function record_published_entries() {
         added="$(exec_on grep -avxF -f "$lower" "$loc")" || [ $? -eq 1 ] \
             || { log_error "Could not compare ${loc} with ${lower}"; return 1; }
         # Galaxy skips lines whose first non-blank character is '#' and strips
-        # the line ending, so do the same.
+        # trailing CRs/LFs, so do the same. Explicit sets, not [[:space:]]: an
+        # old mawk (1.3.3) has no character classes and would drop every row.
         PUBLISHED_ENTRIES+="$(printf '%s\n' "$added" | awk -v loc="${loc##*/}" \
-            '{ sub(/\r$/, "") } !/^[[:space:]]*#/ && /[^[:space:]]/ { print loc "\t" $0 }')"$'\n'
+            '{ sub(/\r+$/, "") } !/^[ \t\r\v\f]*#/ && /[^ \t\r\v\f]/ { print loc "\t" $0 }')"$'\n'
     done
     # Drop the blank lines left by .loc files with no new rows.
     PUBLISHED_ENTRIES="$(printf '%s' "$PUBLISHED_ENTRIES" | grep -v '^$' || true)"
