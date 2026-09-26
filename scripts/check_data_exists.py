@@ -52,16 +52,19 @@ class CheckUnavailable(Exception):
     """
 
 
-def fetch_table(galaxy_url: str, table: str) -> dict | None:
+def fetch_table(galaxy_url: str, table: str, api_key: str | None = None) -> dict | None:
     """GET /api/tool_data/<table> -> {columns, fields}.
 
     Returns None if the table is not configured on that Galaxy (404) - a
     definitive "this Galaxy has no such data". Raises CheckUnavailable if the
-    question could not be answered at all. Public endpoint, no key needed.
+    question could not be answered at all. Public endpoint, no key needed; with
+    an admin ``api_key`` the ``path`` column is the full path rather than
+    Galaxy's public basename of it.
     """
     url = f"{galaxy_url.rstrip('/')}/api/tool_data/{table}"
+    request = urllib.request.Request(url, headers={"x-api-key": api_key} if api_key else {})
     try:
-        with urllib.request.urlopen(url, timeout=30) as resp:  # noqa: S310 (fixed https host)
+        with urllib.request.urlopen(request, timeout=30) as resp:  # noqa: S310 (fixed https host)
             return json.load(resp)
     except urllib.error.HTTPError as exc:
         if exc.code == 404:
