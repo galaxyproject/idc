@@ -23,12 +23,13 @@ unchanged as a fallback; both run the same `scripts/import_bundles.py`.
    `galaxy-import-data-bundle` for every request, records
    `record/<dm>/<version>` and publishes. Already-recorded versions are skipped,
    so re-running is safe. Before closing the transaction it logs the data table
-   rows it added (the `.loc` lines in the transaction's upper layer that are not
-   in the published copy) and, once published, passes them on as the job output
-   `published_entries`.
+   rows it added or changed (whole `.loc` lines in the transaction's upper layer
+   that are not in the published copy) and, only once `cvmfs_server publish`
+   succeeded, passes them on as the job output `published_entries`. A failed
+   publish aborts the transaction and fails the job.
 5. The `after-publish` job (`scripts/after_publish.py`) waits for the Stratum 1s
    to serve the new revision, then reloads each affected data table on
-   test.galaxyproject.org and checks the new values are in it. See below.
+   test.galaxyproject.org and checks the new rows are in it. See below.
 
 Publishing is deliberately manual rather than on merge: the build is
 asynchronous, so a publish triggered by the merge would race it.
@@ -49,20 +50,27 @@ Galaxy. The `after-publish` job:
    minute until each serves that revision or later (90 minutes at most);
 3. then, for up to 30 minutes, calls `GET /api/tool_data/<table>/reload` on
    test.galaxyproject.org for every table a new row went into (the `.loc` to
-   table mapping is `config/tool_data_table_conf.xml`) and checks each new value
-   in the table's first column of `GET /api/tool_data/<table>`. Galaxy's own
-   CVMFS client needs a few minutes after the snapshot to see the new `.loc`,
-   hence the retries.
+   table mapping is `config/tool_data_table_conf.xml`) and checks that each new
+   row is one of the rows (`fields`) of `GET /api/tool_data/<table>`. The whole
+   row is compared, not just its `value` (which is not the first column of
+   every table, e.g. `alignseq_seq` or `snpeffv_*`), so a changed row counts
+   only once Galaxy serves the new version. The request uses the admin key,
+   because Galaxy shows other users only the basename of a `path` column.
+   Galaxy's own CVMFS client needs a few minutes after the snapshot to see the
+   new `.loc`, hence the retries. A table test does not have at all (404) fails
+   straight away: that needs a Galaxy configuration change, not more waiting.
 
-The job summary lists when each Stratum 1 caught up and when each value became
-visible. The job fails if a Stratum 1 did not catch up or a value never showed
+The job summary lists when each Stratum 1 caught up and when each row became
+visible. The job fails if a Stratum 1 did not catch up or a row never showed
 up; Galaxy is checked either way, since test may be served by a Stratum 1 that
-did catch up. The publish itself has happened by then - a failure here means
+did catch up. If the Stratum 0's revision cannot be read, the Stratum 1s are
+not checked and Galaxy gets their 90 minutes on top of its own 30. The publish itself has happened by then - a failure here means
 "not visible (yet)", not "not published".
 
 It runs on a GitHub-hosted runner: it mostly sleeps, for up to two hours, and
 must not hold the shared `cvmfs-publish` runner. It does not run for a rehearsal
-(`publish: false`) or when the publish added no data table row.
+(`publish: false`), a failed publish, or when the publish added no data table
+row. It does run if a step of the publish job fails after the publish itself.
 
 ## Why a self-hosted runner
 
