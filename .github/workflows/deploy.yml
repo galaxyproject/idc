@@ -33,6 +33,10 @@ jobs:
     # A self-hosted job may run up to 5 days; the import itself is minutes to an
     # hour (dominated by installing galaxy-maintenance-scripts on the Stratum 0).
     timeout-minutes: 300
+    outputs:
+      # '<loc file>\t<value>' per data table row the published transaction
+      # added; empty for a rehearsal or when no row was added.
+      published_entries: ${{ steps.import.outputs.published_entries }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -47,6 +51,7 @@ jobs:
           printf '%s\n' "$STRATUM0_SSH_KEY" | ssh-add -
 
       - name: Import reference-data bundles and publish
+        id: import
         env:
           PUBLISH: ${{ inputs.publish && 'true' || 'false' }}
           REFERENCE_DATA_API_KEY: ${{ secrets.REFERENCE_DATA_API_KEY }}
