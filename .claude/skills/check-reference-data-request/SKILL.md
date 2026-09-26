@@ -127,8 +127,14 @@ has published everything that was ready. Its log says what happened to each
 request:
 
 ```bash
-gh run view <run id> --repo galaxyproject/idc --log | grep -E "Recorded import|Already imported|No bundles to import|# skip|# import"
+gh run view <run id> --repo galaxyproject/idc --log | grep -E "rehearsal|Recorded import|Already imported|No bundles to import|# skip|# import"
 ```
+
+**First rule out a rehearsal.** A `publish: false` run imports too, and prints
+`Recorded import` before the transaction is aborted; it logs
+`PUBLISH=false: importing into a transaction that will be aborted (rehearsal)`,
+and its job summary says `published: false`. Only a run without that line (and
+`published: true` in its summary) published anything.
 
 `Recorded import: .../record/<table>/<version>` means it was published by that
 run; `Already imported` means an earlier publish did; `No bundles to import`
@@ -143,8 +149,11 @@ python scripts/check_data_exists.py --expect-exists data-managers/<table>/<versi
 curl -s https://test.galaxyproject.org/api/tool_data/<table> | python3 -m json.tool
 ```
 
-`--expect-exists` exits 0 (`ok: <table>/<version> is present ...`) once the
-row is in test's data table. Show the matching row, including its `value`.
+Run it from an up-to-date checkout of `main` (`git pull` first): a file your
+checkout doesn't have yet is an error (exit 2, "no such request file"), not a
+"yes". Only the `ok: <table>/<version> is present ...` line means the row is
+in test's data table; an `::error::` line means it isn't. Show the matching
+row, including its `value`.
 
 Published but not visible yet? In order:
 
@@ -160,13 +169,17 @@ Published but not visible yet? In order:
    A replica behind the Stratum 0 hasn't taken its hourly snapshot yet; wait.
 2. **Data table reload.** Galaxy keeps tables in memory. After the snapshot
    (and a few minutes for the client), an admin of that Galaxy has to call
-   `GET /api/tool_data/<table>/reload`, or restart it. On test that's part of
-   the publish; elsewhere it's the server's admins.
+   `GET /api/tool_data/<table>/reload`, or restart it. On test a maintainer
+   does it after publishing (the publish workflow may do it once that step
+   lands); elsewhere it's the server's admins.
 3. **The identity didn't match.** If the row is there but `--expect-exists`
    still fails, the data manager wrote a `value` that doesn't contain the
    request's version, `params` values or `depends_on` versions. Report both;
    that's a request/identity problem for the maintainers, not a propagation
-   delay.
+   delay. SameStr built from mOTUs (`samestr_db/marker_db_motus_*`) is a known
+   case: its row carries the mOTUs `db_from_...` value, which the check can't
+   match (see "Known gap" in the guide). Confirm it by eye from the table
+   instead: a row whose `value` is the mOTUs value the chain used.
 
 For a server other than test, repeat step 6 with `--reference-galaxy <url>`;
 it must also load `/cvmfs/idc.galaxyproject.org/config/tool_data_table_conf.xml`

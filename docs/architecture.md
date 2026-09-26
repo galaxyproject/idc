@@ -121,8 +121,8 @@ sequenceDiagram
   TG->>TG: data managers run in bundle mode,<br/>a chained upstream bundle feeds the downstream DM,<br/>bundle index records relative paths
   TG-->>TG: history idc-<table>-<version> with bundle dataset(s)
   M->>GH: dispatch deploy.yml (publish=false, then true)
-  GH->>R: job on runner group cvmfs-publish
-  R->>S0: SSH as the repository owner
+  GH->>R: publish job (self-hosted runner)
+  R->>S0: connect to the Stratum 0
   S0->>S0: cvmfs_server transaction
   S0->>S0: sync config/tool_data_table_conf.xml
   S0->>TG: import_bundles.py resolves bundles from the build history
@@ -169,13 +169,14 @@ build itself carries on in the history `idc-<table>-<version>`.
 
 `deploy.yml`, dispatched by a maintainer once the build histories are green.
 It isn't triggered by the merge because the build finishes hours later and a
-publish on merge would race it. It runs on a self-hosted runner, because the
-Stratum 0 only accepts SSH from inside its own network, and uses credentials
-held in a protected GitHub environment. The job opens a CVMFS transaction,
+publish on merge would race it. It runs on a self-hosted runner that can reach
+the Stratum 0, with its credentials held in a protected GitHub environment.
+The job opens a CVMFS transaction,
 syncs `config/tool_data_table_conf.xml`, and for each request resolves the
 bundles from its build history, refusing any dataset that isn't `ok`. A request
 whose `record/<table>/<version>` marker exists is skipped, as is a chain's
-upstream if its own marker exists. `galaxy-import-data-bundle` then moves the
+upstream if its own marker exists (so an upstream built both for its own
+request and inside a chain is imported once). `galaxy-import-data-bundle` then moves the
 data under `/cvmfs/idc.galaxyproject.org/data/` and appends the `.loc` rows, the
 record marker is written, and the transaction is published (or aborted, for a
 rehearsal). The Jenkins job runs the same code and remains a fallback.

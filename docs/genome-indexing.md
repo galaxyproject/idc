@@ -62,10 +62,11 @@ comes first: it downloads each genome and fills the `all_fasta` and
    [`ansible/`](https://github.com/galaxyproject/idc/tree/main/ansible), with
    the IDC repository mounted, and waits until its CVMFS client is at the
    current revision, so it sees everything already published.
-4. The data managers run in two stages, all in *bundle* mode (Ephemeris
-   `run-data-managers --data-manager-mode bundle`): first the genome fetch, then
-   the indexers. Each task's output lands in a history
-   `idc-<genome>-<data manager>`.
+4. The data managers run in *bundle* mode (Ephemeris
+   `run-data-managers --data-manager-mode bundle`), one stage per job: while any
+   genome still needs fetching, a job runs only the fetch data manager; once
+   all genomes are fetched (and published), the next job runs the indexers.
+   Each task's output lands in a history `idc-<genome>-<data manager>`.
 5. On the Stratum 0, the job opens a CVMFS transaction, syncs
    `config/tool_data_table_conf.xml`, imports every new bundle with
    `galaxy-import-data-bundle` (which moves the data under `data/` and appends

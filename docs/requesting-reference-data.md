@@ -47,8 +47,9 @@ curl -s https://test.galaxyproject.org/api/tool_data/metaphlan_database_versione
             ...]}
 ```
 
-- A row whose `value` or version column names your version means the data is
-  there: there is nothing to request. Moving data that another repository
+- A row with a field equal to your version (for MetaPhlAn it's `dbkey`, for
+  mOTUs `version`), or whose `value` is your version followed by `-<date>`,
+  means the data is there: there is nothing to request. Moving data that another repository
   already serves (byhand, say) into the IDC is a maintainer decision, not a
   request; open an issue instead.
 - A 404 means the table isn't configured on test at all, which is normal for a
@@ -211,9 +212,13 @@ depends_on:
 - A request file for the upstream **must exist**
   (`data-managers/motus_db_versioned/3.1.0.yaml`), so the build can produce it
   if it isn't there yet. If you need a new upstream version too, add both files
-  in the same PR.
+  in the same PR. The upstream is then built twice on test, once for its own
+  request and once inside the chained workflow, since neither exists when the
+  build runs; the publish imports it only once.
 - If the upstream already exists on test, the build references that entry
-  instead of rebuilding it (it looks the upstream up by its version column). If
+  instead of rebuilding it (it looks for a row with a field equal to the
+  upstream request's file name, or a `value` starting with it, and takes the
+  first). If
   it doesn't, the upstream data manager runs first, in the same workflow, and its
   bundle feeds the downstream one.
 - The upstream **branch** of the tool is selected by `depends_on`, not by
@@ -301,7 +306,7 @@ pip install "pydantic>=2" pyyaml jsonschema gxformat2 pytest
 python scripts/request_models.py data-managers/<table>/<version>.yaml   # the request itself
 python scripts/generate_schema.py --check          # is the editor schema still current?
 python scripts/generate_build.py data-managers/<table>/<version>.yaml --outdir build   # generate + gxformat2-validate the workflow
-python scripts/check_data_exists.py data-managers/<table>/<version>.yaml   # already on test? (exit 1 if so)
+python scripts/check_data_exists.py data-managers/<table>/<version>.yaml   # already on test?
 ```
 
 - `request_models.py` checks the structure, the pinned GUID, the directory
@@ -323,8 +328,11 @@ python scripts/check_data_exists.py data-managers/<table>/<version>.yaml   # alr
   with `--reference-galaxy https://test.galaxyproject.org` it references an
   upstream that already exists there, as the real build does. `build/` is
   gitignored.
-- `check_data_exists.py` prints `<table>/<version> already exists on ...` and
-  exits 1 if test already has the data; add `--warn` to only report.
+- `check_data_exists.py` prints `No requested reference data already exists
+  on ...` when it's clear. It prints `<table>/<version> already exists on ...`
+  and exits 1 if test already has the data, and also exits 1 with `cannot
+  tell whether this already exists` if test didn't answer (try again later);
+  `--warn` only reports. A path that doesn't exist is an error (exit 2).
 - The full CI set, as run on the PR, is
   `python scripts/request_models.py && python scripts/generate_schema.py --check --refresh && python scripts/generate_build.py --all --outdir build && python -m pytest tests/ -q && python scripts/check_data_exists.py --all --warn`.
 
@@ -390,8 +398,9 @@ flowchart LR
 7. **Data table reload.** Galaxy keeps data tables in memory, so each server
    has to reload the table (an admin calls
    `GET /api/tool_data/<table>/reload`) or restart before the new entry shows
-   up in tools. On test.galaxyproject.org the reload is part of publishing,
-   done after the snapshot by the maintainer or by the publish workflow.
+   up in tools. On test.galaxyproject.org a maintainer reloads the table after
+   the snapshot as part of publishing; automating that step in the publish
+   workflow is in progress.
    <!-- TODO(merge post-publish-wait-and-reload): once deploy.yml's after-publish
    job lands, say here that the publish waits for the Stratum 1s and reloads
    and verifies the tables on test itself. -->
@@ -407,7 +416,7 @@ Nothing here needs a Galaxy API key.
 | Lint | the PR's checks: `gh pr checks <number> --repo galaxyproject/idc` |
 | Build started? | *Actions → Build reference-data bundles*, or `gh run list --repo galaxyproject/idc --workflow build.yml`. The "Select requests to build" step lists what it built and why it skipped the rest (`skip <table>/<version>: already exists ...`). |
 | Build finished? | the history `idc-<table>-<version>` on test belongs to the build account, so ask on the PR; maintainers can read its state and the bundle index |
-| Published and visible | `curl -s https://test.galaxyproject.org/api/tool_data/<table>` shows the new row, or `python scripts/check_data_exists.py --expect-exists data-managers/<table>/<version>.yaml` (exit 0 once it's there) |
+| Published and visible | `curl -s https://test.galaxyproject.org/api/tool_data/<table>` shows the new row, or `python scripts/check_data_exists.py --expect-exists data-managers/<table>/<version>.yaml` prints `ok: <table>/<version> is present` (from an up-to-date checkout of `main`) |
 
 If you use an agent, the `check-reference-data-request` skill runs through this
 table for you.
@@ -426,10 +435,14 @@ performs it at three points:
   history for a request, which is the case when the build skipped it.
 
 Version matching is heuristic, because the identifying column differs per data
-manager (MetaPhlAn keys on `dbkey`, mOTUs on `value`, SameStr on the upstream's
-value): a request counts as present if its version, any `params` value or any
-`depends_on` version matches a field of a row, or is the row's `value` followed
-by `-<suffix>`.
+manager (MetaPhlAn's index name is in `dbkey`, mOTUs' release in `version`,
+SameStr copies its upstream's `value`): a request counts as present if its
+version, any `params` value or any `depends_on` version equals a whole field of
+a row, or the row's `value` is one of them followed by `-<suffix>`.
+
+You can see how the check treats a finished row by running it against a server
+that already has the same data, e.g.
+`python scripts/check_data_exists.py --reference-galaxy https://usegalaxy.eu <request>`.
 
 This query is the *only* idempotency signal: a second, in-repo list of published
 versions would drift from the data tables it is meant to mirror. Consequences
@@ -457,6 +470,15 @@ worth knowing:
   is simply never recognised as built) rather than hiding. Once a publish has
   propagated, `python scripts/check_data_exists.py --all --expect-exists` exits
   non-zero for any request that isn't found.
+- **Known gap: SameStr built from mOTUs.** Its row copies the mOTUs `value`
+  (`db_from_2026-04-27T094930Z`) and a free-text `name`, so neither the file name
+  (`marker_db_motus_3.1.0`) nor the `depends_on` version (`3.1.0`) equals a
+  field, and the check doesn't recognise the row even where it is served
+  (usegalaxy.eu has it). Until the check resolves a chained request's upstream
+  `value`, such a request is rebuilt if its file is touched again, and
+  `--expect-exists` reports it missing. Imports stay idempotent (the record
+  marker), so no duplicate row is published. SameStr from MetaPhlAn is matched,
+  because the MetaPhlAn `value` starts with the index name.
 
 ## Adding a brand-new data manager
 
@@ -541,7 +563,11 @@ The pair isn't in `CHAIN_WIRING` yet; see
 
 **`error: schemas/request.schema.json is stale`**
 
-Run `python scripts/generate_schema.py` and commit the result.
+If your request adds a `tool_id` the schema doesn't know, run
+`python scripts/generate_schema.py` and commit the result. If CI says stale but
+`python scripts/generate_schema.py --check` passes locally, the Tool Shed now
+serves a different schema for a tool already in use: run
+`python scripts/generate_schema.py --refresh` and commit that.
 
 **The lint warns that my data already exists.**
 
