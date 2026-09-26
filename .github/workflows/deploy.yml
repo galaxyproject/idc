@@ -10,6 +10,10 @@
 # Runs on the org's self-hosted cvmfs-publish runner (docs/cvmfs-publish-actions.md):
 # the Stratum 0 only accepts SSH from inside its network, and the runner group
 # is restricted to this workflow on the default branch.
+#
+# After a real publish, the after-publish job waits for the Stratum 1s to pick up
+# the new revision on their hourly snapshot and checks the published data table
+# rows show up on test.galaxyproject.org (scripts/after_publish.py).
 name: Publish reference data to CVMFS
 
 on:
@@ -76,3 +80,33 @@ jobs:
       - name: Stop ssh-agent
         if: always()
         run: ssh-agent -k || true
+
+  after-publish:
+    needs: publish
+    # Skipped for a rehearsal and when the publish added no data table row.
+    if: inputs.publish && needs.publish.outputs.published_entries != ''
+    # GitHub-hosted on purpose: this mostly sleeps, for up to two hours, and
+    # needs only public HTTP and the Galaxy key - it must not hold the shared
+    # cvmfs-publish runner that usegalaxy-tools deploys from.
+    runs-on: ubuntu-latest
+    # For REFERENCE_DATA_API_KEY (an admin key on test.galaxyproject.org).
+    environment: cvmfs-publish
+    # Up to 90 minutes for the Stratum 1s, then up to 30 for Galaxy.
+    timeout-minutes: 150
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        # check_data_exists.py, whose table lookup the script reuses, imports these.
+        run: pip install "pydantic>=2" pyyaml
+
+      - name: Wait for the Stratum 1s, reload and verify on test.galaxyproject.org
+        env:
+          PUBLISHED_ENTRIES: ${{ needs.publish.outputs.published_entries }}
+          REFERENCE_DATA_API_KEY: ${{ secrets.REFERENCE_DATA_API_KEY }}
+        run: python scripts/after_publish.py
