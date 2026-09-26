@@ -24,6 +24,10 @@ are the source of truth if this page ever drifts from them.
 6. Write `data-managers/<data_table>/<version>.yaml` and lint it locally.
 7. Open the PR.
 
+If you work with a coding agent (Claude Code, Codex, ...), the repository ships
+skills that walk it through the same steps: see
+[Using an agent](#using-an-agent).
+
 ## Before you start: does it already exist?
 
 Don't request data a Galaxy already serves. The only "does this exist?" signal
@@ -405,6 +409,9 @@ Nothing here needs a Galaxy API key.
 | Build finished? | the history `idc-<table>-<version>` on test belongs to the build account, so ask on the PR; maintainers can read its state and the bundle index |
 | Published and visible | `curl -s https://test.galaxyproject.org/api/tool_data/<table>` shows the new row, or `python scripts/check_data_exists.py --expect-exists data-managers/<table>/<version>.yaml` (exit 0 once it's there) |
 
+If you use an agent, the `check-reference-data-request` skill runs through this
+table for you.
+
 ## Avoiding rebuilds of existing data
 
 Reference data a Galaxy already has is never rebuilt or re-imported. The
@@ -565,3 +572,18 @@ Yes: a new version is a new file with a new identity. Only re-requesting the
 
 Not yet. Genomes and their indexes still go through `genomes.yml` and
 `data_managers.yml`; see [Genome indexing](genome-indexing.md).
+
+## Using an agent
+
+The repository ships two agent skills, in
+[`.claude/skills/`](https://github.com/galaxyproject/idc/tree/main/.claude/skills)
+(Claude Code loads them automatically; other agents are pointed at them by
+[`AGENTS.md`](https://github.com/galaxyproject/idc/blob/main/AGENTS.md)):
+
+- **`request-reference-data`**: from "I need database X version Y" to a drafted
+  PR. It runs the existence check, finds the data manager and its parameters,
+  writes the file, runs the lint and drafts the PR text.
+- **`check-reference-data-request`**: where a request is in the pipeline: lint,
+  build, published.
+
+Both use the scripts described here, and neither needs a Galaxy API key.

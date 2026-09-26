@@ -140,6 +140,8 @@ lint, what happens after the PR and how to check a request's status. Publishing
 is documented in [docs/cvmfs-publish-actions.md](docs/cvmfs-publish-actions.md).
 Both are also published, with the rest of the IDC documentation, at
 <https://galaxyproject.github.io/idc/>.
+Coding agents can follow the skills in [`.claude/skills/`](.claude/skills/)
+(see [AGENTS.md](AGENTS.md)).
 
 To lint requests locally:
 

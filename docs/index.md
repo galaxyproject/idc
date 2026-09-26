@@ -44,6 +44,10 @@ publishes the bundle to CVMFS. See
 | understand the pipeline end to end | [How it works](architecture.md) |
 | publish a build to CVMFS (maintainers) | [Publishing to CVMFS](cvmfs-publish-actions.md) |
 
+Coding agents working in the repository have skills for requesting data and
+checking a request's status; see
+[`AGENTS.md`](https://github.com/galaxyproject/idc/blob/main/AGENTS.md).
+
 ## About this site
 
 The site is built with [MkDocs](https://www.mkdocs.org/) and
