@@ -32,14 +32,27 @@ def test_catalog_covers_tables_installed_data_managers_and_genomes():
     assert "[bgruening/data_manager_motus](https://toolshed.g2.bx.psu.edu/view/bgruening/data_manager_motus)" in catalog
     motus_row = next(line for line in catalog.splitlines() if "view/bgruening/data_manager_motus)" in line)
     assert motus_row.endswith("| yes |")
-    diamond_row = next(line for line in catalog.splitlines() if "data_manager_diamond_database_builder)" in line)
-    assert diamond_row.endswith("|  |")
+    installed_rows = [line for line in catalog.splitlines() if "toolshed.g2.bx.psu.edu/view/" in line]
+    requested = sum(row.endswith("| yes |") for row in installed_rows)
+    assert 0 < requested < len(installed_rows)  # the rest are marked unrequested
+    assert all(row.endswith(("| yes |", "|  |")) for row in installed_rows)
     assert "| `dm6` | (from UCSC) | ucsc |" in catalog
 
 
-def test_cells_stay_on_one_line_and_escape_pipes():
+def test_cells_stay_on_one_line_and_escape_pipes_and_html():
     assert cat._cell("a |\n b") == "a \\| b"
     assert cat._cell(None) == ""
+    assert cat._text("<img src=x onerror=alert(1)> & co") == "&lt;img src=x onerror=alert(1)&gt; &amp; co"
+
+
+def test_invalid_request_names_its_file(tmp_path, monkeypatch):
+    bad = tmp_path / "data-managers/motus_db_versioned/broken.yaml"
+    bad.parent.mkdir(parents=True)
+    bad.write_text("tool_id: nope\n")
+    monkeypatch.setattr(cat, "REPO_ROOT", tmp_path)
+    monkeypatch.setattr(cat, "iter_request_files", lambda: [bad])
+    with pytest.raises(ValueError, match="data-managers/motus_db_versioned/broken.yaml"):
+        cat.render_requests()
 
 
 def test_hook_fills_only_the_catalog_page():

@@ -16,6 +16,7 @@ rendered markdown for ``CATALOG_MARKER`` in ``docs/catalog.md``. Standalone::
 
     python scripts/site_catalog.py        # print the generated markdown
 """
+import html
 import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
@@ -48,6 +49,12 @@ def _cell(value) -> str:
     return " ".join(str(value).split()).replace("|", "\\|")
 
 
+def _text(value) -> str:
+    """A free-text cell (outside code spans): also HTML-escaped, so a request's
+    description renders as the text it is."""
+    return html.escape(_cell(value), quote=False)
+
+
 def _tool(tool_id: str) -> str:
     """owner/repo and tool version; the full GUID is in the linked request."""
     m = GUID_RE.match(tool_id)
@@ -60,7 +67,10 @@ def _requests() -> dict[str, list[tuple[str, Request, Path]]]:
     """data table -> [(version, request, path)], sorted by table then version."""
     by_table: dict[str, list[tuple[str, Request, Path]]] = {}
     for path in iter_request_files():
-        request = Request(**yaml.safe_load(path.read_text()))
+        try:
+            request = Request(**yaml.safe_load(path.read_text()))
+        except Exception as exc:
+            raise ValueError(f"{path.relative_to(REPO_ROOT)}: not a valid request ({exc})") from exc
         by_table.setdefault(data_manager_name(path), []).append((version_id(path), request, path))
     return {table: sorted(rows, key=lambda r: r[0]) for table, rows in sorted(by_table.items())}
 
@@ -93,9 +103,10 @@ def render_requests() -> list[str]:
                 f"[{up_table}](#{up_table}) {_cell(up_version)}"
                 for up_table, up_version in (request.depends_on or {}).items()
             )
-            description = _cell(request.description)
+            description = _text(request.description)
             if request.doi:
-                description += f" ([doi:{_cell(request.doi)}](https://doi.org/{request.doi}))"
+                doi = request.doi.strip().removeprefix("https://doi.org/").removeprefix("doi:")
+                description += f" ([doi:{_text(doi)}](https://doi.org/{doi}))"
             rel = path.relative_to(REPO_ROOT).as_posix()
             lines.append(
                 f"| [`{_cell(version)}`]({REPO_URL}/blob/main/{rel}) | {description} "
@@ -181,10 +192,10 @@ def render_genomes() -> list[str]:
     for genome in genomes:
         indexers = ", ".join(i.removeprefix("data_manager_") for i in genome.get("indexers") or [])
         # genomes.yml leaves UCSC descriptions empty: the fetch data manager fills them in.
-        description = _cell(genome.get("description")) or ("(from UCSC)" if genome.get("source") == "ucsc" else "")
+        description = _text(genome.get("description")) or ("(from UCSC)" if genome.get("source") == "ucsc" else "")
         lines.append(
             f"| `{_cell(genome.get('dbkey'))}` | {description} "
-            f"| {_cell(genome.get('source'))} | {_cell(indexers)} |"
+            f"| {_text(genome.get('source'))} | {_cell(indexers)} |"
         )
     lines.append("")
     return lines

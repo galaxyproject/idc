@@ -35,9 +35,10 @@ on:
 permissions:
   contents: read
 
+# A newer PR build supersedes an older one; a deploy from main is never cut off.
 concurrency:
   group: pages-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   build:
