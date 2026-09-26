@@ -2,6 +2,8 @@
 import json
 import sys
 import urllib.error
+import urllib.parse
+import urllib.request
 from pathlib import Path
 
 import pytest
@@ -10,6 +12,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
 import after_publish as ap  # noqa: E402
+import check_data_exists as cde  # noqa: E402
 from check_data_exists import CheckUnavailable  # noqa: E402
 
 REPO = "idc.galaxyproject.org"
@@ -354,11 +357,11 @@ def test_main_reads_entries_from_a_file_and_fetches_with_the_key(tmp_path, monke
         def read(self, *args):
             return json.dumps({"columns": MOTUS_COLUMNS, "fields": [MOTUS_ROW]}).encode()
 
-    def urlopen(request, timeout):
+    def open_url(request, timeout):
         requests.append(request)
         return Response()
 
-    monkeypatch.setattr(ap.fetch_table.__globals__["urllib"].request, "urlopen", urlopen)
+    monkeypatch.setattr(cde, "open_url", open_url)
     get = _galaxy_get({S0: [21], S1A: [21], S1B: [21]})
     rc, summary = _run(tmp_path, "", get, None, ["--entries-file", str(entries)])
     assert rc == 0, summary
@@ -366,3 +369,23 @@ def test_main_reads_entries_from_a_file_and_fetches_with_the_key(tmp_path, monke
     assert [(r.full_url, r.get_header("X-api-key")) for r in requests] == [
         ("https://galaxy.example/api/tool_data/motus_db_versioned", "key")
     ]
+
+
+@pytest.mark.parametrize(
+    "target, keeps_key",
+    [
+        ("https://galaxy.example/api/tool_data/t?x=1", True),  # same scheme and host
+        ("/api/tool_data/t/", True),  # relative: resolved against the request
+        ("https://elsewhere.example/api/tool_data/t", False),
+        ("https://galaxy.example:8443/api/tool_data/t", False),  # another port is another host
+        ("http://galaxy.example/api/tool_data/t", False),  # no key over plain http
+    ],
+)
+def test_the_api_key_does_not_follow_a_redirect_to_another_host(target, keeps_key):
+    request = urllib.request.Request("https://galaxy.example/api/tool_data/t", headers={"x-api-key": "secret"})
+    handler = cde.KeyStaysOnHost()
+    new = handler.redirect_request(
+        request, None, 302, "Found", {}, urllib.parse.urljoin(request.full_url, target)
+    )
+    assert new.get_header("X-api-key") == ("secret" if keeps_key else None)
+    assert any(isinstance(h, cde.KeyStaysOnHost) for h in cde._opener.handlers)

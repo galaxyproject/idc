@@ -49,7 +49,7 @@ from pathlib import Path
 from typing import Callable
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from check_data_exists import CheckUnavailable, fetch_table  # noqa: E402
+from check_data_exists import CheckUnavailable, fetch_table, open_url  # noqa: E402
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_REPO = "idc.galaxyproject.org"
@@ -67,7 +67,8 @@ HttpGet = Callable[[str, dict], bytes]
 
 def http_get(url: str, headers: dict) -> bytes:
     request = urllib.request.Request(url, headers=headers)
-    with urllib.request.urlopen(request, timeout=30) as resp:  # noqa: S310 (configured hosts)
+    # open_url: the reload request carries the admin key.
+    with open_url(request, timeout=30) as resp:
         return resp.read()
 
 
