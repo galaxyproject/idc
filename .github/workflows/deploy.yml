@@ -86,9 +86,11 @@ jobs:
   after-publish:
     needs: publish
     # Skipped for a rehearsal and when the publish added no data table row. The
-    # output exists only after a successful cvmfs_server publish, so always()
-    # lets a step failing after that (e.g. Summarize) not skip the check.
-    if: always() && inputs.publish && needs.publish.outputs.published_entries != ''
+    # output exists only after a successful cvmfs_server publish, so a step
+    # failing after that (e.g. Summarize) must not skip the check: !cancelled()
+    # rather than the implicit success(), and not always(), so a cancelled run
+    # does not start two hours of waiting.
+    if: ${{ !cancelled() && inputs.publish && needs.publish.outputs.published_entries != '' }}
     # GitHub-hosted on purpose: this mostly sleeps, for up to two hours, and
     # needs only public HTTP and the Galaxy key - it must not hold the shared
     # cvmfs-publish runner that usegalaxy-tools deploys from.

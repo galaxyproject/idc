@@ -59,18 +59,24 @@ Galaxy. The `after-publish` job:
    Galaxy's own CVMFS client needs a few minutes after the snapshot to see the
    new `.loc`, hence the retries. A table test does not have at all (404) fails
    straight away: that needs a Galaxy configuration change, not more waiting.
+   Galaxy's `__HERE__` expansion is not mirrored, so a row containing
+   `__HERE__` never verifies.
 
 The job summary lists when each Stratum 1 caught up and when each row became
 visible. The job fails if a Stratum 1 did not catch up or a row never showed
 up; Galaxy is checked either way, since test may be served by a Stratum 1 that
 did catch up. If the Stratum 0's revision cannot be read, the Stratum 1s are
-not checked and Galaxy gets their 90 minutes on top of its own 30. The publish itself has happened by then - a failure here means
-"not visible (yet)", not "not published".
+not checked and Galaxy gets their 90 minutes on top of its own 30. The publish
+itself has happened by then - a failure here means "not visible (yet)", not
+"not published".
 
 It runs on a GitHub-hosted runner: it mostly sleeps, for up to two hours, and
 must not hold the shared `cvmfs-publish` runner. It does not run for a rehearsal
-(`publish: false`), a failed publish, or when the publish added no data table
-row. It does run if a step of the publish job fails after the publish itself.
+(`publish: false`), a failed publish, a cancelled run, or when the publish added
+no data table row. It does run if a step of the publish job fails after the
+publish itself. If the SSH connection drops just after `cvmfs_server publish`
+succeeded, the job reports a failed publish and skips the check - never a false
+"verified" - so compare the Stratum 0 and Stratum 1 revisions by hand then.
 
 ## Why a self-hosted runner
 
