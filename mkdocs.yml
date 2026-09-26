@@ -1,0 +1,74 @@
+site_name: IDC - Simon's Data Club
+site_description: Reference data for Galaxy servers, built by the community and distributed over CVMFS.
+site_url: https://galaxyproject.github.io/idc/
+repo_url: https://github.com/galaxyproject/idc
+repo_name: galaxyproject/idc
+edit_uri: edit/main/docs/
+
+nav:
+  - Home: index.md
+  - Using IDC data in Galaxy: using-idc-data.md
+  - Catalog: catalog.md
+  - Requesting reference data: requesting-reference-data.md
+  - Genome indexing: genome-indexing.md
+  - How it works: architecture.md
+  - Maintainers:
+      - Publishing to CVMFS: cvmfs-publish-actions.md
+
+theme:
+  name: material
+  features:
+    - content.code.copy
+    - navigation.top
+    - navigation.sections
+    - search.suggest
+    - toc.follow
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+
+# Fills in docs/catalog.md from data-managers/, config/, schemas/ and genomes.yml.
+hooks:
+  - scripts/site_catalog.py
+
+# `mkdocs serve` rebuilds when the catalog's sources change, too.
+watch:
+  - data-managers
+  - config/tool_data_table_conf.xml
+  - schemas/data_managers.yml
+  - genomes.yml
+  - scripts/site_catalog.py
+
+# With --strict (as in CI), these fail the build.
+validation:
+  omitted_files: warn
+  absolute_links: info
+  unrecognized_links: warn
+  anchors: warn
+  not_found: warn

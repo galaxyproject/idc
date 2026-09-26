@@ -138,6 +138,8 @@ full guide: checking the data isn't already served, finding the data manager's
 `tool_id` and parameters, choosing the version identity, chained builds, local
 lint, what happens after the PR and how to check a request's status. Publishing
 is documented in [docs/cvmfs-publish-actions.md](docs/cvmfs-publish-actions.md).
+Both are also published, with the rest of the IDC documentation, at
+<https://galaxyproject.github.io/idc/>.
 
 To lint requests locally:
 
