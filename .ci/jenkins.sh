@@ -408,7 +408,9 @@ function abort_transaction() {
 
 function publish_transaction() {
     log "Publishing transaction on $REPO"
-    exec_on "cvmfs_server publish -a 'idc-${GIT_COMMIT:0:7}.${DM_STAGE}' -m 'Automated data installation for commit ${GIT_COMMIT}' ${REPO}"
+    # `|| return 1`: callers may run this as an `if` condition, where errexit is
+    # off - a failed publish must not clear the flag and pass for a success.
+    exec_on "cvmfs_server publish -a 'idc-${GIT_COMMIT:0:7}.${DM_STAGE}' -m 'Automated data installation for commit ${GIT_COMMIT}' ${REPO}" || return 1
     CVMFS_TRANSACTION_UP=false
 }
 
@@ -861,6 +863,9 @@ function do_import_remote() {
         output_published_entries
     else
         abort_transaction
+        if $PUBLISH; then
+            log_exit_error "Publishing the transaction on ${REPO} failed; aborted it"
+        fi
     fi
     stop_ssh_control
 }
