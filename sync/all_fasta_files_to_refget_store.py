@@ -1,4 +1,5 @@
 import argparse
+import gc
 import json
 import logging
 import os
@@ -94,6 +95,8 @@ def import_fasta_all(
 
     os.chdir(rgsi_output_path)
 
+    all_fasta_yaml = load_all_fasta_yaml(yaml_output_path)
+
     for i, fasta_record in enumerate(fasta_all):
         unique_build_id = fasta_record.value
 
@@ -132,20 +135,24 @@ def import_fasta_all(
             )
             continue
 
-        if store is None:
-            store = RefgetStore.in_memory()
+        # Use the persistent store if available; otherwise create a fresh
+        # in-memory store per genome so sequences are freed after each genome
+        # instead of accumulating in RAM across the whole run.
+        genome_store = store
+        if genome_store is None:
+            genome_store = RefgetStore.in_memory()
 
         logger.info(
             f"Processing fasta {i + 1}/{len(fasta_all)}."
         )
 
         try:
-            collection, new = store.add_sequence_collection_from_fasta(local_fasta_path)
+            collection, new = genome_store.add_sequence_collection_from_fasta(local_fasta_path)
         except Exception as e:
             logger.info(f"Could not load {local_fasta_path}: {e}")
             continue
 
-        add_galaxy_aliases_to_store(store, collection, fasta_record)
+        add_galaxy_aliases_to_store(genome_store, collection, fasta_record)
 
         refget_metadata_blob = {
             "level_0": collection.digest,
@@ -157,16 +164,19 @@ def import_fasta_all(
                 "sorted_name_length_pairs": collection.sorted_name_length_pairs_digest,
                 "sorted_sequences": collection.sorted_sequences_digest,
             },
-            "level_2": store.get_collection_level2(collection.digest),
+            "level_2": genome_store.get_collection_level2(collection.digest),
             "aliases": asdict(
-                AliasRecord(**dict(store.get_aliases_for_collection(collection.digest)))
+                AliasRecord(**dict(genome_store.get_aliases_for_collection(collection.digest)))
             ),
         }
 
-        append_to_all_fasta_yaml_file(
-            yaml_output_path, unique_build_id, refget_metadata_blob
-        )
+        all_fasta_yaml[unique_build_id] = build_all_fasta_metadata_blob(refget_metadata_blob)
+
+        append_to_all_fasta_yaml_file(yaml_output_path, all_fasta_yaml)
         write_single_genome_json_file(json_summary_path, refget_metadata_blob)
+
+        del collection, refget_metadata_blob, genome_store
+        gc.collect()
 
 
 def add_galaxy_aliases_to_store(
@@ -201,24 +211,21 @@ def write_single_genome_json_file(
 ):
     print(f"Writing JSON summary file: {json_summary_path}")
     with open(json_summary_path, "w") as refget_file:
-        print(json.dumps(refget_metadata_blob, indent=2), file=refget_file)
+        json.dump(refget_metadata_blob, refget_file, indent=2)
+        print(file=refget_file)
 
 
-def append_to_all_fasta_yaml_file(
-    yaml_output_path: Path, unique_build_id: str, refget_metadata_blob: dict[str, Any]
-):
+def load_all_fasta_yaml(yaml_output_path: Path) -> dict[str, Any]:
     all_fasta_yaml_path = yaml_output_path.joinpath("all_fasta.yml")
-    print(
-        f'Appending refget digests and galaxy aliases for "{unique_build_id}" to: {all_fasta_yaml_path}'
-    )
 
     if os.path.exists(all_fasta_yaml_path):
         with open(all_fasta_yaml_path, "r") as all_fasta_yaml_file:
-            all_fasta_yaml = yaml.safe_load(all_fasta_yaml_file)
-    else:
-        all_fasta_yaml = {}
+            return yaml.safe_load(all_fasta_yaml_file) or {}
+    return {}
 
-    all_fasta_metadata_blob = {
+
+def build_all_fasta_metadata_blob(refget_metadata_blob: dict[str, Any]) -> dict[str, Any]:
+    return {
         "level_0": refget_metadata_blob["level_0"],
         "level_1": refget_metadata_blob["level_1"],
         "level_2_peek": {
@@ -229,7 +236,12 @@ def append_to_all_fasta_yaml_file(
         },
         "aliases": refget_metadata_blob["aliases"],
     }
-    all_fasta_yaml[unique_build_id] = all_fasta_metadata_blob
+
+
+def append_to_all_fasta_yaml_file(
+    yaml_output_path: Path, all_fasta_yaml: dict[str, Any]
+):
+    all_fasta_yaml_path = yaml_output_path.joinpath("all_fasta.yml")
 
     with open(all_fasta_yaml_path, "w") as all_fasta_file:
         yaml.dump(
