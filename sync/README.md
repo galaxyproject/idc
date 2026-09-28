@@ -568,7 +568,7 @@ There are specificities for this table.
     a. Write a bash script that generate a single file per instance with all the digests of the all_fasta.
 2. Identify the common digests (probably level 0)
     a. create a new loc file for EU with common that would link to cvmfs when available.
-    b. remove from the original loc EU file the corresponding.
+    b. remove from the original loc EU file the corresponding entry.
     c. if there are common values data should stay on EU.
 3. Identify the totally different (= no seq common)
     a. list them into a new loc file that would go to CVMFS with the data moved
@@ -587,4 +587,8 @@ There are specificities for this table.
 
 0. For each table determine the way to find the files related (single file vs directory vs glob).
 1. Get checksums and identify the matching/not matching.
+
+## For users
+
+They should know what is on CVMFS what is the origin...
 
