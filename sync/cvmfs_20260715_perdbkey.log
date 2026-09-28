@@ -1,0 +1,208 @@
+2026-07-16 14:43:21,929 - __main__ - INFO - Loading the big yaml file.
+2026-07-16 14:44:15,615 - __main__ - INFO - Done
+2026-07-16 14:44:15,620 - __main__ - WARNING - ornAna1 is present twice in all_fasta. Please check.
+2026-07-16 14:44:15,620 - __main__ - WARNING - Spur_v2.6 dbkey is in the all_fasta but not in '__dbkeys__'
+2026-07-16 14:44:15,620 - __main__ - WARNING - danRer2 dbkey is in the all_fasta but not in '__dbkeys__'
+2026-07-16 14:44:15,622 - __main__ - WARNING - GCF_001021295.1 is present twice in all_fasta. Please check.
+2026-07-16 14:44:15,629 - __main__ - WARNING - GCF_016699485.2 is present twice in all_fasta. Please check.
+2026-07-16 14:44:15,629 - __main__ - WARNING - GCF_014108235.1 is present twice in all_fasta. Please check.
+2026-07-16 14:44:15,630 - __main__ - INFO - Checking table alignseq_seq entries
+2026-07-16 14:44:15,630 - __main__ - INFO - Checking table bowtie2_indexes entries
+2026-07-16 14:44:15,630 - __main__ - WARNING - felCat4full is in bowtie2_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie2_indices.loc but not in all_fasta
+2026-07-16 14:44:15,630 - __main__ - WARNING - panTro2full is in bowtie2_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie2_indices.loc but not in all_fasta
+2026-07-16 14:44:15,630 - __main__ - WARNING - hg18full is in bowtie2_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie2_indices.loc but not in all_fasta
+2026-07-16 14:44:15,630 - __main__ - WARNING - calJac3full is in bowtie2_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie2_indices.loc but not in all_fasta
+2026-07-16 14:44:15,630 - __main__ - WARNING - rn4full is in bowtie2_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie2_indices.loc but not in all_fasta
+2026-07-16 14:44:15,630 - __main__ - WARNING - galgal4 is in bowtie2_indexes from /cvmfs/data.galaxyproject.org/managed/location/bowtie2_indices.loc but not in all_fasta
+2026-07-16 14:44:15,630 - __main__ - WARNING - galGal3full is in bowtie2_indexes from /cvmfs/data.galaxyproject.org/managed/location/bowtie2_indices.loc but not in all_fasta
+2026-07-16 14:44:15,641 - __main__ - INFO - Checking table bowtie_indexes entries
+2026-07-16 14:44:15,642 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/felCat3/bowtie_index/felCat3 is in bowtie_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,642 - __main__ - WARNING - felCat4full is in bowtie_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,642 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/ce6/bowtie_index/ce6 is in bowtie_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,642 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/galGal3/bowtie_index/galGal3 is in bowtie_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,642 - __main__ - WARNING - panTro2full is in bowtie_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,642 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/bosTau4/bowtie_index/bosTau4 is in bowtie_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,642 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/canFam2/bowtie_index/canFam2 is in bowtie_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,642 - __main__ - WARNING - eschColi_O157H7_Sakai is in bowtie_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,642 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/xenTro2/bowtie_index/xenTro2 is in bowtie_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,642 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/dm3/bowtie_index/dm3 is in bowtie_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,642 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/apiMel3/bowtie_index/apiMel3 is in bowtie_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,642 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/equCab2_chrM/bowtie_index/chrM is in bowtie_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,642 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/equCab2/bowtie_index/equCab2 is in bowtie_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,642 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/hg18/bowtie_index/hg18 is in bowtie_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,642 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/hg19/bowtie_index/hg19 is in bowtie_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,642 - __main__ - WARNING - calJac3full is in bowtie_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,642 - __main__ - WARNING - oryLat2full is in bowtie_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,642 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/mm8/bowtie_index/mm8 is in bowtie_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,642 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/mm9/bowtie_index/mm9 is in bowtie_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,642 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/phiX/bowtie_index/phiX is in bowtie_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,642 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/Sscrofa9.58/bowtie_index/Sscrofa9.58 is in bowtie_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,642 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/susScr2/bowtie_index/susScr2 is in bowtie_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,642 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/strPur2/bowtie_index/strPur2 is in bowtie_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,642 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/rn4/bowtie_index/rn4 is in bowtie_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,642 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/rheMac2/bowtie_index/rheMac2 is in bowtie_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,642 - __main__ - WARNING - tetNig1full is in bowtie_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,642 - __main__ - WARNING - tetNig2full is in bowtie_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,642 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/sacCer2/bowtie_index/sacCer2 is in bowtie_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,642 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/taeGut1/bowtie_index/taeGut1 is in bowtie_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,642 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/danRer5/bowtie_index/danRer5 is in bowtie_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,642 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/danRer6/bowtie_index/danRer6 is in bowtie_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,653 - __main__ - INFO - Checking table bwa_indexes entries
+2026-07-16 14:44:15,654 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/felCat3/bwa_index/felCat3.fa is in bwa_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bwa_index.loc but not in all_fasta
+2026-07-16 14:44:15,654 - __main__ - WARNING - felCat4full is in bwa_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bwa_index.loc but not in all_fasta
+2026-07-16 14:44:15,654 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/ce6/bwa_index/ce6 is in bwa_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bwa_index.loc but not in all_fasta
+2026-07-16 14:44:15,654 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/galGal3/bwa_index/galGal3.fa is in bwa_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bwa_index.loc but not in all_fasta
+2026-07-16 14:44:15,654 - __main__ - WARNING - panTro2full is in bwa_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bwa_index.loc but not in all_fasta
+2026-07-16 14:44:15,654 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/bosTau4/bwa_index/bosTau4.fa is in bwa_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bwa_index.loc but not in all_fasta
+2026-07-16 14:44:15,654 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/canFam2/bwa_index/canFam2.fa is in bwa_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bwa_index.loc but not in all_fasta
+2026-07-16 14:44:15,654 - __main__ - WARNING - eschColi_O157H7_Sakai is in bwa_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bwa_index.loc but not in all_fasta
+2026-07-16 14:44:15,654 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/xenTro2/bwa_index/xenTro2.fa is in bwa_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bwa_index.loc but not in all_fasta
+2026-07-16 14:44:15,654 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/dm3/bwa_index/dm3.fa is in bwa_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bwa_index.loc but not in all_fasta
+2026-07-16 14:44:15,654 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/apiMel3/bwa_index/apiMel3.fa is in bwa_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bwa_index.loc but not in all_fasta
+2026-07-16 14:44:15,654 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/equCab2/bwa_index/equCab2.fa is in bwa_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bwa_index.loc but not in all_fasta
+2026-07-16 14:44:15,654 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/hg18/bwa_index/hg18.fa is in bwa_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bwa_index.loc but not in all_fasta
+2026-07-16 14:44:15,654 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/hg19/bwa_index/hg19.fa is in bwa_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bwa_index.loc but not in all_fasta
+2026-07-16 14:44:15,654 - __main__ - WARNING - calJac3full is in bwa_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bwa_index.loc but not in all_fasta
+2026-07-16 14:44:15,654 - __main__ - WARNING - oryLat2full is in bwa_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bwa_index.loc but not in all_fasta
+2026-07-16 14:44:15,654 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/mm8/bwa_index/mm8.fa is in bwa_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bwa_index.loc but not in all_fasta
+2026-07-16 14:44:15,654 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/mm9/bwa_index/mm9.fa is in bwa_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bwa_index.loc but not in all_fasta
+2026-07-16 14:44:15,654 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/phiX/bwa_index/phiX.fa is in bwa_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bwa_index.loc but not in all_fasta
+2026-07-16 14:44:15,654 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/Sscrofa9.58/bwa_index/Sscrofa9.58.fa is in bwa_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bwa_index.loc but not in all_fasta
+2026-07-16 14:44:15,654 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/susScr2/bwa_index/susScr2.fa is in bwa_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bwa_index.loc but not in all_fasta
+2026-07-16 14:44:15,654 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/strPur2/bwa_index/strPur2.fa is in bwa_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bwa_index.loc but not in all_fasta
+2026-07-16 14:44:15,654 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/rn4/bwa_index/rn4.fa is in bwa_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bwa_index.loc but not in all_fasta
+2026-07-16 14:44:15,654 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/rheMac2/bwa_index/rheMac2.fa is in bwa_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bwa_index.loc but not in all_fasta
+2026-07-16 14:44:15,654 - __main__ - WARNING - tetNig1full is in bwa_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bwa_index.loc but not in all_fasta
+2026-07-16 14:44:15,654 - __main__ - WARNING - tetNig2full is in bwa_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bwa_index.loc but not in all_fasta
+2026-07-16 14:44:15,654 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/sacCer2/bwa_index/sacCer2.fa is in bwa_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bwa_index.loc but not in all_fasta
+2026-07-16 14:44:15,654 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/taeGut1/bwa_index/taeGut1.fa is in bwa_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bwa_index.loc but not in all_fasta
+2026-07-16 14:44:15,654 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/danRer5/bwa_index/danRer5.fa is in bwa_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bwa_index.loc but not in all_fasta
+2026-07-16 14:44:15,654 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/danRer6/bwa_index/danRer6.fa is in bwa_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bwa_index.loc but not in all_fasta
+2026-07-16 14:44:15,654 - __main__ - INFO - Checking table bwa_indexes_color entries
+2026-07-16 14:44:15,654 - __main__ - WARNING - hg19full is in bwa_indexes_color from /cvmfs/data.galaxyproject.org/byhand/location/bwa_index_color.loc but not in all_fasta
+2026-07-16 14:44:15,654 - __main__ - WARNING - mm9full is in bwa_indexes_color from /cvmfs/data.galaxyproject.org/byhand/location/bwa_index_color.loc but not in all_fasta
+2026-07-16 14:44:15,654 - __main__ - INFO - Checking table bwa_mem2_indexes entries
+2026-07-16 14:44:15,665 - __main__ - INFO - Checking table bwa_mem_indexes entries
+2026-07-16 14:44:15,666 - __main__ - WARNING - galGal3full is in bwa_mem_indexes from /cvmfs/data.galaxyproject.org/managed/location/bwa_mem_index.loc but not in all_fasta
+2026-07-16 14:44:15,676 - __main__ - INFO - Checking table bwameth_indexes entries
+2026-07-16 14:44:15,676 - __main__ - INFO - Checking table fasta_indexes entries
+2026-07-16 14:44:15,676 - __main__ - WARNING - cb3 is in fasta_indexes from /cvmfs/data.galaxyproject.org/byhand/location/fasta_indexes.loc but not in all_fasta
+2026-07-16 14:44:15,676 - __main__ - WARNING - panTro3 is in fasta_indexes from /cvmfs/data.galaxyproject.org/byhand/location/fasta_indexes.loc but not in all_fasta
+2026-07-16 14:44:15,676 - __main__ - WARNING - ci2 is in fasta_indexes from /cvmfs/data.galaxyproject.org/byhand/location/fasta_indexes.loc but not in all_fasta
+2026-07-16 14:44:15,688 - __main__ - INFO - Checking table gatk_picard_indexes entries
+2026-07-16 14:44:15,688 - __main__ - INFO - Checking table hisat2_indexes entries
+2026-07-16 14:44:15,699 - __main__ - INFO - Checking table mosaik_indexes entries
+2026-07-16 14:44:15,699 - __main__ - WARNING - cb3 is in mosaik_indexes from /cvmfs/data.galaxyproject.org/byhand/location/mosaik_index.loc but not in all_fasta
+2026-07-16 14:44:15,699 - __main__ - WARNING - panTro3 is in mosaik_indexes from /cvmfs/data.galaxyproject.org/byhand/location/mosaik_index.loc but not in all_fasta
+2026-07-16 14:44:15,699 - __main__ - WARNING - ci2 is in mosaik_indexes from /cvmfs/data.galaxyproject.org/byhand/location/mosaik_index.loc but not in all_fasta
+2026-07-16 14:44:15,699 - __main__ - WARNING - eschColi_K12_MG1655 is in mosaik_indexes from /cvmfs/data.galaxyproject.org/byhand/location/mosaik_index.loc but not in all_fasta
+2026-07-16 14:44:15,699 - __main__ - WARNING - eschColi_O157H7_Sakai is in mosaik_indexes from /cvmfs/data.galaxyproject.org/byhand/location/mosaik_index.loc but not in all_fasta
+2026-07-16 14:44:15,699 - __main__ - INFO - Checking table ngs_sim_fasta entries
+2026-07-16 14:44:15,699 - __main__ - WARNING - phiX174 is in ngs_sim_fasta from /cvmfs/data.galaxyproject.org/byhand/location/ngs_sim_fasta.loc but not in all_fasta
+2026-07-16 14:44:15,699 - __main__ - INFO - Checking table picard_indexes entries
+2026-07-16 14:44:15,700 - __main__ - WARNING - cb3 is in picard_indexes from /cvmfs/data.galaxyproject.org/byhand/location/picard_index.loc but not in all_fasta
+2026-07-16 14:44:15,700 - __main__ - WARNING - panTro3 is in picard_indexes from /cvmfs/data.galaxyproject.org/byhand/location/picard_index.loc but not in all_fasta
+2026-07-16 14:44:15,700 - __main__ - WARNING - ci2 is in picard_indexes from /cvmfs/data.galaxyproject.org/byhand/location/picard_index.loc but not in all_fasta
+2026-07-16 14:44:15,700 - __main__ - WARNING - eschColi_K12_MG1655 is in picard_indexes from /cvmfs/data.galaxyproject.org/byhand/location/picard_index.loc but not in all_fasta
+2026-07-16 14:44:15,700 - __main__ - WARNING - eschColi_O157H7_Sakai is in picard_indexes from /cvmfs/data.galaxyproject.org/byhand/location/picard_index.loc but not in all_fasta
+2026-07-16 14:44:15,700 - __main__ - INFO - Checking table rnastar_index2 entries
+2026-07-16 14:44:15,700 - __main__ - INFO - Checking table rnastar_index2x_versioned entries
+2026-07-16 14:44:15,711 - __main__ - INFO - Checking table salmon_indexes_versioned entries
+2026-07-16 14:44:15,711 - __main__ - INFO - Checking table sam_fa_indexes entries
+2026-07-16 14:44:15,711 - __main__ - WARNING - 12931 is in sam_fa_indexes from /cvmfs/data.galaxyproject.org/byhand/location/sam_fa_indices.loc but not in all_fasta
+2026-07-16 14:44:15,711 - __main__ - WARNING - 13953 is in sam_fa_indexes from /cvmfs/data.galaxyproject.org/byhand/location/sam_fa_indices.loc but not in all_fasta
+2026-07-16 14:44:15,711 - __main__ - WARNING - 13954 is in sam_fa_indexes from /cvmfs/data.galaxyproject.org/byhand/location/sam_fa_indices.loc but not in all_fasta
+2026-07-16 14:44:15,711 - __main__ - WARNING - 16297 is in sam_fa_indexes from /cvmfs/data.galaxyproject.org/byhand/location/sam_fa_indices.loc but not in all_fasta
+2026-07-16 14:44:15,711 - __main__ - WARNING - 16351 is in sam_fa_indexes from /cvmfs/data.galaxyproject.org/byhand/location/sam_fa_indices.loc but not in all_fasta
+2026-07-16 14:44:15,711 - __main__ - WARNING - 16720 is in sam_fa_indexes from /cvmfs/data.galaxyproject.org/byhand/location/sam_fa_indices.loc but not in all_fasta
+2026-07-16 14:44:15,711 - __main__ - WARNING - 178 is in sam_fa_indexes from /cvmfs/data.galaxyproject.org/byhand/location/sam_fa_indices.loc but not in all_fasta
+2026-07-16 14:44:15,712 - __main__ - WARNING - 20079 is in sam_fa_indexes from /cvmfs/data.galaxyproject.org/byhand/location/sam_fa_indices.loc but not in all_fasta
+2026-07-16 14:44:15,712 - __main__ - WARNING - 259 is in sam_fa_indexes from /cvmfs/data.galaxyproject.org/byhand/location/sam_fa_indices.loc but not in all_fasta
+2026-07-16 14:44:15,712 - __main__ - WARNING - 278 is in sam_fa_indexes from /cvmfs/data.galaxyproject.org/byhand/location/sam_fa_indices.loc but not in all_fasta
+2026-07-16 14:44:15,712 - __main__ - WARNING - 386 is in sam_fa_indexes from /cvmfs/data.galaxyproject.org/byhand/location/sam_fa_indices.loc but not in all_fasta
+2026-07-16 14:44:15,712 - __main__ - WARNING - arabidopsis is in sam_fa_indexes from /cvmfs/data.galaxyproject.org/byhand/location/sam_fa_indices.loc but not in all_fasta
+2026-07-16 14:44:15,712 - __main__ - WARNING - cb3 is in sam_fa_indexes from /cvmfs/data.galaxyproject.org/byhand/location/sam_fa_indices.loc but not in all_fasta
+2026-07-16 14:44:15,712 - __main__ - WARNING - chrM is in sam_fa_indexes from /cvmfs/data.galaxyproject.org/byhand/location/sam_fa_indices.loc but not in all_fasta
+2026-07-16 14:44:15,712 - __main__ - WARNING - ci2 is in sam_fa_indexes from /cvmfs/data.galaxyproject.org/byhand/location/sam_fa_indices.loc but not in all_fasta
+2026-07-16 14:44:15,712 - __main__ - WARNING - eschColi_EC4115 is in sam_fa_indexes from /cvmfs/data.galaxyproject.org/byhand/location/sam_fa_indices.loc but not in all_fasta
+2026-07-16 14:44:15,712 - __main__ - WARNING - eschColi_TW14359 is in sam_fa_indexes from /cvmfs/data.galaxyproject.org/byhand/location/sam_fa_indices.loc but not in all_fasta
+2026-07-16 14:44:15,712 - __main__ - WARNING - panTro3 is in sam_fa_indexes from /cvmfs/data.galaxyproject.org/byhand/location/sam_fa_indices.loc but not in all_fasta
+2026-07-16 14:44:15,712 - __main__ - WARNING - pseuAeru is in sam_fa_indexes from /cvmfs/data.galaxyproject.org/byhand/location/sam_fa_indices.loc but not in all_fasta
+2026-07-16 14:44:15,712 - __main__ - INFO - Checking table srma_indexes entries
+2026-07-16 14:44:15,712 - __main__ - WARNING - cb3 is in srma_indexes from /cvmfs/data.galaxyproject.org/byhand/location/picard_index.loc but not in all_fasta
+2026-07-16 14:44:15,712 - __main__ - WARNING - panTro3 is in srma_indexes from /cvmfs/data.galaxyproject.org/byhand/location/picard_index.loc but not in all_fasta
+2026-07-16 14:44:15,712 - __main__ - WARNING - ci2 is in srma_indexes from /cvmfs/data.galaxyproject.org/byhand/location/picard_index.loc but not in all_fasta
+2026-07-16 14:44:15,712 - __main__ - WARNING - eschColi_K12_MG1655 is in srma_indexes from /cvmfs/data.galaxyproject.org/byhand/location/picard_index.loc but not in all_fasta
+2026-07-16 14:44:15,712 - __main__ - WARNING - eschColi_O157H7_Sakai is in srma_indexes from /cvmfs/data.galaxyproject.org/byhand/location/picard_index.loc but not in all_fasta
+2026-07-16 14:44:15,712 - __main__ - INFO - Checking table tophat2_indexes entries
+2026-07-16 14:44:15,712 - __main__ - WARNING - felCat4full is in tophat2_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie2_indices.loc but not in all_fasta
+2026-07-16 14:44:15,713 - __main__ - WARNING - panTro2full is in tophat2_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie2_indices.loc but not in all_fasta
+2026-07-16 14:44:15,713 - __main__ - WARNING - hg18full is in tophat2_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie2_indices.loc but not in all_fasta
+2026-07-16 14:44:15,713 - __main__ - WARNING - calJac3full is in tophat2_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie2_indices.loc but not in all_fasta
+2026-07-16 14:44:15,713 - __main__ - WARNING - rn4full is in tophat2_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie2_indices.loc but not in all_fasta
+2026-07-16 14:44:15,713 - __main__ - WARNING - galgal4 is in tophat2_indexes from /cvmfs/data.galaxyproject.org/managed/location/tophat2_indices.loc but not in all_fasta
+2026-07-16 14:44:15,713 - __main__ - WARNING - galGal3full is in tophat2_indexes from /cvmfs/data.galaxyproject.org/managed/location/tophat2_indices.loc but not in all_fasta
+2026-07-16 14:44:15,713 - __main__ - INFO - Checking table tophat_indexes entries
+2026-07-16 14:44:15,713 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/felCat3/bowtie_index/felCat3 is in tophat_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,713 - __main__ - WARNING - felCat4full is in tophat_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,713 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/ce6/bowtie_index/ce6 is in tophat_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,713 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/galGal3/bowtie_index/galGal3 is in tophat_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,713 - __main__ - WARNING - panTro2full is in tophat_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,713 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/bosTau4/bowtie_index/bosTau4 is in tophat_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,713 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/canFam2/bowtie_index/canFam2 is in tophat_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,713 - __main__ - WARNING - eschColi_O157H7_Sakai is in tophat_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,713 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/xenTro2/bowtie_index/xenTro2 is in tophat_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,713 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/dm3/bowtie_index/dm3 is in tophat_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,713 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/apiMel3/bowtie_index/apiMel3 is in tophat_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,713 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/equCab2_chrM/bowtie_index/chrM is in tophat_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,713 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/equCab2/bowtie_index/equCab2 is in tophat_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,713 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/hg18/bowtie_index/hg18 is in tophat_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,713 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/hg19/bowtie_index/hg19 is in tophat_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,713 - __main__ - WARNING - calJac3full is in tophat_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,713 - __main__ - WARNING - oryLat2full is in tophat_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,713 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/mm8/bowtie_index/mm8 is in tophat_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,713 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/mm9/bowtie_index/mm9 is in tophat_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,713 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/phiX/bowtie_index/phiX is in tophat_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,713 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/Sscrofa9.58/bowtie_index/Sscrofa9.58 is in tophat_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,714 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/susScr2/bowtie_index/susScr2 is in tophat_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,714 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/strPur2/bowtie_index/strPur2 is in tophat_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,714 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/rn4/bowtie_index/rn4 is in tophat_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,714 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/rheMac2/bowtie_index/rheMac2 is in tophat_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,714 - __main__ - WARNING - tetNig1full is in tophat_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,714 - __main__ - WARNING - tetNig2full is in tophat_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,714 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/sacCer2/bowtie_index/sacCer2 is in tophat_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,714 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/taeGut1/bowtie_index/taeGut1 is in tophat_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,714 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/danRer5/bowtie_index/danRer5 is in tophat_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,714 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/danRer6/bowtie_index/danRer6 is in tophat_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc but not in all_fasta
+2026-07-16 14:44:15,714 - __main__ - INFO - Checking table tophat_indexes_color entries
+2026-07-16 14:44:15,714 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/felCat3/bowtie_index/cs/felCat3 is in tophat_indexes_color from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices_color.loc but not in all_fasta
+2026-07-16 14:44:15,714 - __main__ - WARNING - felCat4full is in tophat_indexes_color from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices_color.loc but not in all_fasta
+2026-07-16 14:44:15,714 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/galGal3/bowtie_index/cs/galGal3 is in tophat_indexes_color from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices_color.loc but not in all_fasta
+2026-07-16 14:44:15,714 - __main__ - WARNING - panTro2full is in tophat_indexes_color from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices_color.loc but not in all_fasta
+2026-07-16 14:44:15,714 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/bosTau4/bowtie_index/cs/bosTau4 is in tophat_indexes_color from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices_color.loc but not in all_fasta
+2026-07-16 14:44:15,714 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/canFam2/bowtie_index/cs/canFam2 is in tophat_indexes_color from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices_color.loc but not in all_fasta
+2026-07-16 14:44:15,714 - __main__ - WARNING - eschColi_O157H7_Sakai is in tophat_indexes_color from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices_color.loc but not in all_fasta
+2026-07-16 14:44:15,714 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/xenTro2/bowtie_index/cs/xenTro2 is in tophat_indexes_color from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices_color.loc but not in all_fasta
+2026-07-16 14:44:15,714 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/dm3/bowtie_index/cs/dm3 is in tophat_indexes_color from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices_color.loc but not in all_fasta
+2026-07-16 14:44:15,714 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/apiMel3/bowtie_index/cs/apiMel3 is in tophat_indexes_color from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices_color.loc but not in all_fasta
+2026-07-16 14:44:15,714 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/equCab2_chrM/bowtie_index/cs/chrM is in tophat_indexes_color from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices_color.loc but not in all_fasta
+2026-07-16 14:44:15,714 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/equCab2/bowtie_index/cs/equCab2 is in tophat_indexes_color from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices_color.loc but not in all_fasta
+2026-07-16 14:44:15,714 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/hg18/bowtie_index/cs/hg18 is in tophat_indexes_color from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices_color.loc but not in all_fasta
+2026-07-16 14:44:15,714 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/hg19/bowtie_index/cs/hg19 is in tophat_indexes_color from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices_color.loc but not in all_fasta
+2026-07-16 14:44:15,714 - __main__ - WARNING - calJac3full is in tophat_indexes_color from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices_color.loc but not in all_fasta
+2026-07-16 14:44:15,714 - __main__ - WARNING - oryLat2full is in tophat_indexes_color from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices_color.loc but not in all_fasta
+2026-07-16 14:44:15,714 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/mm8/bowtie_index/cs/mm8 is in tophat_indexes_color from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices_color.loc but not in all_fasta
+2026-07-16 14:44:15,714 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/mm9/bowtie_index/cs/mm9 is in tophat_indexes_color from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices_color.loc but not in all_fasta
+2026-07-16 14:44:15,714 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/phiX/bowtie_index/cs/phiX is in tophat_indexes_color from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices_color.loc but not in all_fasta
+2026-07-16 14:44:15,714 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/Sscrofa9.58/bowtie_index/cs/Sscrofa9.58 is in tophat_indexes_color from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices_color.loc but not in all_fasta
+2026-07-16 14:44:15,714 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/susScr2/bowtie_index/cs/susScr2 is in tophat_indexes_color from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices_color.loc but not in all_fasta
+2026-07-16 14:44:15,714 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/strPur2/bowtie_index/cs/strPur2 is in tophat_indexes_color from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices_color.loc but not in all_fasta
+2026-07-16 14:44:15,714 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/rn4/bowtie_index/cs/rn4 is in tophat_indexes_color from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices_color.loc but not in all_fasta
+2026-07-16 14:44:15,715 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/rheMac2/bowtie_index/cs/rheMac2 is in tophat_indexes_color from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices_color.loc but not in all_fasta
+2026-07-16 14:44:15,715 - __main__ - WARNING - tetNig1full is in tophat_indexes_color from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices_color.loc but not in all_fasta
+2026-07-16 14:44:15,715 - __main__ - WARNING - tetNig2full is in tophat_indexes_color from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices_color.loc but not in all_fasta
+2026-07-16 14:44:15,715 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/sacCer2/bowtie_index/cs/sacCer2 is in tophat_indexes_color from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices_color.loc but not in all_fasta
+2026-07-16 14:44:15,715 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/taeGut1/bowtie_index/cs/taeGut1 is in tophat_indexes_color from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices_color.loc but not in all_fasta
+2026-07-16 14:44:15,715 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/danRer5/bowtie_index/cs/danRer5 is in tophat_indexes_color from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices_color.loc but not in all_fasta
+2026-07-16 14:44:15,715 - __main__ - WARNING - /cvmfs/data.galaxyproject.org/byhand/danRer6/bowtie_index/cs/danRer6 is in tophat_indexes_color from /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices_color.loc but not in all_fasta
+2026-07-16 14:44:15,715 - __main__ - INFO - Checking table twobit entries

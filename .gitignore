@@ -53,6 +53,9 @@ coverage.xml
 # Django stuff:
 *.log
 local_settings.py
+# But keep the logs from sync
+!sync/*.log
+
 
 # Flask stuff:
 instance/
@@ -103,6 +106,11 @@ ENV/
 # Simon's working directory
 working/
 
+# PyCharm
+.idea
+
 # Ansible installed artifacts
 ansible/collections
 ansible/roles/*.*
+
+sync/refget_clone

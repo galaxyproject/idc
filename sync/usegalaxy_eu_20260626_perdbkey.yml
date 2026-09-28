@@ -1,0 +1,673 @@
+GCF_002102435.1:
+  GCF_002102435.1:
+    all_fasta:
+    - name: White-tailed deer Apr 2017 (Odocoileus virginianus) (GCF_002102435.1,
+        Ovir.te_1.0)
+      path: /data/db/data_managers/GCF_002102435.1/seq/GCF_002102435.1.fa
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    bowtie2_indexes:
+    - name: White-tailed deer Apr 2017 (Odocoileus virginianus) (GCF_002102435.1,
+        Ovir.te_1.0)
+      path: /data/db/data_managers/GCF_002102435.1/bowtie2_index/GCF_002102435.1/GCF_002102435.1
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    - name: White-tailed deer Apr 2017 (Odocoileus virginianus) (GCF_002102435.1,
+        Ovir.te_1.0)
+      path: /data/db/data_managers/GCF_002102435.1/bowtie2_index/GCF_002102435.1/GCF_002102435.1
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    tophat2_indexes:
+    - name: White-tailed deer Apr 2017 (Odocoileus virginianus) (GCF_002102435.1,
+        Ovir.te_1.0)
+      path: /data/db/data_managers/GCF_002102435.1/bowtie2_index/GCF_002102435.1/GCF_002102435.1
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    - name: White-tailed deer Apr 2017 (Odocoileus virginianus) (GCF_002102435.1,
+        Ovir.te_1.0)
+      path: /data/db/data_managers/GCF_002102435.1/bowtie2_index/GCF_002102435.1/GCF_002102435.1
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    twobit:
+    - path: /data/db/data_managers/GCF_002102435.1/seq/GCF_002102435.1.2bit
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+GCF_003573695.1:
+  GCF_003573695.1:
+    all_fasta:
+    - name: Papaver somniferum Sep 2018 (opium poppy) (GCF_003573695.1)
+      path: /data/db/data_managers/GCF_003573695.1/seq/GCF_003573695.1.fa
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    bowtie2_indexes:
+    - name: Papaver somniferum Sep 2018 (opium poppy) (GCF_003573695.1)
+      path: /data/db/data_managers/GCF_003573695.1/bowtie2_index/GCF_003573695.1/GCF_003573695.1
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    - name: Papaver somniferum Sep 2018 (opium poppy) (GCF_003573695.1)
+      path: /data/db/data_managers/GCF_003573695.1/bowtie2_index/GCF_003573695.1/GCF_003573695.1
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    tophat2_indexes:
+    - name: Papaver somniferum Sep 2018 (opium poppy) (GCF_003573695.1)
+      path: /data/db/data_managers/GCF_003573695.1/bowtie2_index/GCF_003573695.1/GCF_003573695.1
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    - name: Papaver somniferum Sep 2018 (opium poppy) (GCF_003573695.1)
+      path: /data/db/data_managers/GCF_003573695.1/bowtie2_index/GCF_003573695.1/GCF_003573695.1
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+  len_path: /data/db/data_managers/GCF_003573695.1/len/GCF_003573695.1.len
+  name: Papaver somniferum Sep 2018 (opium poppy) (GCF_003573695.1)
+No_dbkey:
+  ? ''
+  : bwa_indexes:
+    - xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    picard_indexes:
+    - xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    srma_indexes:
+    - xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    tophat_indexes_color:
+    - xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+  TAIR10:
+    twobit:
+    - path: /data/db/reference_genomes/TAIR10/seq/TAIR10.2bit
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+  dm3:
+    sam_fa_indexes:
+    - line_type: index
+      path: /data/db/reference_genomes/dm3/sam_index/dm3.fa
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    twobit:
+    - path: /data/db/reference_genomes/dm3/seq/dm3.2bit
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+  dm6:
+    sam_fa_indexes:
+    - line_type: index
+      path: /data/db/reference_genomes/dm6/sam_index/dm6.fa
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+  hg18:
+    sam_fa_indexes:
+    - line_type: index
+      path: /data/db/reference_genomes/hg18/sam_index/hg18.fa
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    twobit:
+    - path: /data/db/reference_genomes/hg18/seq/hg18.2bit
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+  hg19:
+    sam_fa_indexes:
+    - line_type: index
+      path: /data/db/reference_genomes/hg19/sam_index/hg19.fa
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+  mm10:
+    sam_fa_indexes:
+    - line_type: index
+      path: /data/db/reference_genomes/mm10/sam_index/mm10.fa
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+  mm9:
+    sam_fa_indexes:
+    - line_type: index
+      path: /data/db/reference_genomes/mm9/sam_index/mm9.fa
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+TAIR10:
+  TAIR10:
+    picard_indexes:
+    - name: Arabidopsis thaliana (TAIR10)
+      path: /data/db/data_managers/TAIR10/picard_index/TAIR10/TAIR10.fa
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    srma_indexes:
+    - name: Arabidopsis thaliana (TAIR10)
+      path: /data/db/data_managers/TAIR10/picard_index/TAIR10/TAIR10.fa
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+apiMel3:
+  len_path: /data/db/reference_genomes/apiMel3/len/apiMel3.len
+  name: A. mellifera genome (apiMel3, Baylor HGSC Amel_3.0)
+apiMel3_1:
+  apiMel3_1:
+    all_fasta:
+    - name: A. mellifera genome (apiMel3.1 NCBI Amel_HAv3.1)
+      path: /data/db/data_managers/apiMel3_1/seq/apiMel3_1.fa
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    bowtie2_indexes:
+    - name: A. mellifera genome (apiMel3.1 NCBI Amel_HAv3.1)
+      path: /data/db/data_managers/apiMel3_1/bowtie2_index/apiMel3_1/apiMel3_1
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    - name: A. mellifera genome (apiMel3.1 NCBI Amel_HAv3.1)
+      path: /data/db/data_managers/apiMel3_1/bowtie2_index/apiMel3_1/apiMel3_1
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    fasta_indexes:
+    - name: A. mellifera genome (apiMel3.1 NCBI Amel_HAv3.1)
+      path: /data/db/data_managers/genomes/apiMel3_1/sam_fasta_index/v1/apiMel3_1/apiMel3_1.fa
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    tophat2_indexes:
+    - name: A. mellifera genome (apiMel3.1 NCBI Amel_HAv3.1)
+      path: /data/db/data_managers/apiMel3_1/bowtie2_index/apiMel3_1/apiMel3_1
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    - name: A. mellifera genome (apiMel3.1 NCBI Amel_HAv3.1)
+      path: /data/db/data_managers/apiMel3_1/bowtie2_index/apiMel3_1/apiMel3_1
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    twobit:
+    - path: /data/db/data_managers/apiMel3_1/seq/apiMel3_1.2bit
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+  len_path: /data/db/data_managers/apiMel3_1/len/apiMel3_1.len
+  name: A. mellifera genome (apiMel3.1 NCBI Amel_HAv3.1)
+bosTau8:
+  len_path: /data/db/reference_genomes/bosTau8/len/bosTau8.len
+  name: bosTau8
+bosTau9:
+  len_path: /data/db/reference_genomes/bosTau9/len/bosTau9.len
+  name: bosTau9
+canFam3:
+  canFam3:
+    bowtie2_indexes:
+    - name: Dog (canFam3)
+      path: /data/db/data_managers/canFam3/bowtie2_index/canFam3/canFam3
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    tophat2_indexes:
+    - name: Dog (canFam3)
+      path: /data/db/data_managers/canFam3/bowtie2_index/canFam3/canFam3
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+canFam6:
+  len_path: /data/db/reference_genomes/canFam6/len/canFam6.len
+  name: Dog Oct. 2020 (Dog10K_Boxer_Tasha/canFam6) (canFam6)
+ce10:
+  ce10:
+    all_fasta:
+    - name: 'Caenorhabditis elegans: ce10'
+      path: /data/db/reference_genomes/ce10/seq/ce10.fa
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    twobit:
+    - path: /data/db/reference_genomes/ce10/seq/ce10.2bit
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+  len_path: /data/db/reference_genomes/ce10/len/ce10.len
+  name: 'Caenorhabditis elegans: ce10'
+ce11:
+  len_path: /data/db/reference_genomes/ce11/len/ce11.len
+  name: Caenorhabditis elegans Feb. 2013 (WBcel235/ce11)
+ce6:
+  ce6:
+    all_fasta:
+    - name: 'Caenorhabditis elegans: ce6'
+      path: /data/db/reference_genomes/ce6/seq/ce6.fa
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    twobit:
+    - path: /data/db/reference_genomes/ce6/seq/ce6.2bit
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+  len_path: /data/db/reference_genomes/ce6/len/ce6.len
+  name: 'Caenorhabditis elegans: ce6'
+danRer10:
+  len_path: /data/db/reference_genomes/danRer10/len/danRer10.len
+  name: Zebrafish Sep. 2014 (GRCz10/danRer10) (danRer10)
+danRer11:
+  len_path: /data/db/reference_genomes/danRer11/len/danRer11.len
+  name: Zebrafish May 2017 (GRCz11/danRer11) (danRer11)
+danRer7:
+  len_path: /data/db/reference_genomes/danRer7/len/danRer7.len
+  name: Zebrafish Jul. 2010 (Zv9/danRer7) (danRer7)
+dm3:
+  dm3:
+    bowtie2_indexes:
+    - name: 'Drosophila melanogaster: dm3'
+      path: /data/db/reference_genomes/dm3/bowtie2_index/dm3
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    bowtie_indexes:
+    - name: 'Drosophila melanogaster: dm3'
+      path: /data/db/reference_genomes/dm3/bowtie_index/dm3
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    bwa_indexes:
+    - name: 'Drosophila melanogaster: dm3'
+      path: /data/db/reference_genomes/dm3/bwa_index/dm3.fa
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    picard_indexes:
+    - name: 'drosophila melanogaster: dm3'
+      path: /data/db/reference_genomes/dm3/picard_index/dm3.fa
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    srma_indexes:
+    - name: 'drosophila melanogaster: dm3'
+      path: /data/db/reference_genomes/dm3/picard_index/dm3.fa
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    tophat2_indexes:
+    - name: 'Drosophila melanogaster: dm3'
+      path: /data/db/reference_genomes/dm3/bowtie2_index/dm3
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    tophat_indexes:
+    - name: 'Drosophila melanogaster: dm3'
+      path: /data/db/reference_genomes/dm3/bowtie_index/dm3
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    tophat_indexes_color:
+    - name: 'Drosophila melanogaster: dm3'
+      path: /data/db/reference_genomes/dm3/bowtie_index/cs/dm3
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+  dm3full:
+    all_fasta:
+    - name: 'Fly (Drosophila melanogaster): dm3 Full'
+      path: /data/db/reference_genomes/dm3/seq/dm3.fa
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    fasta_indexes:
+    - name: 'Fly (Drosophila melanogaster): dm3 Full'
+      path: /data/db/reference_genomes/dm3/seq/dm3.fa
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+  len_path: /data/db/reference_genomes/dm3/len/dm3.len
+  name: D. melanogaster Apr. 2006 (BDGP R5/dm3) (dm3)
+dm6:
+  dm6:
+    bowtie2_indexes:
+    - name: 'Drosophila melanogaster: dm6'
+      path: /data/db/reference_genomes/dm6/bowtie2_index/dm6
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    tophat2_indexes:
+    - name: 'Drosophila melanogaster: dm6'
+      path: /data/db/reference_genomes/dm6/bowtie2_index/dm6
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+  dm6full:
+    all_fasta:
+    - name: 'Fly (Drosophila melanogaster): dm6 Full'
+      path: /data/db/reference_genomes/dm6/seq/dm6.fa
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    fasta_indexes:
+    - name: 'Fly (Drosophila melanogaster): dm6 Full'
+      path: /data/db/reference_genomes/dm6/seq/dm6.fa
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+equCab3:
+  len_path: /data/db/reference_genomes/equCab3/len/equCab3.len
+  name: Horse Jan. 2018 (EquCab3.0/equCab3)
+eschColi_K12:
+  len_path: /data/db/reference_genomes/eschColi_K12/len/eschColi_K12.len
+  name: Escherichia coli K12 (eschColi_K12)
+felCat9:
+  felCat9:
+    all_fasta:
+    - name: 'Cat Nov. 2017 (Felis catus, domestic cat): felCat9'
+      path: /data/db/data_managers/felCat9/seq/felCat9.fa
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    bowtie2_indexes:
+    - name: 'Cat Nov. 2017 (Felis catus, domestic cat): felCat9'
+      path: /data/db/data_managers/felCat9/bowtie2_index/felCat9/felCat9
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    - name: 'Cat Nov. 2017 (Felis catus, domestic cat): felCat9'
+      path: /data/db/data_managers/felCat9/bowtie2_index/felCat9/felCat9
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    tophat2_indexes:
+    - name: 'Cat Nov. 2017 (Felis catus, domestic cat): felCat9'
+      path: /data/db/data_managers/felCat9/bowtie2_index/felCat9/felCat9
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    - name: 'Cat Nov. 2017 (Felis catus, domestic cat): felCat9'
+      path: /data/db/data_managers/felCat9/bowtie2_index/felCat9/felCat9
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    twobit:
+    - path: /data/db/data_managers/felCat9/seq/felCat9.2bit
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+  len_path: /data/db/reference_genomes/felCat9/len/felCat9.len
+  name: 'Cat Nov. 2017 (Felis catus, domestic cat): felCat9'
+galGal6:
+  len_path: /data/db/reference_genomes/galGal6/len/galGal6.len
+  name: 'Chicken (Gallus gallus): galGal6'
+hg18:
+  hg18:
+    bowtie2_indexes:
+    - name: 'Human (Homo sapiens): hg18'
+      path: /data/db/reference_genomes/hg18/bowtie2_index/hg18
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    bowtie_indexes:
+    - name: 'Human (Homo sapiens): hg18'
+      path: /data/db/reference_genomes/hg18/bowtie_index/hg18
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    bwa_indexes:
+    - name: 'Human (Homo sapiens): hg18'
+      path: /data/db/reference_genomes/hg18/bwa_index/hg18.fa
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    tophat2_indexes:
+    - name: 'Human (Homo sapiens): hg18'
+      path: /data/db/reference_genomes/hg18/bowtie2_index/hg18
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    tophat_indexes:
+    - name: 'Human (Homo sapiens): hg18'
+      path: /data/db/reference_genomes/hg18/bowtie_index/hg18
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    tophat_indexes_color:
+    - name: 'Human (Homo sapiens): hg18'
+      path: /data/db/reference_genomes/hg18/bowtie_index/cs/hg18
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+  hg18full:
+    all_fasta:
+    - name: 'Human (Homo sapiens): hg18 Full'
+      path: /data/db/reference_genomes/hg18/seq/hg18.fa
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    fasta_indexes:
+    - name: 'Human (Homo sapiens): hg18 Full'
+      path: /data/db/reference_genomes/hg18/seq/hg18.fa
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+hg19:
+  hg19:
+    bowtie2_indexes:
+    - name: 'Human (Homo sapiens): hg19'
+      path: /data/db/reference_genomes/hg19/bowtie2_index/hg19
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    bowtie_indexes:
+    - name: 'Human (Homo sapiens): hg19'
+      path: /data/db/reference_genomes/hg19/bowtie_index/hg19
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    bwa_indexes:
+    - name: 'Human (Homo sapiens): hg19'
+      path: /data/db/reference_genomes/hg19/bwa_index/0.7.7/hg19.fa
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    fasta_indexes:
+    - name: 'Human (Homo sapiens): hg19'
+      path: /data/db/reference_genomes/hg19/seq/hg19.fa
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    picard_indexes:
+    - name: 'Human (Homo sapiens): hg19'
+      path: /data/db/reference_genomes/hg19/picard_index/hg19.fa
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    srma_indexes:
+    - name: 'Human (Homo sapiens): hg19'
+      path: /data/db/reference_genomes/hg19/picard_index/hg19.fa
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    tophat2_indexes:
+    - name: 'Human (Homo sapiens): hg19'
+      path: /data/db/reference_genomes/hg19/bowtie2_index/hg19
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    tophat_indexes:
+    - name: 'Human (Homo sapiens): hg19'
+      path: /data/db/reference_genomes/hg19/bowtie_index/hg19
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    tophat_indexes_color:
+    - name: 'Human (Homo sapiens): hg19'
+      path: /data/db/reference_genomes/hg19/bowtie_index/cs/hg19
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+  hg19full:
+    all_fasta:
+    - name: 'Human (Homo sapiens): hg19 Full'
+      path: /data/db/reference_genomes/hg19/seq/hg19.fa
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+  len_path: /data/db/reference_genomes/hg19/len/hg19.len
+  name: 'Human (Homo sapiens): hg19 Full'
+hg19_gatk:
+  hg19_gatk:
+    picard_indexes:
+    - name: 'Human (Homo sapiens): hg19 (GATK-version)'
+      path: /data/db/reference_genomes/hg19/hg19gatk/ucsc.hg19.fasta
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    srma_indexes:
+    - name: 'Human (Homo sapiens): hg19 (GATK-version)'
+      path: /data/db/reference_genomes/hg19/hg19gatk/ucsc.hg19.fasta
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+hg19chrM:
+  hg19chrM:
+    bowtie2_indexes:
+    - name: 'Human (Homo sapiens): hg19chrM Mitochondrial DNA'
+      path: /data/db/reference_genomes/hg19/bowtie2_index/hg19chrM/hg19chrM
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    bowtie_indexes:
+    - name: 'Human (Homo sapiens): hg19chrM Mitochondrial DNA'
+      path: /data/db/reference_genomes/hg19/bowtie_index/hg19chrM/hg19chrM
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    tophat2_indexes:
+    - name: 'Human (Homo sapiens): hg19chrM Mitochondrial DNA'
+      path: /data/db/reference_genomes/hg19/bowtie2_index/hg19chrM/hg19chrM
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    tophat_indexes:
+    - name: 'Human (Homo sapiens): hg19chrM Mitochondrial DNA'
+      path: /data/db/reference_genomes/hg19/bowtie_index/hg19chrM/hg19chrM
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+hg38:
+  hg38:
+    picard_indexes:
+    - name: Human Dec. 2013 (GRCh38/hg38) (hg38)
+      path: /data/db/data_managers/hg38/picard_index/hg38/hg38.fa
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    srma_indexes:
+    - name: Human Dec. 2013 (GRCh38/hg38) (hg38)
+      path: /data/db/data_managers/hg38/picard_index/hg38/hg38.fa
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+  hg38canon:
+    bowtie2_indexes:
+    - name: 'Human (Homo sapiens): hg38 Canonical'
+      path: /data/db/reference_genomes/hg38/hg38canon/bowtie2_index/hg38canon
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    bowtie_indexes:
+    - name: 'Human (Homo sapiens): hg38 Canonical'
+      path: /data/db/reference_genomes/hg38/hg38canon/bowtie_index/hg38canon
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    tophat2_indexes:
+    - name: 'Human (Homo sapiens): hg38 Canonical'
+      path: /data/db/reference_genomes/hg38/hg38canon/bowtie2_index/hg38canon
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    tophat_indexes:
+    - name: 'Human (Homo sapiens): hg38 Canonical'
+      path: /data/db/reference_genomes/hg38/hg38canon/bowtie_index/hg38canon
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+  hg38full:
+    bowtie2_indexes:
+    - name: 'Human (Homo sapiens): hg38 Full'
+      path: /data/db/reference_genomes/hg38/hg38full/bowtie2_index/hg38full
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    bowtie_indexes:
+    - name: 'Human (Homo sapiens): hg38 Full'
+      path: /data/db/reference_genomes/hg38/hg38full/bowtie_index/hg38full
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    tophat2_indexes:
+    - name: 'Human (Homo sapiens): hg38 Full'
+      path: /data/db/reference_genomes/hg38/hg38full/bowtie2_index/hg38full
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    tophat_indexes:
+    - name: 'Human (Homo sapiens): hg38 Full'
+      path: /data/db/reference_genomes/hg38/hg38full/bowtie_index/hg38full
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+  len_path: /data/db/reference_genomes/hg38/len/hg38.len
+  name: Human Dec. 2013 (GRCh38/hg38) (hg38)
+macFas5:
+  len_path: /data/db/reference_genomes/macFas5/len/macFas5.len
+  name: Macaca fascicularis Jun 2013 (macFas5)
+melGal5:
+  len_path: /data/db/reference_genomes/melGal5/len/melGal5.len
+  name: Turkey Nov. 2014 (Turkey_5.0/melGal5) (melGal5)
+mm10:
+  mm10:
+    bowtie2_indexes:
+    - name: 'Mouse (Mus musculus): mm10'
+      path: /data/db/reference_genomes/mm10/bowtie2_index/mm10
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    bowtie_indexes:
+    - name: 'Mouse (Mus musculus): mm10'
+      path: /data/db/reference_genomes/mm10/bowtie_index/mm10
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    bwa_indexes:
+    - name: 'Mouse (Mus musculus): mm10'
+      path: /data/db/reference_genomes/mm10/bwa_index/mm10.fa
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    picard_indexes:
+    - name: 'Mouse (Mus musculus): mm10'
+      path: /data/db/reference_genomes/mm10/picard_index/mm10.fa
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    srma_indexes:
+    - name: 'Mouse (Mus musculus): mm10'
+      path: /data/db/reference_genomes/mm10/picard_index/mm10.fa
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    tophat2_indexes:
+    - name: 'Mouse (Mus musculus): mm10'
+      path: /data/db/reference_genomes/mm10/bowtie2_index/mm10
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    tophat_indexes:
+    - name: 'Mouse (Mus musculus): mm10'
+      path: /data/db/reference_genomes/mm10/bowtie_index/mm10
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    tophat_indexes_color:
+    - name: 'Mouse (Mus musculus): mm10'
+      path: /data/db/reference_genomes/mm10/bowtie_index/cs/mm10
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+  mm10full:
+    all_fasta:
+    - name: 'Mouse (Mus Musculus): mm10 Full'
+      path: /data/db/reference_genomes/mm10/seq/mm10.fa
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    fasta_indexes:
+    - name: 'Mouse (Mus musculus): mm10 Full'
+      path: /data/db/reference_genomes/mm10/seq/mm10.fa
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+mm10_ERCC:
+  mm10_ERCC:
+    bowtie2_indexes:
+    - name: 'Mouse (Mus musculus): mm10 with ERCC spike-in'
+      path: /data/db/reference_genomes/mm10_ERCC_SpikeIn/bowtie2_index/mm10_ERCC_SpikeIn
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    tophat2_indexes:
+    - name: 'Mouse (Mus musculus): mm10 with ERCC spike-in'
+      path: /data/db/reference_genomes/mm10_ERCC_SpikeIn/bowtie2_index/mm10_ERCC_SpikeIn
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+  mm10_ERCCfull:
+    all_fasta:
+    - name: 'Mouse (Mus musculus): mm10 with ERCC spike-in'
+      path: /data/db/reference_genomes/mm10_ERCC_SpikeIn/seq/mm10_ERCC_SpikeIn.fa
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+mm39:
+  len_path: /data/db/reference_genomes/mm39/len/mm39.len
+  mm39:
+    fasta_indexes:
+    - name: 'Mouse (Mus Musculus): mm39 Full'
+      path: /data/db/data_managers/mm39/sam_indexes/mm39/mm39.fa
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+  name: 'Mouse (Mus Musculus): mm39 Full'
+mm9:
+  mm9:
+    bowtie2_indexes:
+    - name: 'Mouse (Mus musculus): mm9'
+      path: /data/db/reference_genomes/mm9/bowtie2_index/mm9
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    bowtie_indexes:
+    - name: 'Mouse (Mus musculus): mm9'
+      path: /data/db/reference_genomes/mm9/bowtie_index/mm9
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    bwa_indexes:
+    - name: 'Mouse (Mus musculus): mm9'
+      path: /data/db/reference_genomes/mm9/bwa_index/mm9.fa
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    picard_indexes:
+    - name: 'Mouse (Mus musculus): mm9'
+      path: /data/db/reference_genomes/mm9/picard_index/mm9.fa
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    srma_indexes:
+    - name: 'Mouse (Mus musculus): mm9'
+      path: /data/db/reference_genomes/mm9/picard_index/mm9.fa
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    tophat2_indexes:
+    - name: 'Mouse (Mus musculus): mm9'
+      path: /data/db/reference_genomes/mm9/bowtie2_index/mm9
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    tophat_indexes:
+    - name: 'Mouse (Mus musculus): mm9'
+      path: /data/db/reference_genomes/mm9/bowtie_index/mm9
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    tophat_indexes_color:
+    - name: 'Mouse (Mus musculus): mm9'
+      path: /data/db/reference_genomes/mm9/bowtie_index/cs/mm9
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+  mm9full:
+    all_fasta:
+    - name: 'Mouse (Mus Musculus): mm9 Full'
+      path: /data/db/reference_genomes/mm9/seq/mm9.fa
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    fasta_indexes:
+    - name: 'Mouse (Mus musculus): mm9 Full'
+      path: /data/db/reference_genomes/mm9/seq/mm9.fa
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+oryCun2:
+  len_path: /data/db/reference_genomes/oryCun2/len/oryCun2.len
+  name: Rabbit Apr. 2009 (oryCun2)
+oviAri4:
+  len_path: /data/db/reference_genomes/oviAri4/len/oviAri4.len
+  name: Sheep (oviAri4, International Sheep Genome Consortium) ((Oar_v4.0/oviAri4))
+pp1.2b:
+  len_path: /data/db/reference_genomes/pp1.2b/len/pp1.2b.len
+  name: 'Physcomitrella patens assembly version 1.2b (2014/03/27): pp1.2b'
+  pp1.2b:
+    all_fasta:
+    - name: 'Physcomitrella patens assembly version 1.2b (2014/03/27): pp1.2b'
+      path: /data/db/reference_genomes/pp1.2b/P.patens.V1.2.1_genome.seq
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    bowtie2_indexes:
+    - name: 'Physcomitrella patens assembly version 1.2b (2014/03/27): pp1.2b'
+      path: /data/db/reference_genomes/pp1.2b/bowtie2_index/P.patens.V1.2.1_genome.seq
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    bowtie_indexes:
+    - name: 'Physcomitrella patens assembly version 1.2b (2014/03/27): pp1.2b'
+      path: /data/db/reference_genomes/pp1.2b/bowtie_index/P.patens.V1.2.1_genome.seq
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    bwa_indexes:
+    - name: 'Physcomitrella patens assembly version 1.2b (2014/03/27): pp1.2b'
+      path: /data/db/reference_genomes/pp1.2b/bwa_index/0.7.7/P.patens.V1.2.1_genome.seq
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    sam_fa_indexes:
+    - line_type: index
+      path: /data/db/reference_genomes/pp1.2b/P.patens.V1.2.1_genome.seq
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    tophat2_indexes:
+    - name: 'Physcomitrella patens assembly version 1.2b (2014/03/27): pp1.2b'
+      path: /data/db/reference_genomes/pp1.2b/bowtie2_index/P.patens.V1.2.1_genome.seq
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    tophat_indexes:
+    - name: 'Physcomitrella patens assembly version 1.2b (2014/03/27): pp1.2b'
+      path: /data/db/reference_genomes/pp1.2b/bowtie_index/P.patens.V1.2.1_genome.seq
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+rheMac10:
+  len_path: /data/db/reference_genomes/rheMac10/len/rheMac10.len
+  name: Rhesus Feb. 2019 (Mmul_10/rheMac10) (rheMac10)
+rn5:
+  len_path: /data/db/reference_genomes/rn5/len/rn5.len
+  name: 'Rat (Rattus norvegicus): rn5'
+  rn5:
+    all_fasta:
+    - name: 'Rat (Rattus norvegicus): rn5'
+      path: /data/db/reference_genomes/rn5/seq/rn5.fa
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    bowtie2_indexes:
+    - name: 'Rat (Rattus norvegicus): rn5'
+      path: /data/db/reference_genomes/rn5/bowtie2_index/rn5
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    bowtie_indexes:
+    - name: 'Rat (Rattus norvegicus): rn5'
+      path: /data/db/reference_genomes/rn5/bowtie_index/rn5
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    bwa_indexes:
+    - name: 'Rat (Rattus norvegicus): rn5'
+      path: /data/db/reference_genomes/rn5/bwa_index/rn5.fa
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    tophat2_indexes:
+    - name: 'Rat (Rattus norvegicus): rn5'
+      path: /data/db/reference_genomes/rn5/bowtie2_index/rn5
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    tophat_indexes:
+    - name: 'Rat (Rattus norvegicus): rn5'
+      path: /data/db/reference_genomes/rn5/bowtie_index/rn5
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+rn6:
+  len_path: /data/db/reference_genomes/rn6/len/rn6.len
+  name: Rat Jul. 2014 (RGSC 6.0/rn6) (rn6)
+  rn6:
+    bowtie2_indexes:
+    - name: Rat Jul. 2014 (RGSC 6.0/rn6) (rn6)
+      path: /data/db/data_managers/rn6/bowtie2_index/rn6/rn6
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    tophat2_indexes:
+    - name: Rat Jul. 2014 (RGSC 6.0/rn6) (rn6)
+      path: /data/db/data_managers/rn6/bowtie2_index/rn6/rn6
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+rn7:
+  len_path: /data/db/reference_genomes/rn7/len/rn7.len
+  name: Rattus norvegicus Nov. 2020 (mRatBN7.2/rn7)
+sacCer3:
+  len_path: /data/db/reference_genomes/sacCer3/len/sacCer3.len
+  name: S. cerevisiae Apr. 2011 (SacCer_Apr2011/sacCer3) (sacCer3)
+  sacCer3:
+    bowtie2_indexes:
+    - name: S. cerevisiae Apr. 2011 (SacCer_Apr2011/sacCer3) (sacCer3)
+      path: /data/db/data_managers/sacCer3/bowtie2_index/sacCer3/sacCer3
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+    tophat2_indexes:
+    - name: S. cerevisiae Apr. 2011 (SacCer_Apr2011/sacCer3) (sacCer3)
+      path: /data/db/data_managers/sacCer3/bowtie2_index/sacCer3/sacCer3
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+susScr11:
+  len_path: /data/db/reference_genomes/susScr11/len/susScr11.len
+  name: Pig Feb. 2017 (Sscrofa11.1/susScr11) (susScr11)
+susScr3:
+  len_path: /data/db/reference_genomes/susScr3/len/susScr3.len
+  name: Pig Aug. 2011 (SGSC Sscrofa10.2/susScr3) (susScr3)
+turTru2:
+  turTru2:
+    all_fasta:
+    - name: Dolphin Oct. 2011 (Tursiops truncatus) (turTru2,  Ttru_1.4)
+      path: /data/db/data_managers/turTru2/seq/turTru2.fa
+      xml_file: /opt/galaxy/config/tool_data_table_conf.xml
+xenTro3:
+  len_path: /data/db/reference_genomes/xenTro3/len/xenTro3.len
+  name: X. tropicalis Nov. 2009 (JGI 4.2/xenTro3) (xenTro3)

@@ -1,0 +1,104 @@
+2026-07-02 11:31:25,815 - __main__ - INFO - Loading the big yaml file.
+2026-07-02 11:31:26,192 - __main__ - INFO - Done
+2026-07-02 11:31:26,192 - __main__ - WARNING - hg18 dbkey is in the all_fasta but not in '__dbkeys__'
+2026-07-02 11:31:26,192 - __main__ - WARNING - mm9 dbkey is in the all_fasta but not in '__dbkeys__'
+2026-07-02 11:31:26,192 - __main__ - WARNING - mm10 dbkey is in the all_fasta but not in '__dbkeys__'
+2026-07-02 11:31:26,192 - __main__ - WARNING - mm10_ERCC dbkey is in the all_fasta but not in '__dbkeys__'
+2026-07-02 11:31:26,192 - __main__ - WARNING - dm6 dbkey is in the all_fasta but not in '__dbkeys__'
+2026-07-02 11:31:26,192 - __main__ - WARNING - GCF_002102435.1 dbkey is in the all_fasta but not in '__dbkeys__'
+2026-07-02 11:31:26,192 - __main__ - WARNING - turTru2 dbkey is in the all_fasta but not in '__dbkeys__'
+2026-07-02 11:31:26,192 - __main__ - INFO - Checking table bowtie2_indexes entries
+2026-07-02 11:31:26,192 - __main__ - WARNING - hg19 is in bowtie2_indexes from None but not in all_fasta
+2026-07-02 11:31:26,192 - __main__ - WARNING - hg38full is in bowtie2_indexes from None but not in all_fasta
+2026-07-02 11:31:26,192 - __main__ - WARNING - hg38canon is in bowtie2_indexes from None but not in all_fasta
+2026-07-02 11:31:26,192 - __main__ - WARNING - hg19chrM is in bowtie2_indexes from None but not in all_fasta
+2026-07-02 11:31:26,192 - __main__ - WARNING - hg18 is in bowtie2_indexes from None but not in all_fasta
+2026-07-02 11:31:26,192 - __main__ - WARNING - mm10 is in bowtie2_indexes from None but not in all_fasta
+2026-07-02 11:31:26,192 - __main__ - WARNING - mm9 is in bowtie2_indexes from None but not in all_fasta
+2026-07-02 11:31:26,192 - __main__ - WARNING - mm10_ERCC is in bowtie2_indexes from None but not in all_fasta
+2026-07-02 11:31:26,192 - __main__ - WARNING - dm3 is in bowtie2_indexes from None but not in all_fasta
+2026-07-02 11:31:26,192 - __main__ - WARNING - dm6 is in bowtie2_indexes from None but not in all_fasta
+2026-07-02 11:31:26,192 - __main__ - WARNING - canFam3 is in bowtie2_indexes from None but not in all_fasta
+2026-07-02 11:31:26,192 - __main__ - WARNING - rn6 is in bowtie2_indexes from None but not in all_fasta
+2026-07-02 11:31:26,192 - __main__ - WARNING - sacCer3 is in bowtie2_indexes from None but not in all_fasta
+2026-07-02 11:31:26,192 - __main__ - INFO - Checking table bowtie_indexes entries
+2026-07-02 11:31:26,192 - __main__ - WARNING - hg19 is in bowtie_indexes from None but not in all_fasta
+2026-07-02 11:31:26,192 - __main__ - WARNING - hg38full is in bowtie_indexes from None but not in all_fasta
+2026-07-02 11:31:26,192 - __main__ - WARNING - hg38canon is in bowtie_indexes from None but not in all_fasta
+2026-07-02 11:31:26,193 - __main__ - WARNING - hg19chrM is in bowtie_indexes from None but not in all_fasta
+2026-07-02 11:31:26,193 - __main__ - WARNING - hg18 is in bowtie_indexes from None but not in all_fasta
+2026-07-02 11:31:26,193 - __main__ - WARNING - mm10 is in bowtie_indexes from None but not in all_fasta
+2026-07-02 11:31:26,193 - __main__ - WARNING - mm9 is in bowtie_indexes from None but not in all_fasta
+2026-07-02 11:31:26,193 - __main__ - WARNING - dm3 is in bowtie_indexes from None but not in all_fasta
+2026-07-02 11:31:26,193 - __main__ - INFO - Checking table bwa_indexes entries
+2026-07-02 11:31:26,193 - __main__ - WARNING - hg19 is in bwa_indexes from None but not in all_fasta
+2026-07-02 11:31:26,193 - __main__ - WARNING - hg18 is in bwa_indexes from None but not in all_fasta
+2026-07-02 11:31:26,193 - __main__ - WARNING - mm10 is in bwa_indexes from None but not in all_fasta
+2026-07-02 11:31:26,193 - __main__ - WARNING - mm9 is in bwa_indexes from None but not in all_fasta
+2026-07-02 11:31:26,193 - __main__ - WARNING - dm3 is in bwa_indexes from None but not in all_fasta
+2026-07-02 11:31:26,193 - __main__ - WARNING -  is in bwa_indexes from None but not in all_fasta
+2026-07-02 11:31:26,193 - __main__ - INFO - Checking table bwa_indexes_color entries
+2026-07-02 11:31:26,193 - __main__ - INFO - Checking table fasta_indexes entries
+2026-07-02 11:31:26,193 - __main__ - WARNING - hg19 is in fasta_indexes from None but not in all_fasta
+2026-07-02 11:31:26,193 - __main__ - WARNING - mm39 is in fasta_indexes from None but not in all_fasta
+2026-07-02 11:31:26,193 - __main__ - INFO - Checking table mosaik_indexes entries
+2026-07-02 11:31:26,193 - __main__ - INFO - Checking table ngs_sim_fasta entries
+2026-07-02 11:31:26,193 - __main__ - INFO - Checking table picard_indexes entries
+2026-07-02 11:31:26,193 - __main__ - WARNING - hg19 is in picard_indexes from None but not in all_fasta
+2026-07-02 11:31:26,193 - __main__ - WARNING - hg19_gatk is in picard_indexes from None but not in all_fasta
+2026-07-02 11:31:26,193 - __main__ - WARNING - mm10 is in picard_indexes from None but not in all_fasta
+2026-07-02 11:31:26,193 - __main__ - WARNING - mm9 is in picard_indexes from None but not in all_fasta
+2026-07-02 11:31:26,193 - __main__ - WARNING - dm3 is in picard_indexes from None but not in all_fasta
+2026-07-02 11:31:26,193 - __main__ - WARNING -  is in picard_indexes from None but not in all_fasta
+2026-07-02 11:31:26,193 - __main__ - WARNING - TAIR10 is in picard_indexes from None but not in all_fasta
+2026-07-02 11:31:26,193 - __main__ - WARNING - hg38 is in picard_indexes from None but not in all_fasta
+2026-07-02 11:31:26,193 - __main__ - INFO - Checking table sam_fa_indexes entries
+2026-07-02 11:31:26,193 - __main__ - WARNING - hg19 is in sam_fa_indexes from None but not in all_fasta
+2026-07-02 11:31:26,193 - __main__ - WARNING - hg18 is in sam_fa_indexes from None but not in all_fasta
+2026-07-02 11:31:26,193 - __main__ - WARNING - mm10 is in sam_fa_indexes from None but not in all_fasta
+2026-07-02 11:31:26,193 - __main__ - WARNING - mm9 is in sam_fa_indexes from None but not in all_fasta
+2026-07-02 11:31:26,193 - __main__ - WARNING - dm3 is in sam_fa_indexes from None but not in all_fasta
+2026-07-02 11:31:26,193 - __main__ - WARNING - dm6 is in sam_fa_indexes from None but not in all_fasta
+2026-07-02 11:31:26,193 - __main__ - INFO - Checking table srma_indexes entries
+2026-07-02 11:31:26,193 - __main__ - WARNING - hg19 is in srma_indexes from None but not in all_fasta
+2026-07-02 11:31:26,193 - __main__ - WARNING - hg19_gatk is in srma_indexes from None but not in all_fasta
+2026-07-02 11:31:26,193 - __main__ - WARNING - mm10 is in srma_indexes from None but not in all_fasta
+2026-07-02 11:31:26,193 - __main__ - WARNING - mm9 is in srma_indexes from None but not in all_fasta
+2026-07-02 11:31:26,193 - __main__ - WARNING - dm3 is in srma_indexes from None but not in all_fasta
+2026-07-02 11:31:26,193 - __main__ - WARNING -  is in srma_indexes from None but not in all_fasta
+2026-07-02 11:31:26,193 - __main__ - WARNING - TAIR10 is in srma_indexes from None but not in all_fasta
+2026-07-02 11:31:26,193 - __main__ - WARNING - hg38 is in srma_indexes from None but not in all_fasta
+2026-07-02 11:31:26,194 - __main__ - INFO - Checking table tophat2_indexes entries
+2026-07-02 11:31:26,194 - __main__ - WARNING - hg19 is in tophat2_indexes from None but not in all_fasta
+2026-07-02 11:31:26,194 - __main__ - WARNING - hg38full is in tophat2_indexes from None but not in all_fasta
+2026-07-02 11:31:26,194 - __main__ - WARNING - hg38canon is in tophat2_indexes from None but not in all_fasta
+2026-07-02 11:31:26,194 - __main__ - WARNING - hg19chrM is in tophat2_indexes from None but not in all_fasta
+2026-07-02 11:31:26,194 - __main__ - WARNING - hg18 is in tophat2_indexes from None but not in all_fasta
+2026-07-02 11:31:26,194 - __main__ - WARNING - mm10 is in tophat2_indexes from None but not in all_fasta
+2026-07-02 11:31:26,194 - __main__ - WARNING - mm9 is in tophat2_indexes from None but not in all_fasta
+2026-07-02 11:31:26,194 - __main__ - WARNING - mm10_ERCC is in tophat2_indexes from None but not in all_fasta
+2026-07-02 11:31:26,194 - __main__ - WARNING - dm3 is in tophat2_indexes from None but not in all_fasta
+2026-07-02 11:31:26,194 - __main__ - WARNING - dm6 is in tophat2_indexes from None but not in all_fasta
+2026-07-02 11:31:26,194 - __main__ - WARNING - canFam3 is in tophat2_indexes from None but not in all_fasta
+2026-07-02 11:31:26,194 - __main__ - WARNING - rn6 is in tophat2_indexes from None but not in all_fasta
+2026-07-02 11:31:26,194 - __main__ - WARNING - sacCer3 is in tophat2_indexes from None but not in all_fasta
+2026-07-02 11:31:26,194 - __main__ - INFO - Checking table tophat_indexes entries
+2026-07-02 11:31:26,194 - __main__ - WARNING - hg19 is in tophat_indexes from None but not in all_fasta
+2026-07-02 11:31:26,194 - __main__ - WARNING - hg38full is in tophat_indexes from None but not in all_fasta
+2026-07-02 11:31:26,194 - __main__ - WARNING - hg38canon is in tophat_indexes from None but not in all_fasta
+2026-07-02 11:31:26,194 - __main__ - WARNING - hg19chrM is in tophat_indexes from None but not in all_fasta
+2026-07-02 11:31:26,194 - __main__ - WARNING - hg18 is in tophat_indexes from None but not in all_fasta
+2026-07-02 11:31:26,194 - __main__ - WARNING - mm10 is in tophat_indexes from None but not in all_fasta
+2026-07-02 11:31:26,194 - __main__ - WARNING - mm9 is in tophat_indexes from None but not in all_fasta
+2026-07-02 11:31:26,194 - __main__ - WARNING - dm3 is in tophat_indexes from None but not in all_fasta
+2026-07-02 11:31:26,194 - __main__ - INFO - Checking table tophat_indexes_color entries
+2026-07-02 11:31:26,194 - __main__ - WARNING - hg19 is in tophat_indexes_color from None but not in all_fasta
+2026-07-02 11:31:26,194 - __main__ - WARNING - hg18 is in tophat_indexes_color from None but not in all_fasta
+2026-07-02 11:31:26,194 - __main__ - WARNING - mm10 is in tophat_indexes_color from None but not in all_fasta
+2026-07-02 11:31:26,194 - __main__ - WARNING - mm9 is in tophat_indexes_color from None but not in all_fasta
+2026-07-02 11:31:26,194 - __main__ - WARNING - dm3 is in tophat_indexes_color from None but not in all_fasta
+2026-07-02 11:31:26,194 - __main__ - WARNING -  is in tophat_indexes_color from None but not in all_fasta
+2026-07-02 11:31:26,194 - __main__ - INFO - Checking table twobit entries
+2026-07-02 11:31:26,194 - __main__ - WARNING - dm3 is in twobit from None but not in all_fasta
+2026-07-02 11:31:26,194 - __main__ - WARNING - hg18 is in twobit from None but not in all_fasta
+2026-07-02 11:31:26,194 - __main__ - WARNING - TAIR10 is in twobit from None but not in all_fasta

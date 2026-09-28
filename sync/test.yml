@@ -1,0 +1,684 @@
+__dbkeys__:
+- len_path: /cvmfs/data.galaxyproject.org/managed/len/Amel_4.5.len
+  loc_file: /cvmfs/data.galaxyproject.org/managed/location/dbkeys.loc
+  name: A. mellifera Nov. 2010 (GCF_000002195.4/Amel_4.5) (Amel_4.5)
+  value: Amel_4.5
+  xml_file: /cvmfs/data.galaxyproject.org/managed/location/tool_data_table_conf.xml
+- len_path: /cvmfs/data.galaxyproject.org/managed/len/ucsc/apiMel4.len
+  loc_file: /cvmfs/data.galaxyproject.org/managed/location/dbkeys_ucsc.loc
+  name: A. mellifera 04 Nov 2010 (Amel_4.5/apiMel4) (apiMel4)
+  value: apiMel4
+  xml_file: /cvmfs/data.galaxyproject.org/managed/location/tool_data_table_conf.xml
+alignseq_seq:
+- loc_file: /cvmfs/data.galaxyproject.org/managed/location/alignseq.loc
+  path: /cvmfs/data.galaxyproject.org/managed/seq/hg19_rCRS_pUC18_phiX174.2bit
+  type: seq
+  value: hg19_rCRS_pUC18_phiX174
+  xml_file: /cvmfs/data.galaxyproject.org/managed/location/tool_data_table_conf.xml
+all_fasta:
+- dbkey: apiMel4
+  loc_file: /cvmfs/data.galaxyproject.org/managed/location/all_fasta_dbkeys.loc
+  name: A. mellifera 04 Nov 2010 (Amel_4.5/apiMel4) (apiMel4)
+  path: /cvmfs/data.galaxyproject.org/managed/seq/apiMel4.fa
+  value: apiMel4
+  xml_file: /cvmfs/data.galaxyproject.org/managed/location/tool_data_table_conf.xml
+- dbkey: Amel_4.5
+  loc_file: /cvmfs/data.galaxyproject.org/managed/location/all_fasta_dbkeys.loc
+  name: A. mellifera Nov. 2010 (GCF_000002195.4/Amel_4.5) (Amel_4.5)
+  path: /cvmfs/data.galaxyproject.org/managed/seq/Amel_4.5.fa
+  value: Amel_4.5
+  xml_file: /cvmfs/data.galaxyproject.org/managed/location/tool_data_table_conf.xml
+- dbkey: phiX174
+  loc_file: /home/delislel/Documents/mygit/tools-iuc/data_managers/data_manager_bmtagger_index_builder/test-data/all_fasta.loc
+  name: phiX 174
+  path: ${__HERE__}/phiX174.fasta
+  value: phiX174
+  xml_file: /cvmfs/data.galaxyproject.org/managed/location/tool_data_table_conf.xml
+amrfinderplus_database:
+- loc_file: /cvmfs/data.galaxyproject.org/byhand/location/amrfinderplus.loc
+  name: V3.12-2024-01-31.1
+  path: /cvmfs/data.galaxyproject.org/byhand/amrfinderplus-db/amrfinderplus_V3.12_2024-01-31.1
+  value: amrfinderplus_V3.12_2024-01-31.1
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+amrfinderplus_versioned_database:
+- db_version: '3.12'
+  loc_file: /cvmfs/data.galaxyproject.org/byhand/location/amrfinderplus_versioned.loc
+  name: V3.12-2024-05-02.2
+  path: /cvmfs/data.galaxyproject.org/byhand/amrfinderplus-db/amrfinderplus_V3.12_2024-05-02.2
+  value: amrfinderplus_V3.12_2024-05-02.2
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+bakta_database:
+- bakta_version: '1.7'
+  dbkey: '7669534'
+  loc_file: /cvmfs/data.galaxyproject.org/byhand/location/bakta_database.loc
+  path: /cvmfs/data.galaxyproject.org/byhand/bakta_database/7669534
+  value: V5.0_2023-02-20
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+bfast_indexes:
+- dbkey: hg18
+  formats: fastqsanger
+  loc_file: /cvmfs/data.galaxyproject.org/byhand/location/bfast_indexes.loc
+  name: 'hg18: 40+ bp NT Space reads'
+  path: /cvmfs/data.galaxyproject.org/byhand/hg18/bfast_index/nt/40+/hg18.fa
+  value: hg18_nt_40+
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+blastdb:
+- loc_file: /cvmfs/data.galaxyproject.org/byhand/location/blastdb.loc
+  name: htgs 13-Apr-2014
+  path: /cvmfs/data.galaxyproject.org/byhand/blastdb/htgs/13apr2014/htgs
+  value: 13apr2014-htgs
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+blastdb_p:
+- loc_file: /cvmfs/data.galaxyproject.org/byhand/location/blastdb_p.loc
+  name: NCBI NR (non redundant) 2021-01-15
+  path: /cvmfs/data.galaxyproject.org/byhand/blastdb/nr/20210115/nr
+  value: nr_20210115
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+bowtie2_indexes:
+- dbkey: apiMel4
+  loc_file: /cvmfs/data.galaxyproject.org/managed/location/bowtie2_indices.loc
+  name: A. mellifera 04 Nov 2010 (Amel_4.5/apiMel4) (apiMel4)
+  path: /cvmfs/data.galaxyproject.org/managed/bowtie2_index/apiMel4/apiMel4
+  value: apiMel4
+  xml_file: /cvmfs/data.galaxyproject.org/managed/location/tool_data_table_conf.xml
+- dbkey: Amel_4.5
+  loc_file: /cvmfs/data.galaxyproject.org/managed/location/bowtie2_indices.loc
+  name: A. mellifera Nov. 2010 (GCF_000002195.4/Amel_4.5) (Amel_4.5)
+  path: /cvmfs/data.galaxyproject.org/managed/bowtie2_index/Amel_4.5/Amel_4.5
+  value: Amel_4.5
+  xml_file: /cvmfs/data.galaxyproject.org/managed/location/tool_data_table_conf.xml
+bowtie_indexes:
+- dbkey: Araly1
+  loc_file: /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc
+  name: 'Arabidopsis lyrata: Araly1'
+  path: /cvmfs/data.galaxyproject.org/byhand/Araly1/bowtie_index/Araly1
+  value: Araly1
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+bowtie_indexes_color:
+- dbkey: Araly1
+  loc_file: /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices_color.loc
+  name: 'Arabidopsis lyrata: Araly1'
+  path: /cvmfs/data.galaxyproject.org/byhand/Araly1/bowtie_index/cs/Araly1
+  value: Araly1
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+bracken_databases:
+- loc_file: /cvmfs/data.galaxyproject.org/byhand/location/bracken_databases.loc
+  name: PlusPF (2021-05-17)
+  path: /cvmfs/data.galaxyproject.org/byhand/bracken_databases/k2_pluspf_20210517/database100mers.kmer_distrib
+  value: k2_pluspf_20210517
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+busco_database:
+- loc_file: /cvmfs/data.galaxyproject.org/byhand/location/busco_database.loc
+  name: All odb12 2026-03-20-145944
+  path: /cvmfs/data.galaxyproject.org/byhand/busco/all-odb12-2026-03-20-145944
+  value: all-odb12-2026-03-20-145944
+  version: 5.8.0
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+busco_database_options:
+- db_value: v5
+  loc_file: /cvmfs/data.galaxyproject.org/byhand/location/busco_database_options.loc
+  name: Liliopsida
+  value: liliopsida_odb10
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+bwa_indexes:
+- dbkey: Araly1
+  loc_file: /cvmfs/data.galaxyproject.org/byhand/location/bwa_index.loc
+  name: 'Arabidopsis lyrata: Araly1'
+  path: /cvmfs/data.galaxyproject.org/byhand/Araly1/bwa_index/Araly1.fa
+  value: Araly1
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+bwa_indexes_color:
+- dbkey: '13953'
+  loc_file: /cvmfs/data.galaxyproject.org/byhand/location/bwa_index_color.loc
+  name: 'Burkholderia pseudomallei 668: 13953'
+  path: /cvmfs/data.galaxyproject.org/byhand/microbes/13953/bwa_index/cs/burkPseu_668.fa
+  value: burkPseu_668
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+bwa_mem2_indexes:
+- dbkey: mm39
+  loc_file: /cvmfs/data.galaxyproject.org/byhand/location/bwa_mem2_index.loc
+  name: 'Mouse (Mus Musculus): GRCm39/mm39'
+  path: /cvmfs/data.galaxyproject.org/byhand/mm39/bwa_mem2_index/mm39/mm39.fa
+  value: mm39
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+bwa_mem_indexes:
+- dbkey: apiMel4
+  loc_file: /cvmfs/data.galaxyproject.org/managed/location/bwa_mem_index.loc
+  name: A. mellifera 04 Nov 2010 (Amel_4.5/apiMel4) (apiMel4)
+  path: /cvmfs/data.galaxyproject.org/managed/bwa_mem_index/apiMel4/apiMel4.fa
+  value: apiMel4
+  xml_file: /cvmfs/data.galaxyproject.org/managed/location/tool_data_table_conf.xml
+- dbkey: Amel_4.5
+  loc_file: /cvmfs/data.galaxyproject.org/managed/location/bwa_mem_index.loc
+  name: A. mellifera Nov. 2010 (GCF_000002195.4/Amel_4.5) (Amel_4.5)
+  path: /cvmfs/data.galaxyproject.org/managed/bwa_mem_index/Amel_4.5/Amel_4.5.fa
+  value: Amel_4.5
+  xml_file: /cvmfs/data.galaxyproject.org/managed/location/tool_data_table_conf.xml
+bwameth_indexes:
+- dbkey: hg19
+  loc_file: /cvmfs/data.galaxyproject.org/byhand/location/bwameth_indexes.loc
+  name: Human (hg19)
+  path: /cvmfs/data.galaxyproject.org/byhand/hg19/bwameth_index/hg19.fa
+  value: hg19
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+ccat_configurations:
+- loc_file: /cvmfs/data.galaxyproject.org/byhand/location/ccat_configurations.loc
+  name: CCAT 3.0 provided Transcription Factor Binding
+  path: /cvmfs/data.galaxyproject.org/byhand/ccat/3.0/config_TF.txt
+  value: ccat_3.0_tf_config
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+checkm2:
+- dbkey: 1.0.2
+  loc_file: /cvmfs/data.galaxyproject.org/byhand/location/checkm2.loc
+  name: CheckM2 diamond DB downloaded with version 1.0.2
+  path: /cvmfs/data.galaxyproject.org/byhand/checkm2/1.0.2/uniref100.KO.1.dmnd
+  value: 1.0.2
+  version: 1.0.2
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+checkv:
+- loc_file: /cvmfs/data.galaxyproject.org/byhand/location/checkv.loc
+  name: Version 1.5
+  path: /cvmfs/data.galaxyproject.org/byhand/checkv/checkv-db
+  value: '1.5'
+  version: '1.5'
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+coreprofiler_versioned_scheme:
+- database: enterobase
+  db_path: db_escherichia_v1/escherichia_v1.fasta
+  loc_file: /cvmfs/data.galaxyproject.org/byhand/location/coreprofiler_versioned_scheme.loc
+  name: 'escherichia_v1: cgMLST [2513 loci] (enterobase - downloaded on 2026-01-15)'
+  path: /cvmfs/data.galaxyproject.org/byhand/coreprofiler/coreprofiler_escherichia_v1_enterobase_no_token_2026-01-15
+  scheme_path: scheme_escherichia_v1
+  tool_version: 2.0.0
+  value: coreprofiler_downloaded_2026-01-15-escherichia_v1-cgMLST-2513-enterobase-no_token
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+customProDB:
+- dbkey: ce11
+  loc_file: /cvmfs/data.galaxyproject.org/byhand/location/customProDB.loc
+  name: C.elegans (Ensembl 89 celegans) (ce11/WBcel235)
+  path: /cvmfs/data.galaxyproject.org/byhand/customProDB/omicron-data.duckdns.org/customProDB/ensembl/celegans-may2017
+  value: ce11_WBcel235
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+dada2_species:
+- loc_file: /cvmfs/data.galaxyproject.org/byhand/location/dada2_species.loc
+  name: Silva version 132
+  path: /cvmfs/data.galaxyproject.org/byhand/dada2/silva_132.species
+  value: silva_132
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+dada2_taxonomy:
+- loc_file: /cvmfs/data.galaxyproject.org/byhand/location/dada2_taxonomy.loc
+  name: Silva version 132
+  path: /cvmfs/data.galaxyproject.org/byhand/dada2/silva_132.taxonomy
+  taxlevels: Kingdom,Phylum,Class,Order,Family,Genus,Species
+  value: silva_132
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+deeparg:
+- db_version: 1.0.4
+  loc_file: /cvmfs/data.galaxyproject.org/byhand/location/deeparg.loc
+  name: Files needed for running deepARG v-1.0.4-07112025
+  path: /cvmfs/data.galaxyproject.org/byhand/deeparg/deeparg_1.0.4
+  value: deeparg_1.0.4-07112025
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+defense-finder-2:
+- dbkey: defense-finder-models
+  description: MacSyFinder models allowing for a systematic search of anti-phage systems
+  loc_file: /cvmfs/data.galaxyproject.org/byhand/location/defense-finder.2.loc
+  name: 'version '
+  path: /cvmfs/data.galaxyproject.org/byhand/defense-finder/defense-finder-models_
+  soft_compatibility_version: ''
+  value: defense-finder-models_
+  version: ''
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+eggnog_mapper_db_versioned:
+- loc_file: /cvmfs/data.galaxyproject.org/byhand/location/eggnog_mapper_db_versioned.loc
+  name: 5.0.2
+  path: /cvmfs/data.galaxyproject.org/byhand/eggnog_data/5.0.2
+  value: 5.0.2
+  version: 5.0.2
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+fasta_indexes:
+- dbkey: apiMel4
+  loc_file: /cvmfs/data.galaxyproject.org/managed/location/fasta_indexes.loc
+  name: A. mellifera 04 Nov 2010 (Amel_4.5/apiMel4) (apiMel4)
+  path: /cvmfs/data.galaxyproject.org/managed/sam_indexes/apiMel4/apiMel4.fa
+  value: apiMel4
+  xml_file: /cvmfs/data.galaxyproject.org/managed/location/tool_data_table_conf.xml
+- dbkey: Amel_4.5
+  loc_file: /cvmfs/data.galaxyproject.org/managed/location/fasta_indexes.loc
+  name: A. mellifera Nov. 2010 (GCF_000002195.4/Amel_4.5) (Amel_4.5)
+  path: /cvmfs/data.galaxyproject.org/managed/sam_indexes/Amel_4.5/Amel_4.5.fa
+  value: Amel_4.5
+  xml_file: /cvmfs/data.galaxyproject.org/managed/location/tool_data_table_conf.xml
+funannotate:
+- description: Funannotate database 2024-11-21-003916
+  format_version: '1.0'
+  loc_file: /cvmfs/data.galaxyproject.org/byhand/location/funannotate.loc
+  path: /cvmfs/data.galaxyproject.org/byhand/funannotate/2024-11-21-003916
+  value: 2024-11-21-003916
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+funannotate_options:
+- db_value: 2024-11-21-003916
+  loc_file: /cvmfs/data.galaxyproject.org/byhand/location/funannotate_options.loc
+  name: Liliopsida odb10
+  select: busco_db
+  value: liliopsida_odb10
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+gatk_picard_indexes:
+- dbkey: hg_g1k_v37
+  loc_file: /cvmfs/data.galaxyproject.org/byhand/location/gatk_sorted_picard_index.loc
+  name: 'Human (Homo sapiens) (b37): hg_g1k_v37'
+  path: /cvmfs/data.galaxyproject.org/byhand/hg_g1k_v37/picard_index/hg_g1k_v37.fa
+  value: hg_g1k_v37
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+genomad:
+- loc_file: /cvmfs/data.galaxyproject.org/byhand/location/genomad.loc
+  name: Version 1.7
+  path: /cvmfs/data.galaxyproject.org/byhand/genomad_databases/1.7
+  value: '1.7'
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+groot_database:
+- loc_file: /cvmfs/data.galaxyproject.org/byhand/location/groot_database.loc
+  name: arg-annot (90 percent identity)
+  path: /cvmfs/data.galaxyproject.org/byhand/groot_database/arg-annot.90
+  value: arg-annot.90-1.1.2-08112025
+  version: 1.1.2
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+gtdb:
+- dbkey: gtdb
+  loc_file: /cvmfs/data.galaxyproject.org/byhand/location/gtdb.loc
+  name: GTDB reference genome generated by MMseqs2 used in SemiBin
+  path: /cvmfs/data.galaxyproject.org/byhand/gtdb
+  value: '17102022'
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+gtdbtk_database_metadata_versioned:
+- loc_file: /cvmfs/data.galaxyproject.org/byhand/location/gtdbtk_database_metadata_versioned.loc
+  name: GTDB-Tk Database Version 220 Metadata from 09-10-2024
+  path: /cvmfs/data.galaxyproject.org/byhand/gtdbtk_database_metadata_versioned/_release_220_downloaded_2024-09-10
+  value: GTDB-Tk Database Version 220 Metadata from 09-10-2024 _release_220_downloaded_2024-09-10
+  version: '220'
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+gtdbtk_database_versioned:
+- loc_file: /cvmfs/data.galaxyproject.org/managed/location/gtdbtk_database_versioned.loc
+  name: Full Database - release 220 (2024-10-19)
+  path: /cvmfs/data.galaxyproject.org/managed/gtdbtk_database_versioned/full_database_release_220_downloaded_2024-10-19
+  value: full_database_release_220_downloaded_2024-10-19
+  version: '220'
+  xml_file: /cvmfs/data.galaxyproject.org/managed/location/tool_data_table_conf.xml
+hisat2_indexes:
+- dbkey: Amel_4.5
+  loc_file: /cvmfs/data.galaxyproject.org/managed/location/hisat2_indexes.loc
+  name: A. mellifera Nov. 2010 (GCF_000002195.4/Amel_4.5) (Amel_4.5)
+  path: /cvmfs/data.galaxyproject.org/managed/hisat2_index/Amel_4.5/Amel_4.5
+  value: Amel_4.5
+  xml_file: /cvmfs/data.galaxyproject.org/managed/location/tool_data_table_conf.xml
+- dbkey: apiMel4
+  loc_file: /cvmfs/data.galaxyproject.org/managed/location/hisat2_indexes.loc
+  name: A. mellifera 04 Nov 2010 (Amel_4.5/apiMel4) (apiMel4)
+  path: /cvmfs/data.galaxyproject.org/managed/hisat2_index/apiMel4/apiMel4
+  value: apiMel4
+  xml_file: /cvmfs/data.galaxyproject.org/managed/location/tool_data_table_conf.xml
+humann_nucleotide_database:
+- dbkey: 3.6.0
+  loc_file: /cvmfs/data.galaxyproject.org/byhand/location/humann_nucleotide_database.loc
+  name: Full ChocoPhlAn for HUManN 2023
+  path: /cvmfs/data.galaxyproject.org/byhand/humann/data/nucleotide_database/chocophlan-full-3.6.0-29032023
+  value: chocophlan-full-3.6.0-29032023
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+humann_protein_database:
+- dbkey: 3.6.0
+  loc_file: /cvmfs/data.galaxyproject.org/byhand/location/humann_protein_database.loc
+  name: Full UniRef90 for HUManN 2023
+  path: /cvmfs/data.galaxyproject.org/byhand/humann/data/protein_database/uniref-uniref90_diamond-3.6.0-29032023
+  value: uniref-uniref90_diamond-3.6.0-29032023
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+humann_utility_mapping:
+- dbkey: 3.6.0
+  loc_file: /cvmfs/data.galaxyproject.org/byhand/location/humann_utility_mapping.loc
+  name: Mapping (full) between Pfam domains ids and names 2023
+  path: /cvmfs/data.galaxyproject.org/byhand/humann/data/utility_mapping/utility_mapping-full-map_pfam_name-3.6.0-29032023.gz
+  value: utility_mapping-full-map_pfam_name-3.6.0-29032023.gz
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+indexed_maf_files:
+- dbkey: exists_in_maf:build1,build2,build3
+  loc_file: /cvmfs/data.galaxyproject.org/byhand/location/maf_index.loc
+  name: '#Display_name UID'
+  species: Comma_Separated_Full_Paths_To_Files
+  value: indexed_for:build1,build2,build3
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+infernal:
+- loc_file: /cvmfs/data.galaxyproject.org/byhand/location/infernal.loc
+  name: RFAM 11.0 2013-09-02
+  path: /cvmfs/data.galaxyproject.org/byhand/infernal/02-09-2013/Rfam.cm.1_1
+  value: rfam_11_0
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+interproscan:
+- description: InterProScan 5.59-91.0
+  interproscan_version: 5.59-91.0
+  loc_file: /cvmfs/data.galaxyproject.org/byhand/location/interproscan.loc
+  path: /cvmfs/data.galaxyproject.org/byhand/interproscan/5.59-91.0
+  value: 5.59-91.0
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+iphop:
+- loc_file: /cvmfs/data.galaxyproject.org/byhand/location/iphop.loc
+  name: Version iPHoP_db_Jun25_rw
+  path: /cvmfs/data.galaxyproject.org/byhand/iphop/iPHoP_db_Jun25_rw
+  value: iPHoP_db_Jun25_rw
+  version: iPHoP_db_Jun25_rw
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+kraken2_databases:
+- loc_file: /cvmfs/data.galaxyproject.org/byhand/location/kraken2_databases.loc
+  name: 'Prebuilt Refseq indexes:  core_nt (Very large collection, inclusive of GenBank,
+    RefSeq, TPA and PDB) (Version:  2024-09-04 - Downloaded: 2025-02-05T204609Z)'
+  path: /cvmfs/data.galaxyproject.org/byhand/kraken2_databases/2025-02-05T204609Z_standard_prebuilt_core_nt_2024-09-04
+  value: 2025-02-05T204609Z_standard_prebuilt_core_nt_2024-09-04
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+kraken_databases:
+- loc_file: /cvmfs/data.galaxyproject.org/managed/location/kraken_databases.loc
+  name: Plasmids
+  path: /cvmfs/data.galaxyproject.org/managed/kraken_database/plasmids
+  value: plasmids
+  xml_file: /cvmfs/data.galaxyproject.org/managed/location/tool_data_table_conf.xml
+lastz_seqs:
+- loc_file: /cvmfs/data.galaxyproject.org/byhand/location/lastz_seqs.loc
+  name: 'Arabidopsis lyrata: Araly1'
+  path: /cvmfs/data.galaxyproject.org/byhand/Araly1/seq/Araly1.2bit
+  value: Araly1
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+liftOver:
+- dbkey: ailMel1
+  loc_file: /cvmfs/data.galaxyproject.org/byhand/location/liftOver.loc
+  name: canFam2
+  value: /cvmfs/data.galaxyproject.org/byhand/ailMel1/liftOver/ailMel1ToCanFam2.over.chain
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+maf_indexes:
+- exists_in_maf: hg38,panTro5,panPan2,gorGor5,ponAbe2,nomLeu3,rheMac8,macFas5,macNem1,cerAty1,papAnu3,chlSab2,manLeu1,nasLar1,colAng1,rhiRox1,rhiBie1,calJac3,saiBol1,cebCap1,aotNan1,tarSyr2,micMur3,proCoq1,eulMac1,eulFla1,otoGar3,mm10,canFam3,dasNov3
+  indexed_for: hg38,panTro5,panPan2,gorGor5,ponAbe2,nomLeu3,rheMac8,macFas5,macNem1,cerAty1,papAnu3,chlSab2,manLeu1,nasLar1,colAng1,rhiRox1,rhiBie1,calJac3,saiBol1,cebCap1,aotNan1,tarSyr2,micMur3,proCoq1,eulMac1,eulFla1,otoGar3,mm10,canFam3,dasNov3
+  loc_file: /cvmfs/data.galaxyproject.org/managed/location/maf_indexes.loc
+  name: 30-way multiZ (hg38)
+  path: /cvmfs/data.galaxyproject.org/managed/align/30_WAY_MULTIZ_HG38/chr18.maf,/cvmfs/data.galaxyproject.org/managed/align/30_WAY_MULTIZ_HG38/chr1.maf,/cvmfs/data.galaxyproject.org/managed/align/30_WAY_MULTIZ_HG38/chr19.maf,/cvmfs/data.galaxyproject.org/managed/align/30_WAY_MULTIZ_HG38/chr10.maf,/cvmfs/data.galaxyproject.org/managed/align/30_WAY_MULTIZ_HG38/chr2.maf,/cvmfs/data.galaxyproject.org/managed/align/30_WAY_MULTIZ_HG38/chr11.maf,/cvmfs/data.galaxyproject.org/managed/align/30_WAY_MULTIZ_HG38/chr15.maf,/cvmfs/data.galaxyproject.org/managed/align/30_WAY_MULTIZ_HG38/chr3.maf,/cvmfs/data.galaxyproject.org/managed/align/30_WAY_MULTIZ_HG38/chr4.maf,/cvmfs/data.galaxyproject.org/managed/align/30_WAY_MULTIZ_HG38/chr20.maf,/cvmfs/data.galaxyproject.org/managed/align/30_WAY_MULTIZ_HG38/chr12.maf,/cvmfs/data.galaxyproject.org/managed/align/30_WAY_MULTIZ_HG38/chr16.maf,/cvmfs/data.galaxyproject.org/managed/align/30_WAY_MULTIZ_HG38/chr5.maf,/cvmfs/data.galaxyproject.org/managed/align/30_WAY_MULTIZ_HG38/chr17.maf,/cvmfs/data.galaxyproject.org/managed/align/30_WAY_MULTIZ_HG38/chr6.maf,/cvmfs/data.galaxyproject.org/managed/align/30_WAY_MULTIZ_HG38/chr21.maf,/cvmfs/data.galaxyproject.org/managed/align/30_WAY_MULTIZ_HG38/chr13.maf,/cvmfs/data.galaxyproject.org/managed/align/30_WAY_MULTIZ_HG38/chr22.maf,/cvmfs/data.galaxyproject.org/managed/align/30_WAY_MULTIZ_HG38/chr14.maf,/cvmfs/data.galaxyproject.org/managed/align/30_WAY_MULTIZ_HG38/chr7.maf,/cvmfs/data.galaxyproject.org/managed/align/30_WAY_MULTIZ_HG38/chr9.maf,/cvmfs/data.galaxyproject.org/managed/align/30_WAY_MULTIZ_HG38/chrX.maf,/cvmfs/data.galaxyproject.org/managed/align/30_WAY_MULTIZ_HG38/chr8.maf,/cvmfs/data.galaxyproject.org/managed/align/30_WAY_MULTIZ_HG38/chrM.maf,/cvmfs/data.galaxyproject.org/managed/align/30_WAY_MULTIZ_HG38/chrY.maf
+  value: 30_WAY_MULTIZ_HG38
+  xml_file: /cvmfs/data.galaxyproject.org/managed/location/tool_data_table_conf.xml
+mapseq_db:
+- loc_file: /cvmfs/data.galaxyproject.org/byhand/location/mapseq_db.loc
+  value: ''
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+metaphlan_database_versioned:
+- db_version: SGB
+  dbkey: mpa_vOct22_CHOCOPhlAnSGB_202212
+  loc_file: /cvmfs/data.galaxyproject.org/byhand/location/metaphlan_database_versioned.loc
+  name: MetaPhlAn clade-specific marker genes (mpa_vOct22_CHOCOPhlAnSGB_202212)
+  path: /cvmfs/data.galaxyproject.org/byhand/metaphlan/mpa_vOct22_CHOCOPhlAnSGB_202212
+  value: mpa_vOct22_CHOCOPhlAnSGB_202212-03042023
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+metasbt_databases:
+- loc_file: /cvmfs/data.galaxyproject.org/byhand/location/metasbt_databases.loc
+  name: Viruses (References)
+  path: /cvmfs/data.galaxyproject.org/byhand/MetaSBT/MetaSBT-Viruses-20250115.tar.gz
+  value: viruses_20250115
+  version: '20250115'
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+mitos:
+- loc_file: /cvmfs/data.galaxyproject.org/byhand/location/mitos.loc
+  name: RefSeq63 Metazoa
+  path: /cvmfs/data.galaxyproject.org/byhand/mitos/refseq63m
+  type: mitos2
+  value: refseq63m
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+mmseqs2_databases:
+- loc_file: /cvmfs/data.galaxyproject.org/byhand/location/mmseqs2_databases.loc
+  name: UniRef50 07112025
+  path: /cvmfs/data.galaxyproject.org/byhand/mmseqs2/UniRef50
+  taxonomy: 'yes'
+  type: aminoacid
+  value: UniRef50-17-b804f-07112025
+  version: 17-b804f
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+mosaik_indexes:
+- dbkey: Araly1
+  loc_file: /cvmfs/data.galaxyproject.org/byhand/location/mosaik_index.loc
+  name: 'Arabidopsis lyrata: Araly1'
+  path: /cvmfs/data.galaxyproject.org/byhand/Araly1/picard_index/Araly1.fa
+  value: Araly1
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+ncbi_fcs_gx_config:
+- loc_file: /cvmfs/data.galaxyproject.org/byhand/location/ncbi_fcs_gx_config.tsv
+  name: Complete GX database
+  node_cache_dir: /dev/shm/gxdb
+  phone_home: '1'
+  phone_home_label: usegalaxy.org
+  use_source_manifest: '1'
+  value: all
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+ncbi_fcs_gx_databases:
+- loc_file: /cvmfs/data.galaxyproject.org/byhand/location/ncbi_fcs_gx_databases.loc
+  name: /cvmfs/data.galaxyproject.org/byhand/ncbi_fcs_gx/all
+  source_manifest: https://ncbi-fcs-gx.s3.amazonaws.com/gxdb/latest/all.manifest
+  value: all
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+ncbi_fcs_gx_databases_ext:
+- loc_file: /cvmfs/data.galaxyproject.org/byhand/location/ncbi_fcs_gx_databases_ext.loc
+  local_manifest: /cvmfs/data.galaxyproject.org/byhand/ncbi_fcs_gx/all
+  name: Complete GX database
+  phone_home: '1'
+  phone_home_label: usegalaxy.org
+  source_manifest: https://ncbi-fcs-gx.s3.amazonaws.com/gxdb/latest/all.manifest
+  use_source_manifest: '1'
+  value: all
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+ncbi_fcs_gx_divisions:
+- loc_file: /cvmfs/data.galaxyproject.org/byhand/location/ncbi_fcs_gx_divisions.tsv
+  name: Animals (Metazoa) - amphibians
+  tag: all
+  value: anml:amphibians
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+ncbi_taxonomy:
+- loc_file: /cvmfs/data.galaxyproject.org/byhand/location/ncbi_taxonomy.loc
+  name: '2020-12-03'
+  path: /cvmfs/data.galaxyproject.org/byhand/ncbi_taxonomy/2020-12-03
+  value: '2020-12-03'
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+ngs_sim_fasta:
+- dbkey: hg19
+  loc_file: /cvmfs/data.galaxyproject.org/byhand/location/ngs_sim_fasta.loc
+  name: 'Human: hg19 chrM'
+  path: /cvmfs/data.galaxyproject.org/byhand/hg19/seq/chrM.fa
+  value: hg19chrM
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+omamer:
+- loc_file: /cvmfs/data.galaxyproject.org/byhand/location/omamer.loc
+  value: ''
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+perm_base_indexes:
+- loc_file: /cvmfs/data.galaxyproject.org/byhand/location/perm_base_index.loc
+  name: 'Human (Homo sapiens) hg19: seed=F3 (3 mismatches), read length=50'
+  path: /cvmfs/data.galaxyproject.org/byhand/hg19/perm_index/hg19_base_F3_50.index
+  value: hg19_F3_50
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+perm_color_indexes:
+- loc_file: /cvmfs/data.galaxyproject.org/byhand/location/perm_color_index.loc
+  name: 'Human (Homo sapiens) hg19: seed=F3 (3 mismatches), read length=50'
+  path: /cvmfs/data.galaxyproject.org/byhand/hg19/perm_index/hg19_color_F3_50.index
+  value: hg19_F3_50
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+picard_indexes:
+- dbkey: apiMel4
+  loc_file: /cvmfs/data.galaxyproject.org/managed/location/picard_index.loc
+  name: A. mellifera 04 Nov 2010 (Amel_4.5/apiMel4) (apiMel4)
+  path: /cvmfs/data.galaxyproject.org/managed/picard_index/apiMel4/apiMel4.fa
+  value: apiMel4
+  xml_file: /cvmfs/data.galaxyproject.org/managed/location/tool_data_table_conf.xml
+- dbkey: Amel_4.5
+  loc_file: /cvmfs/data.galaxyproject.org/managed/location/picard_index.loc
+  name: A. mellifera Nov. 2010 (GCF_000002195.4/Amel_4.5) (Amel_4.5)
+  path: /cvmfs/data.galaxyproject.org/managed/picard_index/Amel_4.5/Amel_4.5.fa
+  value: Amel_4.5
+  xml_file: /cvmfs/data.galaxyproject.org/managed/location/tool_data_table_conf.xml
+plant_tribes_scaffolds:
+- description: 22Gv1.1
+  loc_file: /cvmfs/data.galaxyproject.org/managed/location/plant_tribes_scaffolds.loc
+  name: 22Gv1.1
+  path: /cvmfs/data.galaxyproject.org/managed/plant_tribes/scaffolds/22Gv1.1
+  value: 22Gv1.1
+  xml_file: /cvmfs/data.galaxyproject.org/managed/location/tool_data_table_conf.xml
+plasmidfinder_database:
+- date: '2019_08_28'
+  loc_file: /cvmfs/data.galaxyproject.org/byhand/location/plasmidfinder_database.loc
+  name: '2.1_2019_08_28'
+  path: /cvmfs/data.galaxyproject.org/byhand/plasmidfinder-db/2.1_2019_08_28
+  value: plasmidfinder_1307168_2019_08_28
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+rRNA_databases:
+- loc_file: /cvmfs/data.galaxyproject.org/byhand/location/rRNA_databases.loc
+  value: ''
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+rgi_card:
+- card_annotation: /cvmfs/data.galaxyproject.org/byhand/rgi_card/card_4_0_1/card_annotation.fasta
+  card_annotation_all_models: /cvmfs/data.galaxyproject.org/byhand/rgi_card/card_4_0_1/card_annotation_all.fasta
+  card_json: /cvmfs/data.galaxyproject.org/byhand/rgi_card/card_4_0_1/card.json
+  card_version: 4.0.1
+  loc_file: /cvmfs/data.galaxyproject.org/byhand/location/rgi_card.loc
+  name: CARD 4.0.1
+  value: card_4_0_1
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+rgi_databases:
+- loc_file: /cvmfs/data.galaxyproject.org/byhand/location/rgi_databases.loc
+  name: CARD_data-2025-May
+  path: /cvmfs/data.galaxyproject.org/byhand/rgi_databases/card_data-2025-may
+  value: card_data-2025-may
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+rgi_wildcard:
+- card_version: 4.0.1
+  loc_file: /cvmfs/data.galaxyproject.org/byhand/location/rgi_wildcard.loc
+  name: WildCARD 4.0.2 (CARD 4.0.1)
+  value: wildcard_4_0_2
+  wildcard_annotation: /cvmfs/data.galaxyproject.org/byhand/rgi_wildcard/wildcard_4_0_2/wildcard_annotation.fasta
+  wildcard_annotation_all_models: /cvmfs/data.galaxyproject.org/byhand/rgi_wildcard/wildcard_4_0_2/wildcard_annotation_all.fasta
+  wildcard_index: /cvmfs/data.galaxyproject.org/byhand/rgi_wildcard/wildcard_4_0_2/index-for-model-sequences.txt
+  wildcard_version: 4.0.2
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+rnastar_index2:
+- dbkey: apiMel4
+  loc_file: /cvmfs/data.galaxyproject.org/managed/location/rnastar_index2.loc
+  name: A. mellifera 04 Nov 2010 (Amel_4.5/apiMel4) (apiMel4)
+  path: /cvmfs/data.galaxyproject.org/managed/rnastar_index2/apiMel4/dataset_1130463_files
+  value: apiMel4
+  with-gtf: '0'
+  xml_file: /cvmfs/data.galaxyproject.org/managed/location/tool_data_table_conf.xml
+- dbkey: Amel_4.5
+  loc_file: /cvmfs/data.galaxyproject.org/managed/location/rnastar_index2.loc
+  name: A. mellifera Nov. 2010 (GCF_000002195.4/Amel_4.5) (Amel_4.5)
+  path: /cvmfs/data.galaxyproject.org/managed/rnastar_index2/Amel_4.5/dataset_1130464_files
+  value: Amel_4.5
+  with-gtf: '0'
+  xml_file: /cvmfs/data.galaxyproject.org/managed/location/tool_data_table_conf.xml
+rnastar_index2x_versioned:
+- dbkey: apiMel4
+  loc_file: /cvmfs/data.galaxyproject.org/managed/location/rnastar_index2x_versioned.loc
+  name: A. mellifera 04 Nov 2010 (Amel_4.5/apiMel4) (apiMel4)
+  path: /cvmfs/data.galaxyproject.org/managed/rnastar/2.7.4a/apiMel4/apiMel4/dataset_95aec843-8c04-4d1e-ab44-6888c1fdfefb_files
+  value: apiMel4
+  version: 2.7.4a
+  with_gene_model: '0'
+  xml_file: /cvmfs/data.galaxyproject.org/managed/location/tool_data_table_conf.xml
+- dbkey: Amel_4.5
+  loc_file: /cvmfs/data.galaxyproject.org/managed/location/rnastar_index2x_versioned.loc
+  name: A. mellifera Nov. 2010 (GCF_000002195.4/Amel_4.5) (Amel_4.5)
+  path: /cvmfs/data.galaxyproject.org/managed/rnastar/2.7.4a/Amel_4.5/Amel_4.5/dataset_c53a2b2d-8347-4188-82ad-aed87c416f38_files
+  value: Amel_4.5
+  version: 2.7.4a
+  with_gene_model: '0'
+  xml_file: /cvmfs/data.galaxyproject.org/managed/location/tool_data_table_conf.xml
+salmon_indexes_versioned:
+- dbkey: hg38
+  loc_file: /cvmfs/data.galaxyproject.org/byhand/location/salmon_indexes_versioned.loc
+  name: 'Human (Homo sapiens) (b38): hg38'
+  path: /cvmfs/data.galaxyproject.org/byhand/hg38/salmon_index/hg38/q7
+  value: hg38
+  version: q7
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+sam_fa_indexes:
+- line_type: index
+  loc_file: /cvmfs/data.galaxyproject.org/byhand/location/sam_fa_indices.loc
+  path: /cvmfs/data.galaxyproject.org/byhand/microbes/12931/sam_index/Xanthomonas_oryzae_KACC10331.fa
+  value: '12931'
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+snpeffv_genomedb:
+- key: SnpEff4.3_GRCh38.86
+  loc_file: /cvmfs/data.galaxyproject.org/byhand/location/snpeffv_genomedb.loc
+  name: 'Homo sapiens : GRCh38.86'
+  path: /cvmfs/data.galaxyproject.org/byhand/snpEff/v4_3/data
+  value: GRCh38.86
+  version: SnpEff4.3
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+srma_indexes:
+- dbkey: Araly1
+  loc_file: /cvmfs/data.galaxyproject.org/byhand/location/picard_index.loc
+  name: 'Arabidopsis lyrata: Araly1'
+  path: /cvmfs/data.galaxyproject.org/byhand/Araly1/picard_index/Araly1.fa
+  value: Araly1
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+staramr_database:
+- loc_file: /cvmfs/data.galaxyproject.org/byhand/location/staramr_database.loc
+  name: 'starAMR databases with ResFinder: 2.4.0_d1e607b_2024-08-06, PointFinder:
+    4.1.1_694919f_2024-08-08, PlasmidFinder: 3e77502_2024-03-07'
+  path: /cvmfs/data.galaxyproject.org/byhand/staramr/resfinder_d1e607b_pointfinder_694919f_plasmidfinder_3e77502
+  plasmidfinder_commit: 3e77502
+  pointfinder_commit: 694919f
+  resfinder_commit: d1e607b
+  value: staramr_downloaded_07042025_resfinder_d1e607b_pointfinder_694919f_plasmidfinder_3e77502
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+sylph_databases:
+- clade: prokaryote
+  loc_file: /cvmfs/data.galaxyproject.org/byhand/location/sylph_databases.loc
+  name: sylph database gtdb-r220-c200-dbv1.syldb
+  path: /cvmfs/data.galaxyproject.org/byhand/sylph/gtdb-r220-c200-dbv1.syldb
+  sylph_tax_identifier: GTDB_r220
+  value: sylph_downloaded_07112025_gtdb-r220-c200-dbv1.syldb
+  version: '1'
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+sylph_tax_database:
+- loc_file: /cvmfs/data.galaxyproject.org/byhand/location/sylph_tax_database.loc
+  name: sylph tax database 1.2.0
+  path: /cvmfs/data.galaxyproject.org/byhand/sylph_tax/sylph_tax_metadata_1.2.0
+  value: sylph_tax_downloaded_08112025
+  version: '1'
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+tophat2_indexes:
+- dbkey: apiMel4
+  loc_file: /cvmfs/data.galaxyproject.org/managed/location/tophat2_indices.loc
+  name: A. mellifera 04 Nov 2010 (Amel_4.5/apiMel4) (apiMel4)
+  path: /cvmfs/data.galaxyproject.org/managed/bowtie2_index/apiMel4/apiMel4
+  value: apiMel4
+  xml_file: /cvmfs/data.galaxyproject.org/managed/location/tool_data_table_conf.xml
+- dbkey: Amel_4.5
+  loc_file: /cvmfs/data.galaxyproject.org/managed/location/tophat2_indices.loc
+  name: A. mellifera Nov. 2010 (GCF_000002195.4/Amel_4.5) (Amel_4.5)
+  path: /cvmfs/data.galaxyproject.org/managed/bowtie2_index/Amel_4.5/Amel_4.5
+  value: Amel_4.5
+  xml_file: /cvmfs/data.galaxyproject.org/managed/location/tool_data_table_conf.xml
+tophat_indexes:
+- dbkey: Araly1
+  loc_file: /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices.loc
+  name: 'Arabidopsis lyrata: Araly1'
+  path: /cvmfs/data.galaxyproject.org/byhand/Araly1/bowtie_index/Araly1
+  value: Araly1
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+tophat_indexes_color:
+- dbkey: Araly1
+  loc_file: /cvmfs/data.galaxyproject.org/byhand/location/bowtie_indices_color.loc
+  name: 'Arabidopsis lyrata: Araly1'
+  path: /cvmfs/data.galaxyproject.org/byhand/Araly1/bowtie_index/cs/Araly1
+  value: Araly1
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+twobit:
+- loc_file: /cvmfs/data.galaxyproject.org/byhand/location/twobit.loc
+  path: /cvmfs/data.galaxyproject.org/byhand/bosTau4/bosTau4.2bit
+  value: bosTau4
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
+vibrant:
+- loc_file: /cvmfs/data.galaxyproject.org/byhand/location/vibrant.loc
+  name: Version 1.2.1
+  path: /cvmfs/data.galaxyproject.org/byhand/vibrant_databases/1.2.1
+  value: 1.2.1
+  version: 1.2.1
+  xml_file: /cvmfs/data.galaxyproject.org/byhand/location/tool_data_table_conf.xml
