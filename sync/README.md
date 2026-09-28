@@ -499,6 +499,50 @@ $ ls -alh /cvmfs/data.galaxyproject.org/byhand/ornAna1/bowtie_index/cs/ornAna1.f
 lrwxrwxrwx 1 cvmfs cvmfs 20 May 17  2014 /cvmfs/data.galaxyproject.org/byhand/ornAna1/bowtie_index/cs/ornAna1.fa -> ../../seq/ornAna1.fa
 ```
 
+### bowtie_indexes_color
+
+#### equCab2chrM
+
+Issue with permission
+
+```bash
+$ ls -alh /cvmfs/data.galaxyproject.org/byhand/equCab2/bowtie_index/cs                                                   
+total 2.4G                                                                                                                                                  
+drwxr-xr-x 2 cvmfs cvmfs 4.0K Feb 17  2011 .                                                                                                                
+drwxr-sr-x 3 cvmfs cvmfs 4.0K Oct 20  2010 ..                                                                                                               
+-rw------- 1 cvmfs cvmfs 4.1M Aug 31  2010 chrM.1.ebwt                 
+-rw------- 1 cvmfs cvmfs 2.1K Aug 31  2010 chrM.2.ebwt                 
+-rw------- 1 cvmfs cvmfs   17 Aug 31  2010 chrM.3.ebwt                 
+-rw------- 1 cvmfs cvmfs 4.1K Aug 31  2010 chrM.4.ebwt                 
+lrwxrwxrwx 1 cvmfs cvmfs   17 May 17  2014 chrM.fa -> ../../seq/chrM.fa
+-rw------- 1 cvmfs cvmfs 4.1M Aug 31  2010 chrM.rev.1.ebwt                  
+-rw------- 1 cvmfs cvmfs 2.1K Aug 31  2010 chrM.rev.2.ebwt                  
+-rw-r--r-- 1 cvmfs cvmfs 641M Jan 11  2010 equCab2.1.ebwt                   
+-rw-r--r-- 1 cvmfs cvmfs 279M Jan 11  2010 equCab2.2.ebwt                   
+-rw-r--r-- 1 cvmfs cvmfs 373K Jan 11  2010 equCab2.3.ebwt                                                                                                   
+-rw-r--r-- 1 cvmfs cvmfs 557M Jan 11  2010 equCab2.4.ebwt                                                                                                   
+lrwxrwxrwx 1 cvmfs cvmfs   11 May 17  2014 equCab2chrM.1.ebwt -> chrM.1.ebwt                                                                                
+lrwxrwxrwx 1 cvmfs cvmfs   11 May 17  2014 equCab2chrM.2.ebwt -> chrM.2.ebwt                                                                                
+lrwxrwxrwx 1 cvmfs cvmfs   11 May 17  2014 equCab2chrM.3.ebwt -> chrM.3.ebwt                                                                                
+lrwxrwxrwx 1 cvmfs cvmfs   11 May 17  2014 equCab2chrM.4.ebwt -> chrM.4.ebwt                                                                                
+lrwxrwxrwx 1 cvmfs cvmfs   24 May 17  2014 equCab2chrM.fa -> ../../seq/equCab2chrM.fa
+lrwxrwxrwx 1 cvmfs cvmfs   15 May 17  2014 equCab2chrM.rev.1.ebwt -> chrM.rev.1.ebwt
+lrwxrwxrwx 1 cvmfs cvmfs   15 May 17  2014 equCab2chrM.rev.2.ebwt -> chrM.rev.2.ebwt
+lrwxrwxrwx 1 cvmfs cvmfs   20 May 17  2014 equCab2.fa -> ../../seq/equCab2.fa
+-rw-r--r-- 1 cvmfs cvmfs 641M Jan 11  2010 equCab2.rev.1.ebwt
+-rw-r--r-- 1 cvmfs cvmfs 279M Jan 11  2010 equCab2.rev.2.ebwt
+```
+
+#### ornAna1
+
+The fasta file is symlink with a path which do not exists
+
+### bwa
+
+Still issues with equCab2chrM and ornAna1
+
+
+
 ## Ideas/TODO
 
 Keep in mind that the data_manager are run while we are working.
