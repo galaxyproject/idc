@@ -106,3 +106,10 @@ working/
 # Ansible installed artifacts
 ansible/collections
 ansible/roles/*.*
+
+# macOS
+.DS_Store
+
+# ephemeris/shed-tools test output
+tool_test_output.json
+tool_test_output.html

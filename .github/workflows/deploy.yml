@@ -1,0 +1,73 @@
+# Stage 3 of the reference-data pipeline: import the bundles that build.yml built
+# on test.galaxyproject.org onto CVMFS and publish (.ci/github-actions.sh).
+#
+# Run manually once the build histories (idc-<dm>-<version>) are green: a
+# build runs asynchronously for hours after its request merges, so publishing
+# on merge would race it. import_bundles.py refuses bundles whose datasets are
+# not in the ok state, so a premature run fails loudly rather than publishing
+# a partial build.
+#
+# Runs on the org's self-hosted cvmfs-publish runner (docs/cvmfs-publish-actions.md):
+# the Stratum 0 only accepts SSH from inside its network, and the runner group
+# is restricted to this workflow on the default branch.
+name: Publish reference data to CVMFS
+
+on:
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: "Publish the CVMFS transaction (false = import, then abort: a rehearsal)"
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on:
+      group: cvmfs-publish
+      labels: cvmfs
+    # Scopes the Stratum 0 key and the Galaxy key to this job.
+    environment: cvmfs-publish
+    # A self-hosted job may run up to 5 days; the import itself is minutes to an
+    # hour (dominated by installing galaxy-maintenance-scripts on the Stratum 0).
+    timeout-minutes: 300
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Start ssh-agent with the Stratum 0 key
+        env:
+          STRATUM0_SSH_KEY: ${{ secrets.STRATUM0_SSH_KEY }}
+        run: |
+          eval "$(ssh-agent -s)"
+          echo "SSH_AUTH_SOCK=$SSH_AUTH_SOCK" >> "$GITHUB_ENV"
+          echo "SSH_AGENT_PID=$SSH_AGENT_PID" >> "$GITHUB_ENV"
+          printf '%s\n' "$STRATUM0_SSH_KEY" | ssh-add -
+
+      - name: Import reference-data bundles and publish
+        env:
+          PUBLISH: ${{ inputs.publish && 'true' || 'false' }}
+          REFERENCE_DATA_API_KEY: ${{ secrets.REFERENCE_DATA_API_KEY }}
+        run: .ci/github-actions.sh
+
+      - name: Summarize
+        if: always()
+        env:
+          PUBLISHED: ${{ inputs.publish && job.status == 'success' }}
+        run: |
+          {
+            echo "## Reference data → CVMFS: ${{ job.status }}"
+            echo
+            echo "- commit: \`${GITHUB_SHA}\`"
+            echo "- published: ${PUBLISHED}"
+            echo "- requests:"
+            for req in data-managers/*/*.yaml data-managers/*/*.yml; do
+              [ -e "$req" ] && echo "  - \`${req}\`"
+            done
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Stop ssh-agent
+        if: always()
+        run: ssh-agent -k || true

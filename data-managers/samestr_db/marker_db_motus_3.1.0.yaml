@@ -1,0 +1,20 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/galaxyproject/idc/main/schemas/request.schema.json
+# SameStr marker database built from the mOTUs 3.1.0 database.
+# Chained build: samestr's "motus_db" input is backed by the motus_db_versioned
+# data table, so the build workflow first runs the mOTUs data manager (bundle
+# mode) and feeds its output into this step.
+tool_id: toolshed.g2.bx.psu.edu/repos/iuc/data_manager_samestr/samestr_db/1.2025.111+galaxy4
+data_tables:
+  - samestr_db
+depends_on:
+  # Which mOTUs version this SameStr DB is built against. A request file must
+  # exist at data-managers/motus_db_versioned/<version>.yaml.
+  motus_db_versioned: "3.1.0"
+# Empty on purpose: the tool's db_source conditional is not steered from here.
+# depends_on names the upstream table, and CHAIN_WIRING in generate_build.py maps
+# (samestr_db, motus_db_versioned) -> db_source: {db_type: motus} plus the input
+# that receives the bundle, so the non-default branch is selected by the
+# dependency itself. params is for a build's own tool parameters - see
+# data-managers/motus_db_versioned/3.1.0.yaml for an example that uses it.
+params: {}
+description: SameStr marker database derived from mOTUs 3.1.0

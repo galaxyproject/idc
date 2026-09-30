@@ -87,4 +87,16 @@
         <columns>value, name, path</columns>
         <file path="/cvmfs/idc.galaxyproject.org/config/bracken_databases.loc"/>
     </table>
+    <table name="metaphlan_database_versioned" comment_char="#" allow_duplicate_entries="False">
+        <columns>value, name, dbkey, path, db_version</columns>
+        <file path="/cvmfs/idc.galaxyproject.org/config/metaphlan_database_versioned.loc"/>
+    </table>
+    <table name="samestr_db" comment_char="#" allow_duplicate_entries="False">
+        <columns>value, name, path, version_file, samestr_version</columns>
+        <file path="/cvmfs/idc.galaxyproject.org/config/samestr_db.loc"/>
+    </table>
+    <table name="motus_db_versioned" comment_char="#" allow_duplicate_entries="False">
+        <columns>value, version, name, path</columns>
+        <file path="/cvmfs/idc.galaxyproject.org/config/motus_db_versioned.loc"/>
+    </table>
 </tables>

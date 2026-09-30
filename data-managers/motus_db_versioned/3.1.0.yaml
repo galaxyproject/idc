@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/galaxyproject/idc/main/schemas/request.schema.json
+# mOTUs database v3.1.0 (fetched from Zenodo record 7778108).
+# Standalone build: the data manager downloads the DB by version.
+tool_id: toolshed.g2.bx.psu.edu/repos/bgruening/data_manager_motus/motus_db_fetcher/3.1.0+galaxy2
+data_tables:
+  - motus_db_versioned
+params:
+  version: "3.1.0"   # the tool's "Database Version" select param
+  # "Database identifier override": the exact `value` the tool writes to the data
+  # table. Set to usegalaxy.eu's existing identifier so workflows built there
+  # resolve here unchanged (left empty, the tool would stamp today's date).
+  db_value: "db_from_2026-04-27T094930Z"
+description: mOTUs profiler database, version 3.1.0

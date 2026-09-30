@@ -4,8 +4,23 @@ set -euo pipefail
 # Set this variable to 'true' to publish on successful installation
 : ${PUBLISH:=false}
 
+# Set to 'true' to import ONLY reference-data (data-managers/) bundles and skip
+# the genome (tool-data) build+import entirely. Also enabled by commenting
+# "@galaxybot deploy reference-data" on the PR (see check_bot_command).
+: ${REFERENCE_DATA_ONLY:=false}
+
 BUILD_GALAXY_URL="http://idc-build"
 PUBLISH_GALAXY_URL="https://usegalaxy.org"
+# Galaxy where the IDC reference-data (workflow-bundle) builds run - Stage 2
+# (.github/workflows/build.yml) builds bundles here for Stage 3 to import.
+REFERENCE_DATA_GALAXY_URL="https://test.galaxyproject.org"
+# API key for $REFERENCE_DATA_GALAXY_URL. Stage 3 uses it (via bioblend) to look
+# up the built bundles' dataset ids on that server; the bundle download itself is
+# unauthenticated. This is a DISTINCT server from $PUBLISH_GALAXY_URL, so it needs
+# its own key - do not reuse $EPHEMERIS_API_KEY, which authenticates the genome
+# import against $PUBLISH_GALAXY_URL. Falls back to $EPHEMERIS_API_KEY only for
+# backward compatibility when a reference-data-only key is not provided.
+: ${REFERENCE_DATA_API_KEY:=${EPHEMERIS_API_KEY:-}}
 SSH_MASTER_SOCKET_DIR="${HOME}/.cache/idc"
 MAIN_BRANCH='main'
 
@@ -34,7 +49,20 @@ USE_LOCAL_OVERLAYFS=false
 # Set to true to run the importer in a docker container
 USE_DOCKER="$USE_LOCAL_OVERLAYFS"
 
-REMOTE_PYTHON=/opt/rh/rh-python38/root/usr/bin/python3
+# Python for the remote ephemeris/maintenance venvs. The Stratum 0's system
+# python3 is only 3.9 (too old for galaxy-maintenance-scripts' deps, e.g.
+# yacman>=1.0 which needs 3.10+), and CVMFS-provided Pythons aren't reliably
+# present on every worker, so setup_remote_python() bootstraps a pinned
+# standalone CPython with a pinned uv. Everything below is fixed on purpose (no
+# environment overrides): the publish path must run the same bytes every time
+# until someone changes these lines in a reviewed commit.
+REMOTE_PYTHON=   # set by setup_remote_python()
+REMOTE_PYTHON_VERSION=3.13
+# uv release, pinned by version *and* tarball SHA-256. Bump both together; the
+# checksum is uv-<target>.tar.gz.sha256 on https://github.com/astral-sh/uv/releases.
+UV_VERSION=0.12.18
+UV_TARGET=x86_64-unknown-linux-gnu
+UV_SHA256=89eadd7c76fc063887959510d5ba0ab1264dfd5f1143b925ddb73021a40acf16
 REMOTE_WORKDIR_PARENT=/srv/idc
 
 # $EPHEMERIS_API_KEY and $IDC_VAULT_PASS should be set in the environment
@@ -154,10 +182,15 @@ function check_bot_command() {
     log 'Checking for Github PR Bot commands'
     log_debug "Value of \$ghprbCommentBody is: ${ghprbCommentBody:-UNSET}"
     case "${ghprbCommentBody:-UNSET}" in
+        "@galaxybot deploy reference-data"*)
+            PUBLISH=true
+            REFERENCE_DATA_ONLY=true
+            ;;
         "@galaxybot deploy"*)
             PUBLISH=true
             ;;
     esac
+    $REFERENCE_DATA_ONLY && log "Reference-data-only deploy: skipping genome build/import"
     if $PUBLISH; then
         log "Publish requested; running build and import"
     else
@@ -222,6 +255,26 @@ function setup_ephemeris() {
     log_exec "${EPHEMERIS_BIN}/pip" install --upgrade pip wheel
     log_exec "${EPHEMERIS_BIN}/pip" install --index-url https://wheels.galaxyproject.org/simple/ \
         --extra-index-url https://pypi.org/simple/ "${EPHEMERIS:=ephemeris}"
+}
+
+
+function setup_remote_python() {
+    # Sets global $REMOTE_PYTHON to a pinned standalone CPython bootstrapped with
+    # uv, so the remote venvs don't depend on the host OS Python (too old) or on
+    # a CVMFS-provided Python being mounted on this particular worker/Stratum 0.
+    log "Bootstrapping remote Python ${REMOTE_PYTHON_VERSION} with uv ${UV_VERSION}"
+    # uv is a single static binary. Fetch the pinned release tarball straight
+    # from GitHub, refuse it unless it matches the pinned checksum, and unpack it
+    # into the (ephemeral) workdir - no curl | sh, nothing touches the idc user's
+    # profile, and the same bytes run every time until UV_VERSION/UV_SHA256 are
+    # bumped together.
+    local tarball="uv-${UV_TARGET}.tar.gz"
+    local url="https://github.com/astral-sh/uv/releases/download/${UV_VERSION}/${tarball}"
+    exec_on "set -e; cd '${REMOTE_WORKDIR}' && curl -LsSf -o '${tarball}' '${url}' && echo '${UV_SHA256}  ${tarball}' | sha256sum -c - && mkdir -p uv && tar -xzf '${tarball}' -C uv --strip-components=1 && rm -f '${tarball}'"
+    local uv="${REMOTE_WORKDIR}/uv/uv"
+    exec_on "$uv" python install "$REMOTE_PYTHON_VERSION"
+    REMOTE_PYTHON="$(exec_on "$uv" python find "$REMOTE_PYTHON_VERSION")"
+    log "Remote Python: ${REMOTE_PYTHON}"
 }
 
 
@@ -301,7 +354,11 @@ function start_ssh_control() {
     log "Starting SSH control connection to Stratum 0"
     SSH_MASTER_SOCKET="${SSH_MASTER_SOCKET_DIR}/ssh-tunnel-${REPO_USER}-${REPO_STRATUM0}.sock"
     log_exec mkdir -p "$SSH_MASTER_SOCKET_DIR"
-    log_exec ssh -M -S "$SSH_MASTER_SOCKET" -Nfn -l "$REPO_USER" "$REPO_STRATUM0"
+    # StrictHostKeyChecking=yes: an absent or changed Stratum 0 host key stops
+    # the deploy instead of prompting (non-interactive runs would fail anyway).
+    # ConnectTimeout: fail fast when the Stratum 0 is unreachable rather than
+    # hanging until the job times out.
+    log_exec ssh -o StrictHostKeyChecking=yes -o ConnectTimeout=30 -M -S "$SSH_MASTER_SOCKET" -Nfn -l "$REPO_USER" "$REPO_STRATUM0"
     USER_UID=$(exec_on id -u)
     USER_GID=$(exec_on id -g)
     SSH_MASTER_UP=true
@@ -424,6 +481,10 @@ function wait_for_build_galaxy() {
 
 
 function stop_build_galaxy() {
+    # The build Galaxy (and its ansible-venv) is only set up when there are
+    # genome data managers to run; an import-only run (e.g. reference-data-only,
+    # or "Nothing to build") never starts it, so there is nothing to tear down.
+    $BUILD_GALAXY_UP || return 0
     . ./ansible-venv/bin/activate
     log "Stopping Build Galaxy"
     pushd ansible
@@ -595,6 +656,53 @@ function import_tool_data_bundles() {
 }
 
 
+# ---------------------------------------------------------------------------
+# IDC reference-data (workflow-bundle) pipeline - Stage 3 import.
+# NOTE: UNTESTED against live Jenkins/Stratum 0 - review before enabling.
+# These import bundles built on $REFERENCE_DATA_GALAXY_URL by the Stage 2 build
+# (.github/workflows/build.yml) for requests under data-managers/. Only the
+# remote (non-docker) path is wired here; the USE_DOCKER/local-overlay path
+# would need the container invocation like import_tool_data_bundles.
+# ---------------------------------------------------------------------------
+
+function has_reference_data_requests() {
+    compgen -G "data-managers/*/*.yaml" >/dev/null 2>&1 || compgen -G "data-managers/*/*.yml" >/dev/null 2>&1
+}
+
+
+function import_reference_data_bundles() {
+    local req dm version staged_req
+    log "Importing IDC reference-data bundles"
+    copy_to scripts/get_bundle_urls.py
+    copy_to scripts/import_bundles.py
+    for req in data-managers/*/*.yaml data-managers/*/*.yml; do
+        [ -e "$req" ] || continue
+        dm="$(basename "$(dirname "$req")")"
+        version="$(basename "$req")"; version="${version%.*}"
+        # import_bundles.py skips gracefully when there is no build history
+        # idc-<dm>-<version> - which is the case when the build stage skipped this
+        # request because its data already exists.
+        log "Importing reference-data bundles for '${dm}/${version}'"
+        exec_on mkdir -p "/cvmfs/${REPO}/data" "/cvmfs/${REPO}/record/${dm}"
+        # Ship the request itself (under a dm-qualified name; copy_to keeps only
+        # the basename) so import_bundles.py can read its depends_on and skip an
+        # upstream bundle that the upstream request already published.
+        staged_req="$(mktemp -t "idc-request-${dm}-${version}.XXXXXX.yaml")"
+        cp "$req" "$staged_req"
+        copy_to "$staged_req"
+        # import_bundles.py resolves the build's bundles from its workflow
+        # invocation (history idc-<dm>-<version>) and imports each, recording
+        # record/<dm>/<version> for idempotency. API key filtered by Jenkins.
+        exec_on "EPHEMERIS_API_KEY='$REFERENCE_DATA_API_KEY' TMPDIR='${REMOTE_WORKDIR}' ${EPHEMERIS_BIN}/python3 ${REMOTE_WORKDIR}/import_bundles.py \
+            --galaxy-url '$REFERENCE_DATA_GALAXY_URL' --history-name 'idc-${dm}-${version}' \
+            --dm '$dm' --version '$version' --cvmfs-root '/cvmfs/${REPO}' \
+            --request '${REMOTE_WORKDIR}/${staged_req##*/}' \
+            --import-cmd '${GALAXY_MAINTENANCE_SCRIPTS_BIN}/galaxy-import-data-bundle'"
+        rm -f "$staged_req"
+    done
+}
+
+
 function show_logs() {
     local lines=
     if [ -n "${1:-}" ]; then
@@ -682,13 +790,21 @@ function do_import_local() {
 function do_import_remote() {
     start_ssh_control
     create_remote_workdir
+    setup_remote_python
     setup_remote_ephemeris
     # from this point forward $EPHEMERIS_BIN refers to remote
-    if generate_import_tasks; then
+    local have_genome_tasks=false have_reference_data=false
+    if ! $REFERENCE_DATA_ONLY && generate_import_tasks; then
+        have_genome_tasks=true
+    fi
+    # UNTESTED: also open a transaction when only reference-data requests exist
+    has_reference_data_requests && have_reference_data=true
+    if $have_genome_tasks || $have_reference_data; then
         setup_galaxy_maintenance_scripts "$WORKDIR" "$REMOTE_PYTHON"
         begin_transaction
         update_tool_data_table_conf
-        import_tool_data_bundles
+        $have_genome_tasks && import_tool_data_bundles
+        $have_reference_data && import_reference_data_bundles
         check_for_repo_changes
         post_install
     else
@@ -706,7 +822,7 @@ function main() {
     detect_changes
     set_repo_vars
     setup_ephemeris
-    if generate_data_manager_tasks; then
+    if ! $REFERENCE_DATA_ONLY && generate_data_manager_tasks; then
         run_build_galaxy
         wait_for_build_galaxy
         #install_data_managers
@@ -725,4 +841,8 @@ function main() {
 }
 
 
-main
+# .ci/github-actions.sh sources this file for its functions and runs its own,
+# reference-data-only entry point; only run main when executed directly.
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+    main
+fi

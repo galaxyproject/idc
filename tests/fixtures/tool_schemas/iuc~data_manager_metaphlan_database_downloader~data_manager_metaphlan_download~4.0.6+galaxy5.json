@@ -1,0 +1,81 @@
+{
+    "additionalProperties": false,
+    "properties": {
+        "index": {
+            "anyOf": [
+                {
+                    "const": "mpa_vJan25_CHOCOPhlAnSGB_202503",
+                    "type": "string"
+                },
+                {
+                    "const": "mpa_vOct22_CHOCOPhlAnSGB_202403",
+                    "type": "string"
+                },
+                {
+                    "const": "mpa_vJun23_CHOCOPhlAnSGB_202403",
+                    "type": "string"
+                },
+                {
+                    "const": "mpa_vJun23_CHOCOPhlAnSGB_202307",
+                    "type": "string"
+                },
+                {
+                    "const": "mpa_vOct22_CHOCOPhlAnSGB_202212",
+                    "type": "string"
+                },
+                {
+                    "const": "mpa_vJan21_CHOCOPhlAnSGB_202103",
+                    "type": "string"
+                },
+                {
+                    "const": "mpa_vJan21_TOY_CHOCOPhlAnSGB_202103",
+                    "type": "string"
+                }
+            ],
+            "default": null,
+            "gx_multiple": false,
+            "gx_options": [
+                {
+                    "label": "FULL: mpa_vJan25_CHOCOPhlAnSGB_202503",
+                    "selected": true,
+                    "value": "mpa_vJan25_CHOCOPhlAnSGB_202503"
+                },
+                {
+                    "label": "FULL: mpa_vOct22_CHOCOPhlAnSGB_202403",
+                    "selected": true,
+                    "value": "mpa_vOct22_CHOCOPhlAnSGB_202403"
+                },
+                {
+                    "label": "FULL: mpa_vJun23_CHOCOPhlAnSGB_202403",
+                    "selected": true,
+                    "value": "mpa_vJun23_CHOCOPhlAnSGB_202403"
+                },
+                {
+                    "label": "FULL: mpa_vJun23_CHOCOPhlAnSGB_202307",
+                    "selected": true,
+                    "value": "mpa_vJun23_CHOCOPhlAnSGB_202307"
+                },
+                {
+                    "label": "FULL: mpa_vOct22_CHOCOPhlAnSGB_202212",
+                    "selected": true,
+                    "value": "mpa_vOct22_CHOCOPhlAnSGB_202212"
+                },
+                {
+                    "label": "FULL: mpa_vJan21_CHOCOPhlAnSGB_202103",
+                    "selected": false,
+                    "value": "mpa_vJan21_CHOCOPhlAnSGB_202103"
+                },
+                {
+                    "label": "DEMO: mpa_vJan21_TOY_CHOCOPhlAnSGB_202103",
+                    "selected": false,
+                    "value": "mpa_vJan21_TOY_CHOCOPhlAnSGB_202103"
+                }
+            ],
+            "gx_type": "gx_select",
+            "title": "Version"
+        }
+    },
+    "title": "DynamicModelForTool",
+    "type": "object",
+    "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

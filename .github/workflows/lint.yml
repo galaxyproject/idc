@@ -1,0 +1,58 @@
+name: Lint reference-data requests
+
+# Stage 1 of the IDC reference-data pipeline: validate contributed request
+# YAMLs and the build workflows they generate. Pure validation, no secrets, so
+# it is safe to run on pull requests from forks.
+
+on:
+  pull_request:
+    paths:
+      - "data-managers/**"
+      - "schemas/**"
+      - "scripts/**"
+      - "tests/**"
+      - ".github/workflows/lint.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "data-managers/**"
+      - "schemas/**"
+      - "scripts/**"
+      - "tests/**"
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: pip install "pydantic>=2" pyyaml jsonschema gxformat2 pytest
+      - name: Lint request files
+        # Includes checking each request's params against the data manager's
+        # parameter schema (from schemas/request.schema.json, or fetched from
+        # the Tool Shed for a tool_id not yet in there).
+        run: python scripts/request_models.py
+      - name: Check schemas/request.schema.json is current
+        # The editor schema is generated from the pydantic model plus the Tool
+        # Shed parameter schema of every tool_id in use. --refresh compares the
+        # committed tool schemas against what the Tool Shed serves now, so a
+        # hand edit or upstream change fails here; a new tool_id or a model
+        # change means regenerating and committing the file.
+        run: python scripts/generate_schema.py --check --refresh
+      - name: Validate generated build workflows
+        # Generate a gxformat2 bundle workflow for every request and validate it
+        # with gxformat2 (strict schema, format2->native, semantic lint). Catches
+        # wiring errors - e.g. a chained request with no CHAIN_WIRING entry.
+        run: python scripts/generate_build.py --all --outdir "${RUNNER_TEMP}/idc-build-check"
+      - name: Run pipeline unit tests
+        run: python -m pytest tests/ -q
+      - name: Check whether requested data already exists
+        # Informational (non-blocking): query the tool data tables on
+        # test.galaxyproject.org (public, no key) and warn if a request's data is
+        # already available there from any source (e.g. the byhand CVMFS). The
+        # build stage skips these; here we just surface it to reviewers.
+        run: python scripts/check_data_exists.py --all --warn

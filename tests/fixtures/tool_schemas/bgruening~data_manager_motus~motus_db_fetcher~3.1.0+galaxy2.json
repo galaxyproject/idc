@@ -1,0 +1,69 @@
+{
+    "additionalProperties": false,
+    "properties": {
+        "test_data_manager": {
+            "gx_type": "gx_hidden",
+            "title": "Copy minimal test DB and create mock data table entry.",
+            "type": "string"
+        },
+        "version": {
+            "anyOf": [
+                {
+                    "const": "3.1.0",
+                    "type": "string"
+                },
+                {
+                    "const": "3.0.1",
+                    "type": "string"
+                },
+                {
+                    "const": "3.0.0",
+                    "type": "string"
+                }
+            ],
+            "default": null,
+            "description": "Check https://zenodo.org/records/7778108 for current version. The default value is recommended.",
+            "gx_multiple": false,
+            "gx_options": [
+                {
+                    "label": "3.1.0",
+                    "selected": false,
+                    "value": "3.1.0"
+                },
+                {
+                    "label": "3.0.1",
+                    "selected": false,
+                    "value": "3.0.1"
+                },
+                {
+                    "label": "3.0.0",
+                    "selected": false,
+                    "value": "3.0.0"
+                }
+            ],
+            "gx_type": "gx_select",
+            "title": "Database Version"
+        },
+        "db_value": {
+            "anyOf": [
+                {
+                    "type": "string"
+                },
+                {
+                    "type": "null"
+                }
+            ],
+            "default": null,
+            "description": "Value stored in the data table and used as the on-disk directory name. Leave empty to default to db_from_<Zenodo publication date> (e.g. db_from_2023-03-28). Set it to reproduce or match an existing entry from another server (e.g. db_from_2026-04-27T094930Z).",
+            "gx_area": false,
+            "gx_type": "gx_text",
+            "title": "Database identifier override"
+        }
+    },
+    "required": [
+        "test_data_manager"
+    ],
+    "title": "DynamicModelForTool",
+    "type": "object",
+    "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

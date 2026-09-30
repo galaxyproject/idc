@@ -1,0 +1,4 @@
+self-hosted-runner:
+  # Organization runner group cvmfs-publish (docs/cvmfs-publish-actions.md)
+  labels:
+    - cvmfs
