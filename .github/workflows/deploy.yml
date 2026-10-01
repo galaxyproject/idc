@@ -64,7 +64,7 @@ jobs:
             echo "- published: ${PUBLISHED}"
             echo "- requests:"
             for req in data-managers/*/*.yaml data-managers/*/*.yml; do
-              [ -e "$req" ] && echo "  - \`${req}\`"
+              if [ -e "$req" ]; then echo "  - \`${req}\`"; fi
             done
           } >> "$GITHUB_STEP_SUMMARY"
 
