@@ -1,0 +1,5 @@
+# The IDC site (mkdocs.yml); the catalog hook imports scripts/request_models.py.
+mkdocs==1.6.1
+mkdocs-material==9.7.7
+pydantic>=2
+pyyaml
