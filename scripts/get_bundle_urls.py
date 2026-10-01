@@ -30,6 +30,12 @@ import sys
 EXT = "data_manager_json"
 DEFAULT_BUNDLE_SUFFIX = "_bundle"
 HDA_SRC = "hda"
+FAILED_DATASET_STATES = ("error", "failed_metadata", "paused")
+FAILED_INVOCATION_STATES = ("failed", "cancelled", "cancelling")
+
+
+class BuildFailed(Exception):
+    """Every history of a build holds a failed build, so there is nothing to import."""
 
 
 def bundle_url(galaxy_url: str, dataset_id: str) -> str:
@@ -59,21 +65,54 @@ def bundle_dataset_ids_from_invocation(
     return result
 
 
+def history_failed(gi, history: dict) -> bool:
+    """True if a dataset in ``history`` (a ``show_history`` dict) errored or was
+    paused, or the history's latest workflow invocation failed or was cancelled."""
+    details = history.get("state_details") or {}
+    if any(details.get(state) for state in FAILED_DATASET_STATES):
+        return True
+    invocations = gi.invocations.get_invocations(history_id=history["id"])
+    if invocations:
+        latest = max(invocations, key=lambda i: i.get("create_time", ""))
+        if latest.get("state") in FAILED_INVOCATION_STATES:
+            return True
+    return False
+
+
+def build_history_id(gi, history_name: str) -> str | None:
+    """The history to import a build from: the newest history called
+    ``history_name`` whose build has not failed.
+
+    A rebuild creates another history of the same name, so there can be several.
+    The newest one that has not failed is the build to import, even if it is still
+    running; the import then refuses its bundles until they are ``ok``. Returns
+    None if no such history exists (the build was skipped because the data already
+    exists) and raises BuildFailed if every one of them failed.
+    """
+    histories = gi.histories.get_histories(name=history_name, deleted=False)
+    if not histories:
+        return None
+    details = [gi.histories.show_history(h["id"]) for h in histories]
+    for history in sorted(details, key=lambda h: h.get("create_time", ""), reverse=True):
+        if not history_failed(gi, history):
+            return history["id"]
+    raise BuildFailed(f"every history named {history_name!r} holds a failed build; rebuild it before importing")
+
+
 def bundles_from_history(gi, history_name: str, suffix: str = DEFAULT_BUNDLE_SUFFIX) -> dict[str, str]:
     """Resolve a build's bundles from its history name (the stable key shared by
-    the build and import stages).
+    the build and import stages), using the history ``build_history_id`` picks.
 
     Prefers the workflow **invocation** in that history: its named ``*_bundle``
     outputs are exactly the bundles this build produced, so this is precise even
     if the history also holds a re-run or a failed job's output. Falls back to
     scanning ``data_manager_json`` datasets only if the history has no invocation.
     """
-    histories = gi.histories.get_histories(name=history_name, deleted=False)
-    if not histories:
+    history_id = build_history_id(gi, history_name)
+    if history_id is None:
         # No build history - e.g. the build was skipped because the data already
         # exists. Return nothing so callers can skip gracefully.
         return {}
-    history_id = histories[0]["id"]
 
     invocations = gi.invocations.get_invocations(history_id=history_id)
     if invocations:

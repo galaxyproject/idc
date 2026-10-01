@@ -31,6 +31,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from get_bundle_urls import (  # noqa: E402
     DEFAULT_BUNDLE_SUFFIX,
+    BuildFailed,
     bundle_dataset_ids_from_invocation,
     bundle_url,
     bundles_from_history,
@@ -152,7 +153,11 @@ def main(argv: list[str] | None = None) -> int:
         print(f"Already imported: {args.dm}/{args.version} (record {marker} exists); skipping")
         return 0
 
-    bundles = resolve_bundles(args)
+    try:
+        bundles = resolve_bundles(args)
+    except BuildFailed as exc:
+        print(f"Cannot import {args.dm}/{args.version}: {exc}", file=sys.stderr)
+        return 1
     if not bundles:
         # Nothing to import - no build history/invocation (e.g. the build was
         # skipped because the data already exists). Not an error.

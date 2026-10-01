@@ -495,10 +495,12 @@ def test_lint_mode_warns_without_failing(tmp_path, monkeypatch, capsys):
 class _FakeGi:
     """Minimal stand-in for a bioblend GalaxyInstance for history resolution."""
 
-    def __init__(self, invocations, invocation_detail, datasets=None):
+    def __init__(self, invocations, invocation_detail, datasets=None, histories=None):
         self._invocations = invocations
         self._invocation_detail = invocation_detail
         self._datasets = datasets or []
+        # show_history dicts; each may carry its own "invocations" list
+        self._histories = histories or [{"id": "hist1", "create_time": "2026-01-01T00:00:00"}]
         # dataset id -> state for show_dataset (default "ok")
         self.dataset_states: dict[str, str] = {}
 
@@ -506,11 +508,15 @@ class _FakeGi:
 
         class _Histories:
             def get_histories(self, name, deleted=False):
-                return [{"id": "hist1", "name": name}]
+                return [{"id": h["id"], "name": name} for h in outer._histories]
+
+            def show_history(self, history_id):
+                return next(h for h in outer._histories if h["id"] == history_id)
 
         class _Invocations:
             def get_invocations(self, history_id):
-                return outer._invocations
+                history = next(h for h in outer._histories if h["id"] == history_id)
+                return history.get("invocations", outer._invocations)
 
             def show_invocation(self, invocation_id):
                 return outer._invocation_detail
@@ -538,6 +544,62 @@ def test_history_resolution_prefers_latest_invocation():
     result = gburls.bundles_from_history(gi, "idc-samestr_db-v1")
     # precise: exactly the two bundle outputs, not a dataset scan
     assert result == {"metaphlan_database_versioned_bundle": "dsMETA", "samestr_db_bundle": "dsSAM"}
+
+
+def _history(history_id, create_time, invocation_state="scheduled", **state_details):
+    return {
+        "id": history_id,
+        "create_time": create_time,
+        "state_details": state_details,
+        "invocations": [{"id": f"inv-{history_id}", "create_time": create_time, "state": invocation_state}],
+    }
+
+
+def test_build_history_prefers_newest_history():
+    gi = _FakeGi([], {}, histories=[
+        _history("old", "2026-01-01T00:00:00", ok=1),
+        _history("new", "2026-02-01T00:00:00", ok=1),
+    ])
+    assert gburls.build_history_id(gi, "idc-motus_db_versioned-3.1.0") == "new"
+
+
+def test_build_history_skips_a_newer_failed_build():
+    gi = _FakeGi([], {}, histories=[
+        _history("good", "2026-01-01T00:00:00", ok=1),
+        _history("errored", "2026-02-01T00:00:00", error=1),
+        _history("paused", "2026-03-01T00:00:00", paused=1),
+        _history("cancelled", "2026-04-01T00:00:00", invocation_state="cancelled"),
+    ])
+    assert gburls.build_history_id(gi, "idc-motus_db_versioned-3.1.0") == "good"
+
+
+def test_build_history_takes_a_newer_running_build_over_an_older_good_one():
+    gi = _FakeGi([], {}, histories=[
+        _history("good", "2026-01-01T00:00:00", ok=1),
+        _history("running", "2026-02-01T00:00:00", running=1, queued=1),
+    ])
+    assert gburls.build_history_id(gi, "idc-motus_db_versioned-3.1.0") == "running"
+
+
+def test_build_history_raises_when_every_build_failed():
+    gi = _FakeGi([], {}, histories=[
+        _history("a", "2026-01-01T00:00:00", failed_metadata=1),
+        _history("b", "2026-02-01T00:00:00", invocation_state="failed"),
+    ])
+    with pytest.raises(gburls.BuildFailed):
+        gburls.build_history_id(gi, "idc-motus_db_versioned-3.1.0")
+
+
+def test_import_fails_when_every_build_failed(tmp_path, monkeypatch, capsys):
+    gi = _FakeGi([], {}, histories=[_history("a", "2026-01-01T00:00:00", error=1)])
+    monkeypatch.setattr(imp, "_galaxy_connection", lambda args: gi)
+    rc = imp.main([
+        "--history-name", "idc-motus_db_versioned-3.1.0",
+        "--dm", "motus_db_versioned", "--version", "3.1.0",
+        "--cvmfs-root", str(tmp_path), "--dry-run",
+    ])
+    assert rc == 1
+    assert "holds a failed build" in capsys.readouterr().err
 
 
 def test_history_resolution_returns_empty_when_history_missing():
