@@ -90,6 +90,7 @@ OVERLAYFS_WORK=
 OVERLAYFS_MOUNT=
 EPHEMERIS_BIN=
 GALAXY_MAINTENANCE_SCRIPTS_BIN=
+PUBLISHED_ENTRIES=   # set by record_published_entries()
 
 SSH_MASTER_UP=false
 CVMFS_TRANSACTION_UP=false
@@ -407,7 +408,9 @@ function abort_transaction() {
 
 function publish_transaction() {
     log "Publishing transaction on $REPO"
-    exec_on "cvmfs_server publish -a 'idc-${GIT_COMMIT:0:7}.${DM_STAGE}' -m 'Automated data installation for commit ${GIT_COMMIT}' ${REPO}"
+    # `|| return 1`: callers may run this as an `if` condition, where errexit is
+    # off - a failed publish must not clear the flag and pass for a success.
+    exec_on "cvmfs_server publish -a 'idc-${GIT_COMMIT:0:7}.${DM_STAGE}' -m 'Automated data installation for commit ${GIT_COMMIT}' ${REPO}" || return 1
     CVMFS_TRANSACTION_UP=false
 }
 
@@ -738,6 +741,58 @@ function check_for_repo_changes() {
 }
 
 
+function record_published_entries() {
+    # Sets global $PUBLISHED_ENTRIES: one '<loc file>\t<row>' line per .loc row
+    # this transaction adds or changes, <row> being the whole tab-separated row.
+    # Overlayfs copies a changed .loc up whole, so a row is new when it is in the
+    # upper copy but not in the published (lower) one. Must run before the
+    # transaction is closed, which empties the upper layer. Runs on Jenkins too,
+    # where the result is only logged (see output_published_entries).
+    local loc lower added
+    log "Recording the data table rows added by this transaction"
+    PUBLISHED_ENTRIES=
+    for loc in $(exec_on "compgen -G '${OVERLAYFS_UPPER}/config/*.loc'"); do
+        exec_on test -f "$loc" || continue
+        lower="${OVERLAYFS_LOWER}/config/${loc##*/}"
+        exec_on test -f "$lower" || lower=/dev/null
+        # Lines of the upper .loc that are not a whole line of the lower one.
+        # grep exits 1 when there are none; any other failure (2, or ssh's 255)
+        # means we cannot tell what is being published, so stop (the trap then
+        # aborts the transaction).
+        added="$(exec_on grep -avxF -f "$lower" "$loc")" || [ $? -eq 1 ] \
+            || { log_error "Could not compare ${loc} with ${lower}"; return 1; }
+        # Galaxy skips lines whose first non-blank character is '#' and strips
+        # trailing CRs/LFs, so do the same. Explicit sets, not [[:space:]]: an
+        # old mawk (1.3.3) has no character classes and would drop every row.
+        PUBLISHED_ENTRIES+="$(printf '%s\n' "$added" | awk -v loc="${loc##*/}" \
+            '{ sub(/\r+$/, "") } !/^[ \t\r\v\f]*#/ && /[^ \t\r\v\f]/ { print loc "\t" $0 }')"$'\n'
+    done
+    # Drop the blank lines left by .loc files with no new rows.
+    PUBLISHED_ENTRIES="$(printf '%s' "$PUBLISHED_ENTRIES" | grep -v '^$' || true)"
+    if [ -n "$PUBLISHED_ENTRIES" ]; then
+        log "Data table rows added (<loc file> <row>):"
+        printf '%s\n' "$PUBLISHED_ENTRIES"
+    else
+        log "No data table rows added"
+    fi
+}
+
+
+function output_published_entries() {
+    # On GitHub Actions, hand the rows a published transaction added to the
+    # after-publish job (.github/workflows/deploy.yml), which waits for the
+    # Stratum 1s and checks they reach test.galaxyproject.org. A no-op on
+    # Jenkins and when nothing was added.
+    [ -n "${GITHUB_OUTPUT:-}" ] && [ -n "$PUBLISHED_ENTRIES" ] || return 0
+    local delimiter="PUBLISHED_ENTRIES_${RANDOM}${RANDOM}"
+    {
+        echo "published_entries<<${delimiter}"
+        printf '%s\n' "$PUBLISHED_ENTRIES"
+        echo "$delimiter"
+    } >> "$GITHUB_OUTPUT"
+}
+
+
 function clean_workspace() {
     log_exec rm -rf "${WORKSPACE}/${BUILD_NUMBER}"
 }
@@ -806,12 +861,20 @@ function do_import_remote() {
         $have_genome_tasks && import_tool_data_bundles
         $have_reference_data && import_reference_data_bundles
         check_for_repo_changes
+        $have_reference_data && record_published_entries
         post_install
     else
         log "Nothing to import"
         PUBLISH=false
     fi
-    $PUBLISH && publish_transaction || abort_transaction
+    if $PUBLISH && publish_transaction; then
+        output_published_entries
+    else
+        abort_transaction
+        if $PUBLISH; then
+            log_exit_error "Publishing the transaction on ${REPO} failed; aborted it"
+        fi
+    fi
     stop_ssh_control
 }
 

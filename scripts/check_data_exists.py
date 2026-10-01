@@ -27,6 +27,7 @@ import argparse
 import json
 import sys
 import urllib.error
+import urllib.parse
 import urllib.request
 from pathlib import Path
 
@@ -52,16 +53,43 @@ class CheckUnavailable(Exception):
     """
 
 
-def fetch_table(galaxy_url: str, table: str) -> dict | None:
+class KeyStaysOnHost(urllib.request.HTTPRedirectHandler):
+    """Follow redirects, but drop ``x-api-key`` when one leaves the scheme and host.
+
+    urllib forwards every request header on a redirect, so a Galaxy redirecting
+    to another host (or to plain http) would otherwise hand that host the key.
+    """
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        new = super().redirect_request(req, fp, code, msg, headers, newurl)
+        if new is not None:
+            old, target = urllib.parse.urlsplit(req.full_url), urllib.parse.urlsplit(new.full_url)
+            if (old.scheme, old.netloc) != (target.scheme, target.netloc):
+                new.remove_header("X-api-key")  # urllib stores header names capitalize()d
+        return new
+
+
+_opener = urllib.request.build_opener(KeyStaysOnHost)
+
+
+def open_url(request: urllib.request.Request, timeout: float):
+    """``urlopen`` that never forwards the API key to another host on a redirect."""
+    return _opener.open(request, timeout=timeout)
+
+
+def fetch_table(galaxy_url: str, table: str, api_key: str | None = None) -> dict | None:
     """GET /api/tool_data/<table> -> {columns, fields}.
 
     Returns None if the table is not configured on that Galaxy (404) - a
     definitive "this Galaxy has no such data". Raises CheckUnavailable if the
-    question could not be answered at all. Public endpoint, no key needed.
+    question could not be answered at all. Public endpoint, no key needed; with
+    an admin ``api_key`` the ``path`` column is the full path rather than
+    Galaxy's public basename of it.
     """
     url = f"{galaxy_url.rstrip('/')}/api/tool_data/{table}"
+    request = urllib.request.Request(url, headers={"x-api-key": api_key} if api_key else {})
     try:
-        with urllib.request.urlopen(url, timeout=30) as resp:  # noqa: S310 (fixed https host)
+        with open_url(request, timeout=30) as resp:
             return json.load(resp)
     except urllib.error.HTTPError as exc:
         if exc.code == 404:

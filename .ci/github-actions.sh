@@ -12,6 +12,10 @@
 # The workflow sets:
 #   PUBLISH                 'true' to publish the CVMFS transaction, 'false' to import and abort (rehearsal)
 #   REFERENCE_DATA_API_KEY  test.galaxyproject.org key used to look up the built bundles
+#
+# After a publish, the data table rows it added are written to $GITHUB_OUTPUT as
+# `published_entries` (see output_published_entries in jenkins.sh), for the
+# workflow's after-publish job.
 set -euo pipefail
 
 : "${PUBLISH:=true}"
