@@ -588,7 +588,33 @@ There are specificities for this table.
 0. For each table determine the way to find the files related (single file vs directory vs glob).
 1. Get checksums and identify the matching/not matching.
 
-## For users
+### For users
 
 They should know what is on CVMFS what is the origin...
+
+## Data managers/data tables reflexions
+
+### dbkey/unique_build_id
+
+I noticed that sometimes the dbkey can host multiple unique_build_id.
+
+Usually the unique_build_ids are subsets of the 'full'.
+
+If I remember correctly, the dbkey are used to show they are 'compatible' and also it is used to be displayed in UCSC.
+
+### data managers that depends on fasta allow to change values
+
+This is a big issue. Hopefully most of admins leave it empty so it uses the same value as the fasta but they can change it and then it is a big deal for workflows that would assume they are the same entries.
+
+### the `sam_fa_indexes` table
+
+It seems to be used in the past by samtools, see https://galaxyproject.org/admin/data-preparation/#tools-and-their-corresponding-loc-files
+
+But I do not see any data_manager currently in the tools-iuc.
+
+The tools that uses this table are `htseq_count` and `bamtools` -> see https://github.com/galaxyproject/tools-iuc/pull/8479.
+
+The columns are `line_type` which seems to be always `index`, `value` that hopefully matches the `unique_build_id` (`value`) of `all_fasta` table and `path` which is the path to the fasta and which should have a file with the extension `.fai`.
+
+-> I think all wrappers should use `fasta_indexes` which is the same content but have more columns like `dbkey` and `name` (the corresponding data_manager is `data_manager_sam_fasta_index_builder`).
 
