@@ -26,9 +26,9 @@ There is one script that can be used to list all the indices available per data 
 python sync/tool_data_table_conf_to_yaml.py -o sync/cvmfs_20260715.yml &> sync/cvmfs_20260715.log
 ```
 
-One can use `--tool_data_table_conf` to specifiy the tool_data_table_conf.xml files to be considered.
+One can use `--tool_data_table_conf` to specifiy the tool_data_table_conf.xml files to be considered (usually the `galaxy.tool_data_table_config_path` **and `galaxy.shed_tool_data_table_config`**).
 
-José ran the command for the usegalaxy.eu and the result is [here](./usegalaxy_eu_20260626.yaml).
+Gabriel ran the command for the usegalaxy.eu and the result is [here](./usegalaxy_eu_20260918.yaml).
 
 ### Generate hashes and manifest of all indices listed in the tables
 
@@ -228,7 +228,7 @@ Despite this, I ran this first version on the 2 yml I have and inspected the log
 
 ```bash
 python sync/all_tables_content_to_fasta_based_yaml.py -i sync/cvmfs_20260715.yml -o sync/cvmfs_20260715_perdbkey.yml -log info 2> sync/cvmfs_20260715_perdbkey.log
-python sync/all_tables_content_to_fasta_based_yaml.py -i sync/usegalaxy_eu_20260626.yaml -o sync/usegalaxy_eu_20260626_perdbkey.yml -log info 2> sync/usegalaxy_eu_20260626_perdbkey.log
+python sync/all_tables_content_to_fasta_based_yaml.py -i sync/usegalaxy_eu_20260918.yml -o sync/usegalaxy_eu_20260918_perdbkey.yml -log info 2> sync/usegalaxy_eu_20260918_perdbkey.log
 ```
 
 ## CVMFS inspection
