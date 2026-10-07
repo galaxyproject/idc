@@ -1,0 +1,110 @@
+{
+    "$defs": {
+        "ConditionalType": {
+            "oneOf": [
+                {
+                    "$ref": "#/$defs/When_db_type_metaphlan"
+                },
+                {
+                    "$ref": "#/$defs/When_db_type___absent"
+                },
+                {
+                    "$ref": "#/$defs/When_db_type_motus"
+                }
+            ],
+            "title": "ConditionalType",
+            "discriminator": {
+                "propertyName": "db_type",
+                "mapping": {
+                    "metaphlan": "#/$defs/When_db_type_metaphlan",
+                    "motus": "#/$defs/When_db_type_motus"
+                }
+            }
+        },
+        "When_db_type___absent": {
+            "additionalProperties": false,
+            "properties": {
+                "database": {
+                    "default": null,
+                    "description": "MetaPhlAn clade marker database.",
+                    "gx_multiple": false,
+                    "gx_type": "gx_select",
+                    "title": "Marker database",
+                    "type": "string"
+                }
+            },
+            "title": "When db_type is absent",
+            "type": "object"
+        },
+        "When_db_type_metaphlan": {
+            "additionalProperties": false,
+            "properties": {
+                "db_type": {
+                    "const": "metaphlan",
+                    "title": "Db Type",
+                    "type": "string"
+                },
+                "database": {
+                    "default": null,
+                    "description": "MetaPhlAn clade marker database.",
+                    "gx_multiple": false,
+                    "gx_type": "gx_select",
+                    "title": "Marker database",
+                    "type": "string"
+                }
+            },
+            "title": "When db_type = metaphlan",
+            "type": "object",
+            "required": [
+                "db_type"
+            ]
+        },
+        "When_db_type_motus": {
+            "additionalProperties": false,
+            "properties": {
+                "db_type": {
+                    "const": "motus",
+                    "title": "Db Type",
+                    "type": "string"
+                },
+                "motus_db": {
+                    "default": null,
+                    "description": "mOTUs clade marker database",
+                    "gx_multiple": false,
+                    "gx_type": "gx_select",
+                    "title": "mOTUs database",
+                    "type": "string"
+                }
+            },
+            "title": "When db_type = motus",
+            "type": "object",
+            "required": [
+                "db_type"
+            ]
+        }
+    },
+    "additionalProperties": false,
+    "properties": {
+        "db_source": {
+            "$ref": "#/$defs/ConditionalType",
+            "default": null,
+            "gx_options": [
+                {
+                    "label": "MetaPhlAn",
+                    "selected": false,
+                    "value": "metaphlan"
+                },
+                {
+                    "label": "mOTUs",
+                    "selected": false,
+                    "value": "motus"
+                }
+            ],
+            "gx_test_label": "Source database type",
+            "gx_type": "gx_conditional"
+        }
+    },
+    "title": "DynamicModelForTool",
+    "type": "object",
+    "$schema": "https://json-schema.org/draft/2020-12/schema"
+}
