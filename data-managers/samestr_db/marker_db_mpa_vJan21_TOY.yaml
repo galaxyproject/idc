@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/galaxyproject/idc/main/schemas/request.schema.json
+# SameStr marker database built from the MetaPhlAn TOY database, for workflow
+# tests (e.g. IWC CI) that can't fit the full MetaPhlAn bowtie2 index in memory.
+# Chained build: samestr's "database" input is backed by the
+# metaphlan_database_versioned data table, so the build workflow first runs the
+# MetaPhlAn data manager (bundle mode) and feeds its output into this step.
+tool_id: toolshed.g2.bx.psu.edu/repos/iuc/data_manager_samestr/samestr_db/1.2025.111+galaxy5
+data_tables:
+  - samestr_db
+depends_on:
+  # A request file must exist at data-managers/metaphlan_database_versioned/<version>.yaml.
+  metaphlan_database_versioned: mpa_vJan21_TOY_CHOCOPhlAnSGB_202103
+params: {}
+description: SameStr marker database derived from MetaPhlAn mpa_vJan21_TOY_CHOCOPhlAnSGB_202103 (for tests)

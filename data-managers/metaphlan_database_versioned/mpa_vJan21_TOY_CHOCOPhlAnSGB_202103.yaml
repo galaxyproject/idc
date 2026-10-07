@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/galaxyproject/idc/main/schemas/request.schema.json
+# MetaPhlAn TOY/demo database (Jan 2021 CHOCOPhlAn SGB 202103), a ~30 MB subset
+# of mpa_vJan21 for tests. It is already on CVMFS (byhand); this file exists
+# because a depends_on upstream needs a request file.
+tool_id: toolshed.g2.bx.psu.edu/repos/iuc/data_manager_metaphlan_database_downloader/data_manager_metaphlan_download/4.0.6+galaxy5
+data_tables:
+  - metaphlan_database_versioned
+params:
+  index: mpa_vJan21_TOY_CHOCOPhlAnSGB_202103   # the tool's "Version" select param ("DEMO")
+description: MetaPhlAn TOY/demo marker database for tests (mpa_vJan21_TOY_CHOCOPhlAnSGB_202103)
+doi: 10.1101/2020.11.19.388223
