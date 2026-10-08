@@ -275,8 +275,11 @@ and commit both files it rewrites.
    bundle(s) from the build's workflow invocation and imports them onto CVMFS
    with `galaxy-import-data-bundle` (`.ci/github-actions.sh`, or
    `@galaxybot deploy reference-data` on Jenkins via `.ci/jenkins.sh`),
-   recording `record/<data_manager>/<version>` for idempotency. See
-   `docs/cvmfs-publish-actions.md`.
+   recording `record/<data_manager>/<version>` for idempotency. The workflow
+   then waits for the Stratum 1s to pick up the new revision on their hourly
+   snapshot (nothing triggers one, so no Stratum 1 access is needed), reloads
+   the affected data tables on test.galaxyproject.org and checks the new
+   entries are visible there. See `docs/cvmfs-publish-actions.md`.
 
 ### Avoiding rebuilds of existing data ("does this already exist?")
 

@@ -7,6 +7,7 @@ name: Lint reference-data requests
 on:
   pull_request:
     paths:
+      - ".ci/**"
       - "data-managers/**"
       - "schemas/**"
       - "scripts/**"
@@ -16,6 +17,7 @@ on:
     branches:
       - main
     paths:
+      - ".ci/**"
       - "data-managers/**"
       - "schemas/**"
       - "scripts/**"
@@ -50,6 +52,13 @@ jobs:
         run: python scripts/generate_build.py --all --outdir "${RUNNER_TEMP}/idc-build-check"
       - name: Run pipeline unit tests
         run: python -m pytest tests/ -q
+      - name: Test recording the rows a publish adds
+        # record_published_entries (.ci/jenkins.sh) with a local stand-in for
+        # the ssh to the Stratum 0.
+        run: bash tests/test_record_published_entries.sh
+      - name: Test how a publish ends (publish, abort, output)
+        # do_import_remote (.ci/jenkins.sh) with the Stratum 0 stubbed.
+        run: bash tests/test_do_import_remote.sh
       - name: Check whether requested data already exists
         # Informational (non-blocking): query the tool data tables on
         # test.galaxyproject.org (public, no key) and warn if a request's data is
