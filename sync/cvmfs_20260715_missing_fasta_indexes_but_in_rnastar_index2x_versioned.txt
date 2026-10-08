@@ -1,0 +1,2 @@
+CHM13_T2T_v2.0
+hg19chrX

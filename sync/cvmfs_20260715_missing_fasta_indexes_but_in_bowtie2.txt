@@ -1,0 +1,17 @@
+CHM13_T2T_v2.0
+anoGam1
+calJac3canon
+equCab1
+felCat4canon
+galGal3canon
+hg18canon
+hg19canon
+hg19female
+hg38canon
+hg38female
+mm9canon
+mm9female
+panTro2canon
+panTro3canon
+panTro3full
+rn4canon

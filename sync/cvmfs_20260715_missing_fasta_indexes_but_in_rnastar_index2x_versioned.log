@@ -1,0 +1,6 @@
+2026-10-08 16:28:30,056 - __main__ - INFO - Loading the big yaml file.
+2026-10-08 16:28:55,553 - __main__ - INFO - Done
+2026-10-08 16:28:55,557 - __main__ - WARNING - cb3 is in fasta_indexes but not in all_fasta.
+2026-10-08 16:28:55,557 - __main__ - WARNING - panTro3 is in fasta_indexes but not in all_fasta.
+2026-10-08 16:28:55,557 - __main__ - WARNING - ci2 is in fasta_indexes but not in all_fasta.
+2026-10-08 16:28:55,560 - __main__ - INFO - Checking table rnastar_index2x_versioned entries

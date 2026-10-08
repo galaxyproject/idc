@@ -1,0 +1,13 @@
+2026-10-08 16:33:41,466 - __main__ - INFO - Loading the big yaml file.
+2026-10-08 16:34:03,414 - __main__ - INFO - Done
+2026-10-08 16:34:03,418 - __main__ - WARNING - cb3 is in fasta_indexes but not in all_fasta.
+2026-10-08 16:34:03,418 - __main__ - WARNING - panTro3 is in fasta_indexes but not in all_fasta.
+2026-10-08 16:34:03,418 - __main__ - WARNING - ci2 is in fasta_indexes but not in all_fasta.
+2026-10-08 16:34:03,420 - __main__ - INFO - Checking table bowtie2_indexes entries
+2026-10-08 16:34:03,420 - __main__ - WARNING - felCat4full is in bowtie2_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie2_indices.loc but not in all_fasta.
+2026-10-08 16:34:03,420 - __main__ - WARNING - panTro2full is in bowtie2_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie2_indices.loc but not in all_fasta.
+2026-10-08 16:34:03,420 - __main__ - WARNING - hg18full is in bowtie2_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie2_indices.loc but not in all_fasta.
+2026-10-08 16:34:03,420 - __main__ - WARNING - calJac3full is in bowtie2_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie2_indices.loc but not in all_fasta.
+2026-10-08 16:34:03,420 - __main__ - WARNING - rn4full is in bowtie2_indexes from /cvmfs/data.galaxyproject.org/byhand/location/bowtie2_indices.loc but not in all_fasta.
+2026-10-08 16:34:03,420 - __main__ - WARNING - galgal4 is in bowtie2_indexes from /cvmfs/data.galaxyproject.org/managed/location/bowtie2_indices.loc but not in all_fasta.
+2026-10-08 16:34:03,420 - __main__ - WARNING - galGal3full is in bowtie2_indexes from /cvmfs/data.galaxyproject.org/managed/location/bowtie2_indices.loc but not in all_fasta.

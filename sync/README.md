@@ -231,6 +231,23 @@ python sync/all_tables_content_to_fasta_based_yaml.py -i sync/cvmfs_20260715.yml
 python sync/all_tables_content_to_fasta_based_yaml.py -i sync/usegalaxy_eu_20260918.yml -o sync/usegalaxy_eu_20260918_perdbkey.yml -log info 2> sync/usegalaxy_eu_20260918_perdbkey.log
 ```
 
+### Get the fasta that need to run fasta_indexes to be compatible with xxx
+
+With the new version of the ATAC-seq (and RNA-seq) pipelines. Only the genomes that are present both in bowtie2 (and rnastar) and in fasta_indexes will appear. This means that a lot of genome may not be proposed anymore. To help admins to identify which genomes will be missed. I built a python script that scans the all_fasta table (potential input of the `data_manager_sam_fasta_index_builder`), the fasta_indexes table and either the bowtie2 or the rnastar table.
+
+```bash
+# Bowtie2
+python sync/all_tables_content_to_missing_fasta_indexes_for_another_table.py --input sync/cvmfs_20260715.yml --output sync/cvmfs_20260715_missing_fasta_indexes_but_in_bowtie2.txt --table bowtie2_
+indexes -log info &> sync/cvmfs_20260715_missing_fasta_indexes_but_in_bowtie2.log
+python sync/all_tables_content_to_missing_fasta_indexes_for_another_table.py --input sync/usegalaxy_eu_20260918.yml --output sync/usegalaxy_eu_20260918_missing_fasta_indexes_but_in_bowtie2.txt --
+table bowtie2_indexes -log info &> sync/usegalaxy_eu_20260918_missing_fasta_indexes_but_in_bowtie2.log
+# RNA STAR
+python sync/all_tables_content_to_missing_fasta_indexes_for_another_table.py --input sync/cvmfs_20260715.yml --output sync/cvmfs_20260715_missing_fasta_indexes_but_in_rnastar_index2x_versioned.tx
+t --table rnastar_index2x_versioned -log info &> sync/cvmfs_20260715_missing_fasta_indexes_but_in_rnastar_index2x_versioned.log
+python sync/all_tables_content_to_missing_fasta_indexes_for_another_table.py --input sync/usegalaxy_eu_20260918.yml --output sync/usegalaxy_eu_20260918_missing_fasta_indexes_but_in_rnastar_index2
+x_versioned.txt --table rnastar_index2x_versioned -log info &> sync/usegalaxy_eu_20260918_missing_fasta_indexes_but_in_rnastar_index2x_versioned.log
+```
+
 ## CVMFS inspection
 
 ### Fasta files
