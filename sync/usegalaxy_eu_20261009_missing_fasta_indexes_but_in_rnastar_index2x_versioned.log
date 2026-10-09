@@ -1,0 +1,5 @@
+2026-10-09 16:02:56,290 - __main__ - INFO - Loading the big yaml file.
+2026-10-09 16:03:06,576 - __main__ - INFO - Done
+2026-10-09 16:03:06,577 - __main__ - WARNING - hg19canon is in fasta_indexes but not in all_fasta.
+2026-10-09 16:03:06,577 - __main__ - WARNING - mm9canon is in fasta_indexes but not in all_fasta.
+2026-10-09 16:03:06,577 - __main__ - INFO - Checking table rnastar_index2x_versioned entries

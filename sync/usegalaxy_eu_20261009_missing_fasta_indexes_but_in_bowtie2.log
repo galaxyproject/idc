@@ -1,0 +1,9 @@
+2026-10-09 16:02:23,880 - __main__ - INFO - Loading the big yaml file.
+2026-10-09 16:02:32,908 - __main__ - INFO - Done
+2026-10-09 16:02:32,908 - __main__ - WARNING - hg19canon is in fasta_indexes but not in all_fasta.
+2026-10-09 16:02:32,909 - __main__ - WARNING - mm9canon is in fasta_indexes but not in all_fasta.
+2026-10-09 16:02:32,909 - __main__ - INFO - Checking table bowtie2_indexes entries
+2026-10-09 16:02:32,909 - __main__ - WARNING - hg38full is in bowtie2_indexes from /opt/galaxy/tool-data/bowtie2_indices.loc but not in all_fasta.
+2026-10-09 16:02:32,909 - __main__ - WARNING - hg38canon is in bowtie2_indexes from /opt/galaxy/tool-data/bowtie2_indices.loc but not in all_fasta.
+2026-10-09 16:02:32,909 - __main__ - WARNING - hg19chrM is in bowtie2_indexes from /opt/galaxy/tool-data/bowtie2_indices.loc but not in all_fasta.
+2026-10-09 16:02:32,909 - __main__ - WARNING - mm10_ERCC is in bowtie2_indexes from /opt/galaxy/tool-data/bowtie2_indices.loc but not in all_fasta.
