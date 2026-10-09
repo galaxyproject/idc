@@ -1,0 +1,928 @@
+{
+    "$defs": {
+        "BatchDataDceInstance": {
+            "additionalProperties": false,
+            "properties": {
+                "src": {
+                    "const": "dce",
+                    "title": "Src",
+                    "type": "string"
+                },
+                "id": {
+                    "title": "Id",
+                    "type": "string"
+                },
+                "map_over_type": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "Map Over Type"
+                }
+            },
+            "required": [
+                "src",
+                "id"
+            ],
+            "title": "BatchDataDceInstance",
+            "type": "object"
+        },
+        "BatchDataHdcaInstance": {
+            "additionalProperties": false,
+            "properties": {
+                "src": {
+                    "const": "hdca",
+                    "title": "Src",
+                    "type": "string"
+                },
+                "id": {
+                    "title": "Id",
+                    "type": "string"
+                },
+                "map_over_type": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "Map Over Type"
+                }
+            },
+            "required": [
+                "src",
+                "id"
+            ],
+            "title": "BatchDataHdcaInstance",
+            "type": "object"
+        },
+        "BatchDataNonCollectionInstance": {
+            "additionalProperties": false,
+            "properties": {
+                "src": {
+                    "enum": [
+                        "hda",
+                        "ldda"
+                    ],
+                    "title": "Src",
+                    "type": "string"
+                },
+                "id": {
+                    "title": "Id",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "src",
+                "id"
+            ],
+            "title": "BatchDataNonCollectionInstance",
+            "type": "object"
+        },
+        "BatchRequest": {
+            "additionalProperties": false,
+            "properties": {
+                "__class__": {
+                    "const": "Batch",
+                    "title": "Class",
+                    "type": "string"
+                },
+                "values": {
+                    "items": {
+                        "discriminator": {
+                            "mapping": {
+                                "dce": "#/$defs/BatchDataDceInstance",
+                                "hda": "#/$defs/BatchDataNonCollectionInstance",
+                                "hdca": "#/$defs/BatchDataHdcaInstance",
+                                "ldda": "#/$defs/BatchDataNonCollectionInstance"
+                            },
+                            "propertyName": "src"
+                        },
+                        "oneOf": [
+                            {
+                                "$ref": "#/$defs/BatchDataHdcaInstance"
+                            },
+                            {
+                                "$ref": "#/$defs/BatchDataDceInstance"
+                            },
+                            {
+                                "$ref": "#/$defs/BatchDataNonCollectionInstance"
+                            }
+                        ]
+                    },
+                    "title": "Values",
+                    "type": "array"
+                },
+                "linked": {
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "Linked"
+                }
+            },
+            "required": [
+                "__class__",
+                "values"
+            ],
+            "title": "BatchRequest",
+            "type": "object"
+        },
+        "DataRequestDce": {
+            "additionalProperties": false,
+            "properties": {
+                "src": {
+                    "const": "dce",
+                    "default": "dce",
+                    "title": "Src",
+                    "type": "string"
+                },
+                "id": {
+                    "title": "Id",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "title": "DataRequestDce",
+            "type": "object"
+        },
+        "DataRequestHda": {
+            "additionalProperties": false,
+            "properties": {
+                "src": {
+                    "const": "hda",
+                    "default": "hda",
+                    "title": "Src",
+                    "type": "string"
+                },
+                "id": {
+                    "title": "Id",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "title": "DataRequestHda",
+            "type": "object"
+        },
+        "DataRequestLd": {
+            "additionalProperties": false,
+            "properties": {
+                "src": {
+                    "const": "ld",
+                    "deprecated": true,
+                    "title": "Src",
+                    "type": "string"
+                },
+                "id": {
+                    "title": "Id",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "src",
+                "id"
+            ],
+            "title": "DataRequestLd",
+            "type": "object"
+        },
+        "DataRequestLdda": {
+            "additionalProperties": false,
+            "properties": {
+                "src": {
+                    "const": "ldda",
+                    "default": "ldda",
+                    "title": "Src",
+                    "type": "string"
+                },
+                "id": {
+                    "title": "Id",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "title": "DataRequestLdda",
+            "type": "object"
+        },
+        "DataRequestUri": {
+            "additionalProperties": false,
+            "properties": {
+                "url": {
+                    "title": "Url",
+                    "type": "string"
+                },
+                "name": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "Name"
+                },
+                "ext": {
+                    "title": "Ext",
+                    "type": "string"
+                },
+                "dbkey": {
+                    "default": "?",
+                    "title": "Dbkey",
+                    "type": "string"
+                },
+                "deferred": {
+                    "default": false,
+                    "title": "Deferred",
+                    "type": "boolean"
+                },
+                "created_from_basename": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "Created From Basename"
+                },
+                "info": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "Info"
+                },
+                "tags": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "Tags"
+                },
+                "hashes": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "$ref": "#/$defs/FileHash"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "Hashes"
+                },
+                "space_to_tab": {
+                    "default": false,
+                    "title": "Space To Tab",
+                    "type": "boolean"
+                },
+                "to_posix_lines": {
+                    "default": false,
+                    "title": "To Posix Lines",
+                    "type": "boolean"
+                },
+                "src": {
+                    "const": "url",
+                    "default": "url",
+                    "title": "Src",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "url",
+                "ext"
+            ],
+            "title": "DataRequestUri",
+            "type": "object"
+        },
+        "FileHash": {
+            "additionalProperties": false,
+            "properties": {
+                "hash_function": {
+                    "enum": [
+                        "MD5",
+                        "SHA-1",
+                        "SHA-256",
+                        "SHA-512"
+                    ],
+                    "title": "Hash Function",
+                    "type": "string"
+                },
+                "hash_value": {
+                    "title": "Hash Value",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "hash_function",
+                "hash_value"
+            ],
+            "title": "FileHash",
+            "type": "object"
+        },
+        "RepeatType": {
+            "default": null,
+            "items": {
+                "$ref": "#/$defs/Repeat_sequence_identifiers"
+            },
+            "minItems": 1,
+            "title": "RepeatType",
+            "type": "array"
+        },
+        "Repeat_sequence_identifiers": {
+            "additionalProperties": false,
+            "properties": {
+                "identifier": {
+                    "default": null,
+                    "gx_area": false,
+                    "gx_type": "gx_text",
+                    "title": "Sequence Identifier",
+                    "type": "string"
+                }
+            },
+            "title": "Repeat_sequence_identifiers",
+            "type": "object"
+        },
+        "When_dbkey_source_selector___absent": {
+            "additionalProperties": false,
+            "properties": {
+                "dbkey": {
+                    "default": null,
+                    "gx_multiple": false,
+                    "gx_type": "gx_genomebuild",
+                    "title": "DBKEY to assign to data",
+                    "type": "string"
+                }
+            },
+            "title": "When dbkey_source_selector is absent",
+            "type": "object"
+        },
+        "When_dbkey_source_selector_existing": {
+            "additionalProperties": false,
+            "properties": {
+                "dbkey_source_selector": {
+                    "const": "existing",
+                    "title": "Dbkey Source Selector",
+                    "type": "string"
+                },
+                "dbkey": {
+                    "default": null,
+                    "gx_multiple": false,
+                    "gx_type": "gx_genomebuild",
+                    "title": "DBKEY to assign to data",
+                    "type": "string"
+                }
+            },
+            "title": "When dbkey_source_selector = existing",
+            "type": "object",
+            "required": [
+                "dbkey_source_selector"
+            ]
+        },
+        "When_dbkey_source_selector_new": {
+            "additionalProperties": false,
+            "properties": {
+                "dbkey_source_selector": {
+                    "const": "new",
+                    "title": "Dbkey Source Selector",
+                    "type": "string"
+                },
+                "dbkey": {
+                    "default": null,
+                    "gx_area": false,
+                    "gx_type": "gx_text",
+                    "title": "dbkey",
+                    "type": "string"
+                },
+                "dbkey_name": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "gx_area": false,
+                    "gx_type": "gx_text",
+                    "title": "Display name for dbkey"
+                }
+            },
+            "title": "When dbkey_source_selector = new",
+            "type": "object",
+            "required": [
+                "dbkey_source_selector"
+            ]
+        },
+        "When_reference_source_selector___absent": {
+            "additionalProperties": false,
+            "properties": {
+                "requested_dbkey": {
+                    "default": null,
+                    "gx_area": false,
+                    "gx_type": "gx_text",
+                    "title": "UCSC's DBKEY for source FASTA",
+                    "type": "string"
+                }
+            },
+            "title": "When reference_source_selector is absent",
+            "type": "object"
+        },
+        "When_reference_source_selector_directory": {
+            "additionalProperties": false,
+            "properties": {
+                "reference_source_selector": {
+                    "const": "directory",
+                    "title": "Reference Source Selector",
+                    "type": "string"
+                },
+                "fasta_filename": {
+                    "default": null,
+                    "gx_area": false,
+                    "gx_type": "gx_text",
+                    "title": "Full path to FASTA file on disk",
+                    "type": "string"
+                },
+                "create_symlink": {
+                    "default": null,
+                    "gx_type": "gx_boolean",
+                    "title": "Create symlink to original data instead of copying",
+                    "type": "boolean"
+                }
+            },
+            "title": "When reference_source_selector = directory",
+            "type": "object",
+            "required": [
+                "reference_source_selector"
+            ]
+        },
+        "When_reference_source_selector_history": {
+            "additionalProperties": false,
+            "properties": {
+                "reference_source_selector": {
+                    "const": "history",
+                    "title": "Reference Source Selector",
+                    "type": "string"
+                },
+                "input_fasta": {
+                    "anyOf": [
+                        {
+                            "discriminator": {
+                                "mapping": {
+                                    "dce": "#/$defs/DataRequestDce",
+                                    "hda": "#/$defs/DataRequestHda",
+                                    "ld": "#/$defs/DataRequestLd",
+                                    "ldda": "#/$defs/DataRequestLdda",
+                                    "url": "#/$defs/DataRequestUri"
+                                },
+                                "propertyName": "src"
+                            },
+                            "oneOf": [
+                                {
+                                    "$ref": "#/$defs/DataRequestHda"
+                                },
+                                {
+                                    "$ref": "#/$defs/DataRequestLdda"
+                                },
+                                {
+                                    "$ref": "#/$defs/DataRequestLd"
+                                },
+                                {
+                                    "$ref": "#/$defs/DataRequestDce"
+                                },
+                                {
+                                    "$ref": "#/$defs/DataRequestUri"
+                                }
+                            ]
+                        },
+                        {
+                            "$ref": "#/$defs/BatchRequest"
+                        }
+                    ],
+                    "gx_extensions": [
+                        "data"
+                    ],
+                    "gx_multiple": false,
+                    "gx_type": "gx_data",
+                    "title": "FASTA file"
+                }
+            },
+            "required": [
+                "input_fasta",
+                "reference_source_selector"
+            ],
+            "title": "When reference_source_selector = history",
+            "type": "object"
+        },
+        "When_reference_source_selector_ncbi": {
+            "additionalProperties": false,
+            "properties": {
+                "reference_source_selector": {
+                    "const": "ncbi",
+                    "title": "Reference Source Selector",
+                    "type": "string"
+                },
+                "requested_identifier": {
+                    "default": null,
+                    "description": "Identifiers (e.g 667699573) or accessions (e.g AC020606.7) may be used",
+                    "gx_area": false,
+                    "gx_type": "gx_text",
+                    "title": "NCBI identifier/accession",
+                    "type": "string"
+                }
+            },
+            "title": "When reference_source_selector = ncbi",
+            "type": "object",
+            "required": [
+                "reference_source_selector"
+            ]
+        },
+        "When_reference_source_selector_ucsc": {
+            "additionalProperties": false,
+            "properties": {
+                "reference_source_selector": {
+                    "const": "ucsc",
+                    "title": "Reference Source Selector",
+                    "type": "string"
+                },
+                "requested_dbkey": {
+                    "default": null,
+                    "gx_area": false,
+                    "gx_type": "gx_text",
+                    "title": "UCSC's DBKEY for source FASTA",
+                    "type": "string"
+                }
+            },
+            "title": "When reference_source_selector = ucsc",
+            "type": "object",
+            "required": [
+                "reference_source_selector"
+            ]
+        },
+        "When_reference_source_selector_url": {
+            "additionalProperties": false,
+            "properties": {
+                "reference_source_selector": {
+                    "const": "url",
+                    "title": "Reference Source Selector",
+                    "type": "string"
+                },
+                "user_url": {
+                    "default": null,
+                    "gx_area": false,
+                    "gx_type": "gx_text",
+                    "title": "URLs",
+                    "type": "string"
+                }
+            },
+            "title": "When reference_source_selector = url",
+            "type": "object",
+            "required": [
+                "reference_source_selector"
+            ]
+        },
+        "When_sort_selector___absent": {
+            "additionalProperties": false,
+            "properties": {},
+            "title": "When sort_selector is absent",
+            "type": "object"
+        },
+        "When_sort_selector_as_is": {
+            "additionalProperties": false,
+            "properties": {
+                "sort_selector": {
+                    "const": "as_is",
+                    "title": "Sort Selector",
+                    "type": "string"
+                }
+            },
+            "title": "When sort_selector = as_is",
+            "type": "object",
+            "required": [
+                "sort_selector"
+            ]
+        },
+        "When_sort_selector_custom": {
+            "additionalProperties": false,
+            "properties": {
+                "sort_selector": {
+                    "const": "custom",
+                    "title": "Sort Selector",
+                    "type": "string"
+                },
+                "sequence_identifiers": {
+                    "$ref": "#/$defs/RepeatType",
+                    "gx_min": 1,
+                    "gx_type": "gx_repeat"
+                },
+                "handle_not_listed_selector": {
+                    "anyOf": [
+                        {
+                            "const": "discard",
+                            "type": "string"
+                        },
+                        {
+                            "const": "keep_append",
+                            "type": "string"
+                        },
+                        {
+                            "const": "keep_prepend",
+                            "type": "string"
+                        }
+                    ],
+                    "default": null,
+                    "gx_multiple": false,
+                    "gx_options": [
+                        {
+                            "label": "Discard",
+                            "selected": true,
+                            "value": "discard"
+                        },
+                        {
+                            "label": "Keep and Append",
+                            "selected": false,
+                            "value": "keep_append"
+                        },
+                        {
+                            "label": "Keep and Prepend",
+                            "selected": false,
+                            "value": "keep_prepend"
+                        }
+                    ],
+                    "gx_type": "gx_select",
+                    "title": "How to handle non-specified Identifiers"
+                }
+            },
+            "title": "When sort_selector = custom",
+            "type": "object",
+            "required": [
+                "sort_selector"
+            ]
+        },
+        "When_sort_selector_gatk": {
+            "additionalProperties": false,
+            "properties": {
+                "sort_selector": {
+                    "const": "gatk",
+                    "title": "Sort Selector",
+                    "type": "string"
+                }
+            },
+            "title": "When sort_selector = gatk",
+            "type": "object",
+            "required": [
+                "sort_selector"
+            ]
+        },
+        "When_sort_selector_lexicographical": {
+            "additionalProperties": false,
+            "properties": {
+                "sort_selector": {
+                    "const": "lexicographical",
+                    "title": "Sort Selector",
+                    "type": "string"
+                }
+            },
+            "title": "When sort_selector = lexicographical",
+            "type": "object",
+            "required": [
+                "sort_selector"
+            ]
+        },
+        "galaxy__tool_util_models__parameters__ConditionalParameterModel__pydantic_template___locals___ConditionalType__1": {
+            "oneOf": [
+                {
+                    "$ref": "#/$defs/When_dbkey_source_selector_existing"
+                },
+                {
+                    "$ref": "#/$defs/When_dbkey_source_selector___absent"
+                },
+                {
+                    "$ref": "#/$defs/When_dbkey_source_selector_new"
+                }
+            ],
+            "title": "ConditionalType",
+            "discriminator": {
+                "propertyName": "dbkey_source_selector",
+                "mapping": {
+                    "existing": "#/$defs/When_dbkey_source_selector_existing",
+                    "new": "#/$defs/When_dbkey_source_selector_new"
+                }
+            }
+        },
+        "galaxy__tool_util_models__parameters__ConditionalParameterModel__pydantic_template___locals___ConditionalType__2": {
+            "oneOf": [
+                {
+                    "$ref": "#/$defs/When_reference_source_selector_ucsc"
+                },
+                {
+                    "$ref": "#/$defs/When_reference_source_selector___absent"
+                },
+                {
+                    "$ref": "#/$defs/When_reference_source_selector_ncbi"
+                },
+                {
+                    "$ref": "#/$defs/When_reference_source_selector_url"
+                },
+                {
+                    "$ref": "#/$defs/When_reference_source_selector_history"
+                },
+                {
+                    "$ref": "#/$defs/When_reference_source_selector_directory"
+                }
+            ],
+            "title": "ConditionalType",
+            "discriminator": {
+                "propertyName": "reference_source_selector",
+                "mapping": {
+                    "ucsc": "#/$defs/When_reference_source_selector_ucsc",
+                    "ncbi": "#/$defs/When_reference_source_selector_ncbi",
+                    "url": "#/$defs/When_reference_source_selector_url",
+                    "history": "#/$defs/When_reference_source_selector_history",
+                    "directory": "#/$defs/When_reference_source_selector_directory"
+                }
+            }
+        },
+        "galaxy__tool_util_models__parameters__ConditionalParameterModel__pydantic_template___locals___ConditionalType__3": {
+            "oneOf": [
+                {
+                    "$ref": "#/$defs/When_sort_selector_as_is"
+                },
+                {
+                    "$ref": "#/$defs/When_sort_selector___absent"
+                },
+                {
+                    "$ref": "#/$defs/When_sort_selector_lexicographical"
+                },
+                {
+                    "$ref": "#/$defs/When_sort_selector_gatk"
+                },
+                {
+                    "$ref": "#/$defs/When_sort_selector_custom"
+                }
+            ],
+            "title": "ConditionalType",
+            "discriminator": {
+                "propertyName": "sort_selector",
+                "mapping": {
+                    "as_is": "#/$defs/When_sort_selector_as_is",
+                    "lexicographical": "#/$defs/When_sort_selector_lexicographical",
+                    "gatk": "#/$defs/When_sort_selector_gatk",
+                    "custom": "#/$defs/When_sort_selector_custom"
+                }
+            }
+        }
+    },
+    "additionalProperties": false,
+    "properties": {
+        "dbkey_source": {
+            "$ref": "#/$defs/galaxy__tool_util_models__parameters__ConditionalParameterModel__pydantic_template___locals___ConditionalType__1",
+            "default": null,
+            "gx_options": [
+                {
+                    "label": "Existing",
+                    "selected": true,
+                    "value": "existing"
+                },
+                {
+                    "label": "New",
+                    "selected": false,
+                    "value": "new"
+                }
+            ],
+            "gx_test_label": "Use existing dbkey or create a new one.",
+            "gx_type": "gx_conditional"
+        },
+        "sequence_name": {
+            "anyOf": [
+                {
+                    "type": "string"
+                },
+                {
+                    "type": "null"
+                }
+            ],
+            "default": null,
+            "gx_area": false,
+            "gx_type": "gx_text",
+            "title": "Name of sequence"
+        },
+        "sequence_id": {
+            "anyOf": [
+                {
+                    "type": "string"
+                },
+                {
+                    "type": "null"
+                }
+            ],
+            "default": null,
+            "gx_area": false,
+            "gx_type": "gx_text",
+            "title": "ID for sequence"
+        },
+        "reference_source": {
+            "$ref": "#/$defs/galaxy__tool_util_models__parameters__ConditionalParameterModel__pydantic_template___locals___ConditionalType__2",
+            "default": null,
+            "gx_options": [
+                {
+                    "label": "UCSC",
+                    "selected": true,
+                    "value": "ucsc"
+                },
+                {
+                    "label": "NCBI",
+                    "selected": false,
+                    "value": "ncbi"
+                },
+                {
+                    "label": "URL",
+                    "selected": false,
+                    "value": "url"
+                },
+                {
+                    "label": "History",
+                    "selected": false,
+                    "value": "history"
+                },
+                {
+                    "label": "Directory on Server",
+                    "selected": false,
+                    "value": "directory"
+                }
+            ],
+            "gx_test_label": "Choose the source for the reference genome",
+            "gx_type": "gx_conditional"
+        },
+        "sorting": {
+            "$ref": "#/$defs/galaxy__tool_util_models__parameters__ConditionalParameterModel__pydantic_template___locals___ConditionalType__3",
+            "default": null,
+            "gx_options": [
+                {
+                    "label": "As is",
+                    "selected": true,
+                    "value": "as_is"
+                },
+                {
+                    "label": "Lexicographical",
+                    "selected": false,
+                    "value": "lexicographical"
+                },
+                {
+                    "label": "GATK",
+                    "selected": false,
+                    "value": "gatk"
+                },
+                {
+                    "label": "Custom",
+                    "selected": false,
+                    "value": "custom"
+                }
+            ],
+            "gx_test_label": "Sort by chromosome name",
+            "gx_type": "gx_conditional"
+        }
+    },
+    "title": "DynamicModelForTool",
+    "type": "object",
+    "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

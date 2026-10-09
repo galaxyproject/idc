@@ -36,6 +36,13 @@ such as fetching from UCSC by its dbkey or from a URL. Many genomes are already
 served, so check
 `https://test.galaxyproject.org/api/tool_data/all_fasta` for your dbkey first.
 
+A genome that is already served from outside the IDC still gets a request: the
+recipe that reproduces it, with the checksum of the FASTA the data manager
+writes. The build then uses the served copy only if it has that checksum.
+[`data-managers/all_fasta/hg38canon.yaml`](https://github.com/galaxyproject/idc/blob/main/data-managers/all_fasta/hg38canon.yaml)
+reproduces the `hg38canon` served from `data.galaxyproject.org`: UCSC's hg38,
+cut down to the canonical chromosomes in karyotypic order by the custom sort.
+
 ## Indexes
 
 An index is built from a genome in `all_fasta`, so its request names the genome
@@ -51,18 +58,17 @@ depends_on:
 params: {}
 ```
 
-If the genome is already served, the build indexes that copy; otherwise it's
-fetched first, in the same workflow.
+If the genome is already served (and matches its `sha256`, if pinned), the
+build indexes that copy; otherwise it's fetched first, in the same workflow.
 
 Each indexer needs a `CHAIN_WIRING` entry in
 [`scripts/generate_build.py`](https://github.com/galaxyproject/idc/blob/main/scripts/generate_build.py)
 the first time it's requested, naming the input that takes the `all_fasta`
-entry. Most indexers have no conditional to set, so the entry is short. For
-Bowtie2 it is
+entry. Most indexers have no conditional to set, so the entry needs no
+`tool_state`. For STAR it is
 
 ```python
-("bowtie2_indexes", "all_fasta"): {
-    "tool_state": {},
+("rnastar_index2x_versioned", "all_fasta"): {
     "connect_param": "all_fasta_source",
 },
 ```

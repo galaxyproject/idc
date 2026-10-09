@@ -40,6 +40,8 @@ SEEDS = {
     "metaphlan": REPO_ROOT / "data-managers/metaphlan_database_versioned/mpa_vJan21_CHOCOPhlAnSGB_202103.yaml",
     "motus": REPO_ROOT / "data-managers/motus_db_versioned/3.1.0.yaml",
     "samestr": REPO_ROOT / "data-managers/samestr_db/marker_db_mpa_vJan21.yaml",
+    "hg38canon": REPO_ROOT / "data-managers/all_fasta/hg38canon.yaml",
+    "rnastar": REPO_ROOT / "data-managers/rnastar_index2x_versioned/hg38canon.yaml",
 }
 
 
@@ -210,6 +212,12 @@ def test_lint_reports_bad_params_and_unavailable_schema(isolated_requests):
     assert "cannot check params" in err and "HTTP 503" in err
 
 
+def test_sha256_pins_must_be_hex_digests():
+    rm.Request(tool_id=MOTUS_GUID, data_tables=["t"], sha256={"a.fa": "0" * 64})
+    with pytest.raises(Exception):
+        rm.Request(tool_id=MOTUS_GUID, data_tables=["t"], sha256={"a.fa": "md5:abc"})
+
+
 def test_model_rejects_empty_data_tables():
     with pytest.raises(Exception):
         rm.Request(tool_id=MOTUS_GUID, data_tables=[])
@@ -293,7 +301,7 @@ def test_chained_build_wires_upstream_bundle():
 
 def test_chained_build_references_existing_upstream(monkeypatch):
     # When the upstream metaphlan already exists, reference it instead of rebuilding.
-    monkeypatch.setattr(cde, "resolve_existing_value", lambda url, table, version: "mpa_vJan21_CHOCOPhlAnSGB_202103-04042023")
+    monkeypatch.setattr(cde, "resolve_existing_value", lambda url, table, version, **kw: "mpa_vJan21_CHOCOPhlAnSGB_202103-04042023")
     request, dm, version = gb.load_request(SEEDS["samestr"])
     workflow, job = gb.build(request, dm, version, reference_galaxy="https://test.galaxyproject.org")
     # single step (samestr only) - no metaphlan build step
@@ -305,6 +313,32 @@ def test_chained_build_references_existing_upstream(monkeypatch):
     assert job["db_source_database"] == "mpa_vJan21_CHOCOPhlAnSGB_202103-04042023"
     assert set(workflow["outputs"]) == {"samestr_db_bundle"}
     gb.validate_workflow(workflow)
+
+
+def test_genome_index_chain_fetches_the_genome_first():
+    request, dm, version = gb.load_request(SEEDS["rnastar"])
+    workflow, _ = gb.build(request, dm, version)
+    assert list(workflow["steps"]) == ["all_fasta", "rnastar_index2x_versioned"]
+    star = workflow["steps"]["rnastar_index2x_versioned"]
+    assert star["tool_state"] == {"__data_manager_mode": "bundle"}  # wiring without tool_state
+    assert star["in"]["all_fasta_source"]["source"] == "all_fasta/out_file"
+    gb.validate_workflow(workflow)
+
+
+def test_served_upstream_is_referenced_only_if_its_files_match_the_pin(monkeypatch):
+    pinned = gb.load_request(SEEDS["hg38canon"])[0].sha256
+    monkeypatch.setattr(cde, "fetch_table", lambda url, table: _ALL_FASTA_TABLE)
+    monkeypatch.setenv("GALAXY_API_KEY", "k")
+    request, dm, version = gb.load_request(SEEDS["rnastar"])
+
+    monkeypatch.setattr(cde, "entry_sha256", lambda url, table, value, key: dict(pinned))
+    workflow, job = gb.build(request, dm, version, reference_galaxy="http://g")
+    assert list(workflow["steps"]) == ["rnastar_index2x_versioned"]
+    assert job == {"all_fasta_source": "hg38canon"}
+
+    monkeypatch.setattr(cde, "entry_sha256", lambda url, table, value, key: {"hg38canon.fa": "0" * 64})
+    with pytest.raises(cde.ChecksumMismatch, match="same name but different files"):
+        gb.build(request, dm, version, reference_galaxy="http://g")
 
 
 def test_validate_rejects_broken_connection():
@@ -385,6 +419,10 @@ _META_TABLE = {
     "fields": [["mpa_vJan21_CHOCOPhlAnSGB_202103-04042023", "n", "mpa_vJan21_CHOCOPhlAnSGB_202103", "/p", "SGB"]],
 }
 _MOTUS_TABLE = {"columns": ["value", "version", "name", "path"], "fields": [["3.1.0", "3.1.0", "n", "/p"]]}
+_ALL_FASTA_TABLE = {
+    "columns": ["value", "dbkey", "name", "path"],
+    "fields": [["hg38canon", "hg38", "Human (Homo sapiens) (b38): hg38 Canonical", "hg38canon.fa"]],
+}
 
 
 def test_entry_exists_matches_exact_field_and_value_prefix():
@@ -675,3 +713,29 @@ def test_import_refuses_bundles_that_are_not_ok(tmp_path, capsys):
 
     gi.dataset_states["dsMOTUS"] = "ok"
     imp.check_bundles_ready(gi, {"motus_db_versioned_bundle": "dsMOTUS"})  # no raise
+
+
+def test_pinned_request_exists_only_if_the_served_files_match(tmp_path, monkeypatch, capsys):
+    """A served entry under the request's name is "already built" only if its
+    files have the pinned checksums; other content under that name fails the
+    build selection instead of being skipped or rebuilt."""
+    pinned = gb.load_request(SEEDS["hg38canon"])[0].sha256
+    monkeypatch.setattr(cde, "fetch_table", lambda url, table: _ALL_FASTA_TABLE)
+    listing = _candidates(tmp_path, SEEDS["hg38canon"])
+    argv = ["--from-file", listing, "--print-new", "--reference-galaxy", "http://g"]
+
+    # No key: the files can't be read, so we can't tell.
+    monkeypatch.delenv("GALAXY_API_KEY", raising=False)
+    assert cde.main(argv) == 1
+    assert "needs an admin API key" in capsys.readouterr().err
+
+    monkeypatch.setenv("GALAXY_API_KEY", "k")
+    monkeypatch.setattr(cde, "entry_sha256", lambda url, table, value, key: dict(pinned))
+    assert cde.main(argv) == 0
+    out, err = capsys.readouterr()
+    assert out == "" and "skip all_fasta/hg38canon" in err
+
+    monkeypatch.setattr(cde, "entry_sha256", lambda url, table, value, key: {"hg38canon.fa": "0" * 64})
+    assert cde.main(argv) == 1
+    out, err = capsys.readouterr()
+    assert out == "" and "::error:: all_fasta/hg38canon" in err and "different files" in err
