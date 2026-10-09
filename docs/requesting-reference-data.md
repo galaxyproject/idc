@@ -90,6 +90,13 @@ request, run the existence check against a server that already has the same
 data, e.g.
 `python scripts/check_data_exists.py --reference-galaxy https://usegalaxy.eu <file>`.
 
+A matching name doesn't prove it's the same data. If the data is already served
+from outside the IDC (for example a genome on `data.galaxyproject.org`), pin its
+files with `sha256`: the build then counts the served entry as this request only
+if its files have those checksums, and fails if they don't. Compute the
+checksums from the data your recipe produces; a maintainer can check them
+against the served copy.
+
 Data without a version of its own, like whatever BLAST `nr` is on the day it's
 downloaded, gets a date: `nr_2026-09-21`, with a `description` saying what the
 date means. Such a data manager is typically requested with `params: {}`; the
@@ -184,6 +191,7 @@ entry added in the same PR, and the lint says so.
 | `data_tables` | yes | the tables the data manager writes, including the directory name |
 | `params` | no | the tool's parameters for this build |
 | `depends_on` | no | `{upstream_table: upstream_version}` for a database built from another |
+| `sha256` | no | `{file name: sha256}` of the entry's files, required in practice when the data is already served from outside the IDC |
 | `description` | no | what the data is, for reviewers and the catalog |
 | `doi` | no | DOI of the publication or dataset |
 
@@ -379,7 +387,13 @@ in use, and `python scripts/generate_schema.py --refresh` picks that up.
 
 **The lint warns that my data already exists.** It's already served from some
 source. If the existing entry is wrong or should move into the IDC, say so on
-the PR; replacing an entry is done by hand by a maintainer.
+the PR; replacing an entry is done by hand by a maintainer. For a request that
+pins `sha256`, the lint can't read the served files (that needs an admin key),
+so it says it can't tell; the build checks them.
+
+**The build fails with "has the same name but different files".** An entry with
+the request's name is served, but its files don't have the pinned checksums. Use
+a different name, or ask a maintainer which one is right.
 
 **The PR is merged but nothing was built.** The build run's "Select requests to
 build" step says which requests it skipped and why. A maintainer can re-run the

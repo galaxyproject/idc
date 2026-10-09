@@ -39,6 +39,9 @@ jobs:
         run: pip install planemo "pydantic>=2" pyyaml jsonschema gxformat2
 
       - name: Select requests to build
+        env:
+          # Admin key: reading a served entry's files to check pinned sha256s.
+          GALAXY_API_KEY: ${{ secrets.TEST_API_KEY }}
         run: |
           set -euo pipefail
           if [ -n "${{ github.event.inputs.request }}" ]; then
@@ -62,6 +65,7 @@ jobs:
       - name: Build bundles on test.galaxyproject.org
         env:
           TEST_API_KEY: ${{ secrets.TEST_API_KEY }}
+          GALAXY_API_KEY: ${{ secrets.TEST_API_KEY }}
         run: |
           set -euo pipefail
           if [ ! -s requests.txt ]; then echo "Nothing to build."; exit 0; fi

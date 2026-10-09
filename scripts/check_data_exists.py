@@ -16,6 +16,11 @@ present if any of the request's identity strings - its version, its ``params``
 values, or its ``depends_on`` versions - equals any field of a row, or is the
 ``value`` column optionally followed by a ``-<suffix>`` (e.g. a build date).
 
+A name says nothing about content, so a request that pins its files' ``sha256``
+only counts as present if the matching entry's files have those checksums; one
+that doesn't is an error (``ChecksumMismatch``), not "absent". Reading an
+entry's files needs an admin API key, taken from ``$GALAXY_API_KEY``.
+
 Usage::
 
     python scripts/check_data_exists.py --all                       # exit 1 if any exist
@@ -24,8 +29,11 @@ Usage::
     python scripts/check_data_exists.py data-managers/motus_db_versioned/3.1.0.yaml
 """
 import argparse
+import hashlib
 import json
+import os
 import sys
+import urllib.parse
 import urllib.error
 import urllib.request
 from pathlib import Path
@@ -41,6 +49,7 @@ from request_models import (  # noqa: E402
 )
 
 DEFAULT_GALAXY = "https://test.galaxyproject.org"
+CHUNK_SIZE = 1 << 20
 
 
 class CheckUnavailable(Exception):
@@ -50,6 +59,10 @@ class CheckUnavailable(Exception):
     means we do not know. Since this check is the pipeline's only idempotency
     signal, callers must not read it as "absent" and go build.
     """
+
+
+class ChecksumMismatch(Exception):
+    """A served entry has the request's name but not its pinned content."""
 
 
 def fetch_table(galaxy_url: str, table: str) -> dict | None:
@@ -69,6 +82,47 @@ def fetch_table(galaxy_url: str, table: str) -> dict | None:
         raise CheckUnavailable(f"{url}: HTTP {exc.code} {exc.reason}") from exc
     except Exception as exc:
         raise CheckUnavailable(f"{url}: {exc}") from exc
+
+
+def _get(url: str, api_key: str):
+    request = urllib.request.Request(url, headers={"x-api-key": api_key})
+    try:
+        return urllib.request.urlopen(request, timeout=60)  # noqa: S310 (fixed https host)
+    except Exception as exc:
+        raise CheckUnavailable(f"{url}: {exc}") from exc
+
+
+def entry_sha256(galaxy_url: str, table: str, value: str, api_key: str) -> dict[str, str]:
+    """SHA-256 of each file of the served entry ``value``, keyed by file name.
+
+    Streams the files through Galaxy's admin-only data table file endpoint.
+    """
+    base = f"{galaxy_url.rstrip('/')}/api/tool_data/{table}/fields/{urllib.parse.quote(value, safe='')}"
+    with _get(base, api_key) as resp:
+        files = json.load(resp).get("files", {})
+    checksums = {}
+    for name in files:
+        digest = hashlib.sha256()
+        with _get(f"{base}/files/{urllib.parse.quote(name)}", api_key) as resp:
+            while chunk := resp.read(CHUNK_SIZE):
+                digest.update(chunk)
+        checksums[name] = digest.hexdigest()
+    return checksums
+
+
+def verify_entry(galaxy_url: str, table: str, value: str, expected: dict[str, str], api_key: str | None) -> None:
+    """Raise ChecksumMismatch unless the served entry's files match ``expected``."""
+    if not api_key:
+        raise CheckUnavailable(
+            f"{table} entry {value!r} must match pinned sha256 checksums, which needs an admin API key in $GALAXY_API_KEY"
+        )
+    actual = entry_sha256(galaxy_url, table, value, api_key)
+    wrong = {name: actual.get(name, "missing") for name, digest in expected.items() if actual.get(name) != digest}
+    if wrong:
+        raise ChecksumMismatch(
+            f"{table} entry {value!r} on {galaxy_url} has the same name but different files: "
+            + ", ".join(f"{name} is {digest}, expected {expected[name]}" for name, digest in wrong.items())
+        )
 
 
 def identity_strings(request: Request, version: str) -> set[str]:
@@ -94,26 +148,38 @@ def entry_exists(table_data: dict, candidates: set[str]) -> bool:
     return matching_value(table_data, candidates) is not None
 
 
-def resolve_existing_value(galaxy_url: str, table: str, version: str) -> str | None:
+def resolve_existing_value(
+    galaxy_url: str,
+    table: str,
+    version: str,
+    expected_sha256: dict[str, str] | None = None,
+    api_key: str | None = None,
+) -> str | None:
     """The data-table ``value`` for an existing entry of ``version``, else None.
 
     Used to reference an already-built upstream database (e.g. a MetaPhlAn DB a
     SameStr build depends on) instead of rebuilding it. CheckUnavailable
     propagates: generating a workflow that silently rebuilds a multi-hour
     upstream database because the Galaxy was briefly unreachable is worse than
-    failing the build step.
+    failing the build step. So does ChecksumMismatch if ``expected_sha256`` is
+    given and the entry's files don't match it.
     """
     table_data = fetch_table(galaxy_url, table)
     if table_data is None:
         return None
-    return matching_value(table_data, {version})
+    value = matching_value(table_data, {version})
+    if value is not None and expected_sha256:
+        verify_entry(galaxy_url, table, value, expected_sha256, api_key)
+    return value
 
 
-def request_exists(request: Request, version: str, galaxy_url: str) -> bool:
+def request_exists(request: Request, version: str, galaxy_url: str, api_key: str | None = None) -> bool:
     """True if any of the request's data tables already carries this version.
 
     Raises CheckUnavailable if a table could not be queried and no other table
     gave a positive answer - "we could not tell" must not pass for "not there".
+    Raises ChecksumMismatch if the request pins ``sha256`` and the entry found
+    under its name has other files.
     """
     candidates = identity_strings(request, version)
     unavailable: list[str] = []
@@ -133,7 +199,10 @@ def request_exists(request: Request, version: str, galaxy_url: str) -> bool:
                 file=sys.stderr,
             )
             continue
-        if entry_exists(table_data, candidates):
+        value = matching_value(table_data, candidates)
+        if value is not None:
+            if request.sha256:
+                verify_entry(galaxy_url, table, value, request.sha256, api_key)
             return True
     if unavailable:
         raise CheckUnavailable("; ".join(unavailable))
@@ -178,17 +247,26 @@ def main(argv: list[str] | None = None) -> int:
             raw += [ln.strip() for ln in Path(args.from_file).read_text().splitlines() if ln.strip()]
         paths = [Path(r) for r in raw if Path(r).is_file()]
 
-    new, existing, unknown = [], [], []
+    api_key = os.environ.get("GALAXY_API_KEY")
+    new, existing, unknown, mismatched = [], [], [], []
     for path in paths:
         request = Request(**yaml.safe_load(Path(path).read_text()))
         version = version_id(Path(path))
         dm = data_manager_name(Path(path))
         try:
-            found = request_exists(request, version, args.reference_galaxy)
+            found = request_exists(request, version, args.reference_galaxy, api_key)
         except CheckUnavailable as exc:
             unknown.append((path, dm, version, str(exc)))
             continue
+        except ChecksumMismatch as exc:
+            mismatched.append((path, dm, version, str(exc)))
+            continue
         (existing.append((path, dm, version)) if found else new.append(path))
+
+    # Neither "there" nor "build it": the name is taken by other data, which
+    # needs a different version name or a maintainer's look.
+    for path, dm, version, reason in mismatched:
+        print(f"::error:: {dm}/{version}: {reason} ({path})", file=sys.stderr)
 
     prefix = "::warning:: " if args.warn or args.print_new else ""
     for path, dm, version, reason in unknown:
@@ -211,7 +289,7 @@ def main(argv: list[str] | None = None) -> int:
                 f"request's version identity does not match the entry that was written ({path})",
                 file=sys.stderr,
             )
-        return 1 if (new or unknown) else 0
+        return 1 if (new or unknown or mismatched) else 0
 
     if args.print_new:
         # Say what was dropped, so an empty build list is diagnosable.
@@ -220,11 +298,13 @@ def main(argv: list[str] | None = None) -> int:
         for path in new:
             print(path)
         # A question we could not answer must not silently become "build it".
-        return 1 if unknown else 0
+        return 1 if (unknown or mismatched) else 0
 
     for path, dm, version in existing:
         print(f"{prefix}{dm}/{version} already exists on {args.reference_galaxy} ({path})", file=sys.stderr)
 
+    if mismatched:
+        return 1
     if not existing and not unknown:
         print(f"No requested reference data already exists on {args.reference_galaxy}.")
         return 0

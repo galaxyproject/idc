@@ -30,6 +30,7 @@ For each request it writes ``<outdir>/<dm>/<version>/workflow.gxwf.yml`` and
 """
 import argparse
 import copy
+import os
 import sys
 from pathlib import Path
 
@@ -46,8 +47,8 @@ from request_models import (  # noqa: E402
 from tool_schemas import flatten_params  # noqa: E402
 
 # How to wire an upstream bundle into a downstream (chained) data manager. Keyed
-# on (downstream data manager, upstream data table). ``db_type`` selects the
-# branch of the downstream tool's conditional (baked into tool_state);
+# on (downstream data manager, upstream data table). ``tool_state`` (optional)
+# selects the branch of the downstream tool's conditional, e.g. ``db_type``;
 # ``connect_param`` is the downstream input parameter (gxformat2 ``|`` notation)
 # that receives the upstream step's bundle output.
 CHAIN_WIRING = {
@@ -58,6 +59,9 @@ CHAIN_WIRING = {
     ("samestr_db", "motus_db_versioned"): {
         "tool_state": {"db_source": {"db_type": "motus"}},
         "connect_param": "db_source|motus_db",
+    },
+    ("rnastar_index2x_versioned", "all_fasta"): {
+        "connect_param": "all_fasta_source",
     },
 }
 
@@ -157,8 +161,10 @@ def build(request: Request, dm: str, version: str, reference_galaxy: str | None 
 
     For a chained request (``depends_on``): if ``reference_galaxy`` is given and
     the upstream database already exists in that Galaxy's data table, the existing
-    entry is referenced directly (no upstream build step). Otherwise the upstream
-    data manager is added as a step and rebuilt.
+    entry is referenced directly (no upstream build step), after checking it
+    against the upstream request's pinned ``sha256``, if any (needs an admin key
+    in ``$GALAXY_API_KEY``). Otherwise the upstream data manager is added as a
+    step and rebuilt.
     """
     from check_data_exists import resolve_existing_value
 
@@ -173,10 +179,19 @@ def build(request: Request, dm: str, version: str, reference_galaxy: str | None 
                 f"No chain wiring defined for downstream {dm!r} depending on {up_table!r}. "
                 f"Add an entry to CHAIN_WIRING in scripts/generate_build.py."
             )
-        baked_state = deep_merge(baked_state, wiring["tool_state"])
+        baked_state = deep_merge(baked_state, wiring.get("tool_state", {}))
 
+        up_request, up_dm, _ = load_request(_resolve_request_path(up_table, up_version))
         existing_value = (
-            resolve_existing_value(reference_galaxy, up_table, up_version) if reference_galaxy else None
+            resolve_existing_value(
+                reference_galaxy,
+                up_table,
+                up_version,
+                expected_sha256=up_request.sha256,
+                api_key=os.environ.get("GALAXY_API_KEY"),
+            )
+            if reference_galaxy
+            else None
         )
         if existing_value is not None:
             # Reference the already-built upstream entry via a workflow input.
@@ -186,7 +201,6 @@ def build(request: Request, dm: str, version: str, reference_galaxy: str | None 
             connections[wiring["connect_param"]] = input_name
         else:
             # Rebuild the upstream data manager as a step and wire its bundle.
-            up_request, up_dm, _ = load_request(_resolve_request_path(up_table, up_version))
             wb.add_step(up_dm, up_request.tool_id, up_request.params, input_prefix=f"{up_dm}_")
             connections[wiring["connect_param"]] = f"{up_dm}/{OUT_FILE}"
 
