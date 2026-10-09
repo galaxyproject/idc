@@ -456,6 +456,13 @@ def test_print_new_on_empty_input_builds_nothing(tmp_path, capsys):
     assert capsys.readouterr().out == ""
 
 
+def test_missing_request_file_is_an_error_not_absent_data(tmp_path, capsys):
+    missing = str(tmp_path / "data-managers/motus_db_versioned/9.9.9.yaml")
+    for mode in ([], ["--expect-exists"], ["--print-new"]):
+        assert cde.main([missing, *mode]) == 2
+        assert "no such request file" in capsys.readouterr().err
+
+
 def test_print_new_fails_rather_than_rebuilding_when_galaxy_cannot_answer(tmp_path, monkeypatch, capsys):
     """Fail the build step loudly: treating "don't know" as "absent" would
     rebuild data that already exists (hours of Galaxy compute)."""

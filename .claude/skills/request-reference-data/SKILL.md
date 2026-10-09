@@ -1,0 +1,319 @@
+---
+name: request-reference-data
+description: Request a new versioned reference-data build from the Galaxy IDC (a data manager database such as a new MetaPhlAn, mOTUs or SameStr version) - check it is not already served, find the data manager's version-pinned tool_id and params, choose the version identity, write data-managers/<table>/<version>.yaml, run the repo's lint and draft the pull request. Use when someone needs a reference database or version on Galaxy servers, or asks to add or fix an IDC request file.
+---
+
+# Request reference data from the IDC
+
+Takes a request like "we need MetaPhlAn database mpa_vJan25_CHOCOPhlAnSGB_202503
+on Galaxy" to a linted request file and a drafted PR against
+`galaxyproject/idc`. The human-facing version of these steps, with background, is
+`docs/requesting-reference-data.md`; read it when a step here is unclear, and
+treat it and the real files under `data-managers/` as the source of truth.
+
+Ground rules:
+
+- **Use the repo's scripts** (`scripts/request_models.py`,
+  `scripts/tool_schemas.py`, `scripts/generate_schema.py`,
+  `scripts/generate_build.py`, `scripts/check_data_exists.py`). Don't
+  re-implement their checks; if one seems wrong, say so rather than working
+  around it.
+- **No secrets.** Everything here uses public endpoints: the Galaxy data table
+  API and the Tool Shed. Never ask for or use a Galaxy API key on this path.
+  (`gh` needs a logged-in GitHub account, any account; without one, use the
+  web UI for the PR searches.)
+- **Pushing and opening the PR are the user's call.** Prepare the branch,
+  commit and PR text, then ask before `git push` or `gh pr create`.
+- **Stop early** when the data already exists or the data manager isn't
+  installed on the build Galaxy, and explain what would have to happen instead.
+
+## 0. Gather the request
+
+You need: the database (and the data manager, if the user knows it), the version,
+and whether it is built from another database (e.g. SameStr from MetaPhlAn). Also
+ask whether another Galaxy (usegalaxy.eu, usegalaxy.org) already has the same
+data, since the IDC should reuse its identifier. Don't guess a version the user
+didn't give; the tool's select options (step 3) list the valid ones.
+
+Set up once, from the repository root:
+
+```bash
+python3 -m venv .venv && . .venv/bin/activate    # or reuse an existing venv
+pip install "pydantic>=2" pyyaml jsonschema gxformat2 pytest
+```
+
+## 1. Is it already requested or served?
+
+```bash
+ls data-managers/<table>/                              # existing requests for the table
+gh pr list --repo galaxyproject/idc --state open --search "<table or database>"
+gh pr view <n> --repo galaxyproject/idc --json files --jq '.files[].path'   # per hit: which requests it adds
+curl -s https://test.galaxyproject.org/api/tool_data/<table> | python3 -m json.tool
+```
+
+- A request file, or an open PR adding `data-managers/<table>/<version>.yaml`
+  for the same version: stop, point the user at it (use the
+  `check-reference-data-request` skill for its status). A PR search hit that
+  only touches other versions doesn't count.
+- A row with a field equal to the version (MetaPhlAn: `dbkey`; mOTUs:
+  `version`; `db_version`-style columns often hold something else), or whose
+  `value` is the version followed by `-<date>`: the data is already served (from the IDC or another repository). Stop. Moving
+  non-IDC data into the IDC is a maintainer decision, not a request.
+- `"fields": []` or no matching row: not served there; continue.
+- HTTP 404: the table isn't configured on test. Expected for a data manager
+  nobody has requested from; continue, but step 2 will need the onboarding path.
+
+If you don't know the table name yet, do step 2 first and come back.
+
+## 2. Find the data manager, its `tool_id` and data table
+
+```bash
+grep -n -i "<database or repo name>" schemas/data_managers.yml
+```
+
+`schemas/data_managers.yml` lists every data manager installed on
+test.galaxyproject.org as full GUIDs
+(`toolshed.g2.bx.psu.edu/repos/<owner>/<repo>/<tool id>/<version>`). Use that
+GUID as `tool_id` unless the user needs a specific other version; it must stay
+version-pinned and on the production Tool Shed (`toolshed.g2.bx.psu.edu`).
+The tool's version is not the database version: `motus_db_fetcher/3.1.0+galaxy2`
+also fetches mOTUs 3.0.1 and 3.0.0. Step 3 lists which database versions a
+tool offers; an older tool version may not offer the newest database.
+
+Not listed means not installed on the build Galaxy. The request can't build
+until the data manager is added to usegalaxy-tools'
+`test.galaxyproject.org/data_managers.yml`; see "Adding a new data
+manager" in the guide. Tell the user; you can still prepare the idc side
+(steps 3 to 7) if they want, and note the dependency in the PR.
+
+The **data table**: if a request directory for this data manager already
+exists, that's it. Otherwise read the `<data_table name=...>` entries of the
+repository's `data_manager_conf.xml`, found via the Tool Shed:
+
+```bash
+curl -s 'https://toolshed.g2.bx.psu.edu/api/repositories?name=<repo>&owner=<owner>' | python3 -m json.tool   # remote_repository_url
+```
+
+`remote_repository_url` is usually a GitHub `.../tree/<branch>/<dir>` URL; the
+file is at `https://raw.githubusercontent.com/<org>/<repo>/<branch>/<dir>/data_manager_conf.xml`.
+That's the branch head, which may be newer than the installed revision; table
+names rarely change, but say so if you rely on anything else from it.
+
+List every table it writes in `data_tables`; the primary one (the table tools
+select the database from) names the directory. Check it is configured for the
+IDC:
+
+```bash
+grep -n '<table name="<table>"' config/tool_data_table_conf.xml
+```
+
+If it isn't, the PR must add it (columns from the data manager's
+`tool_data_table_conf.xml.sample`, file
+`/cvmfs/idc.galaxyproject.org/config/<table>.loc`,
+`allow_duplicate_entries="False"`, like the neighbouring versioned tables).
+
+## 3. Find and fill `params`
+
+```bash
+schema="${TMPDIR:-/tmp}/params.schema.json"
+python scripts/tool_schemas.py <tool_id> > "$schema"   # the full parameter schema
+python3 - "$schema" <<'PY'
+import json, sys
+s = json.load(open(sys.argv[1]))
+for where, node in [("params", s), *s.get("$defs", {}).items()]:
+    for name, p in node.get("properties", {}).items():
+        opts = [o["value"] for o in p.get("gx_options", [])] or p.get("const", "")
+        ref = p.get("$ref", "").rsplit("/", 1)[-1]
+        print(f"{where}: {name} [{p.get('gx_type', ref or p.get('type', ''))}] {p.get('title', '')} {opts}")
+        if p.get("default") is not None or p.get("description"):
+            print(f"    default={p.get('default')!r} {p.get('description', '')}")
+PY
+```
+
+This lists each settable parameter with its type, label, default and help text
+and, for selects, the allowed values. Parameters inside a conditional are
+listed under its branches, `When_<selector>_<value>` (plus
+`When_<selector>___absent` for the default branch); the entry with a single
+constant value in each branch is the selector itself. For example, the MetaPhlAn data manager prints
+`params: index [gx_select] Version ['mpa_vJan25_CHOCOPhlAnSGB_202503', ...]`,
+and SameStr prints its `db_source` conditional with a `database` input on the
+`metaphlan` branch and `motus_db` on the `motus` branch. Defaults and help text
+are in the JSON. Rules:
+
+- Keys are the tool's `<param name=>`, nested like the tool form
+  (`db_source: {db_type: motus}`), never `a|b` paths.
+- Set what selects the version (MetaPhlAn `index`, mOTUs `version`, ...). Leave
+  out parameters whose default is right.
+- **A chained request's upstream branch is not a param.** Don't set the
+  conditional that picks the upstream database (SameStr's `db_source`); step 5's
+  `depends_on` does that. Such requests usually have `params: {}`.
+- **Identifier pinning.** Check what `value` other servers use for the same data:
+  `curl -s https://usegalaxy.eu/api/tool_data/<table>` (and usegalaxy.org). If
+  the data manager has a parameter that sets the table `value` explicitly
+  (mOTUs' `db_value`), set it to that server's identifier so workflows move
+  between servers unchanged. If it has none and would write a different
+  `value`, mention it in the PR for the reviewers. If no other server has the
+  data, leave such an override unset unless its help text says the default is
+  not reproducible (e.g. it stamps today's date); say which `value` you expect
+  in the PR.
+
+## 4. Choose the version identity (file name)
+
+`data-managers/<table>/<version>.yaml`. The `<version>` stem names the build
+history (`idc-<table>-<version>`) and the CVMFS record marker, and is what the
+existence check looks for in the data table. So:
+
+- use the identity the data manager itself writes (MetaPhlAn index name, mOTUs
+  release number). `check_data_exists.py` recognises a built request only if
+  the stem, a `params` value or a `depends_on` version equals a whole field of
+  the row the data manager writes, or the row's `value` starts with it followed
+  by `-`. Otherwise the request is never recognised as built;
+- to see how the check will treat the finished row, run it against a server
+  that already has the same data:
+  `python scripts/check_data_exists.py --reference-galaxy https://usegalaxy.eu <file>`
+  should say "already exists" there;
+- known gap: a chained build whose row copies the upstream's `value` instead of
+  naming its own version (SameStr from mOTUs writes `db_from_...`) is not
+  recognised under any conventional name; the committed
+  `samestr_db/marker_db_motus_3.1.0.yaml` has the same problem. Keep the naming
+  convention and note it in the PR rather than inventing a name to satisfy the
+  check;
+- unversioned upstream data (e.g. "latest nr"): a date stamp, `nr_2026-09-21`,
+  with its meaning in `description`;
+- derived databases name their source: `marker_db_motus_3.1.0`;
+- only letters, digits, `.`, `_`, `-`; unique within the table.
+
+## 5. Chained builds (`depends_on`)
+
+For a database built from another one:
+
+```yaml
+depends_on:
+  <upstream_table>: "<upstream version>"   # an existing (or added) request's file name
+```
+
+```bash
+grep -n -A3 '("<table>", "<upstream_table>")' scripts/generate_build.py   # CHAIN_WIRING entry?
+ls data-managers/<upstream_table>/                                        # upstream request exists?
+```
+
+- No `CHAIN_WIRING` entry for the pair: the PR must add one (the conditional
+  selector to bake in, and the `a|b` input receiving the upstream bundle). Read
+  the downstream tool's schema (step 3) to find both; ask the user to confirm.
+- No upstream request file: add it too, in the same PR, following steps 1 to 4
+  for the upstream (it must pass the existence check on its own, unless it's
+  already served, in which case its request file still has to exist but the
+  build will reference the served entry instead of rebuilding it).
+- When the upstream is new in the same PR, expect it to be built twice on test:
+  once for its own request and once as the first step of the chained workflow
+  (neither exists on test when the build runs). The publish imports it only
+  once, because the first import writes its record marker. That's expected; if
+  the upstream is large, mention the extra build time in the PR.
+
+Genomes and indexes are chains too: a genome is a request in `all_fasta` for
+the `data_manager_fetch_genome_dbkeys_all_fasta` data manager, named after the
+dbkey, and each index is a request in the index's table with
+`depends_on: {all_fasta: <dbkey>}`. Every indexer needs a `CHAIN_WIRING` entry
+the first time (for Bowtie2, `tool_state: {}` and
+`connect_param: all_fasta_source`); `docs/genome-indexing.md` has the example
+files.
+
+## 6. Write the file
+
+Copy the shape of the closest real request:
+`data-managers/motus_db_versioned/3.1.0.yaml` (standalone, with a pinned
+`db_value`), `data-managers/metaphlan_database_versioned/mpa_vJan21_CHOCOPhlAnSGB_202103.yaml`
+(standalone), `data-managers/samestr_db/marker_db_motus_3.1.0.yaml` (chained).
+
+```yaml
+# yaml-language-server: $schema=https://raw.githubusercontent.com/galaxyproject/idc/main/schemas/request.schema.json
+# <one line: what this is and where it comes from>
+tool_id: toolshed.g2.bx.psu.edu/repos/<owner>/<repo>/<tool id>/<version>
+data_tables:
+  - <table>
+params:
+  <param>: "<value>"   # the tool's "<label>" param
+description: <what this data is, with the version>
+doi: <optional>
+```
+
+Only these fields exist: `tool_id`, `data_tables`, `params`, `depends_on`,
+`description`, `doi`. Keep the modeline. Quote version-like values
+(`"3.1.0"`) so YAML keeps them strings.
+
+## 7. Lint
+
+Run all of these; fix and re-run until they pass. Every script takes several
+files, so pass all the request files you added (e.g. an upstream and its
+chained request):
+
+```bash
+python scripts/request_models.py <files>
+python scripts/generate_schema.py --check
+python scripts/generate_build.py <files> --outdir build --reference-galaxy https://test.galaxyproject.org
+python scripts/check_data_exists.py <files>
+python -m pytest tests/ -q
+```
+
+- `request_models.py` errors map one-to-one to the guide's "Lint
+  errors" section; the params messages list the allowed names/values.
+- `generate_schema.py --check` reporting "stale": the `tool_id` isn't in the
+  committed editor schema. Run `python scripts/generate_schema.py`, check the
+  diff only adds that tool, and commit `schemas/request.schema.json` with the
+  request. (If CI later reports "stale" although the local `--check` passes,
+  the Tool Shed changed a schema already in use: `--refresh` regenerates it.)
+- `generate_build.py` must succeed (it gxformat2-validates the workflow). Look at
+  `build/<table>/<version>/job.yml`: its values are exactly what the build will
+  pass to the tool. For a chained request, check whether it included the
+  upstream step or referenced an existing entry, and that this is what you
+  expect.
+- `check_data_exists.py` must print "No requested reference data already
+  exists"; "already exists" sends you back to step 1. "cannot tell" means test
+  didn't answer: retry later, don't ignore it. Exit 2 with "no such request
+  file" means a wrong path.
+- If you added a `CHAIN_WIRING` entry or other code, also run the full set CI
+  runs: `python scripts/request_models.py && python scripts/generate_schema.py --check --refresh && python scripts/generate_build.py --all --outdir build && python -m pytest tests/ -q && python scripts/check_data_exists.py --all --warn`.
+- Delete `build/` afterwards (it's gitignored, but it's not part of the PR).
+
+## 8. Commit and draft the PR
+
+```bash
+git switch -c request-<table>-<version>
+git add data-managers/<table>/<version>.yaml   # + upstream request, schema / config / CHAIN_WIRING changes
+git commit -m "Request <database> <version> (<data manager repo> <tool version>)"
+```
+
+For a chain added together, name the pair: branch
+`request-<table>-<version>` after the downstream, subject e.g.
+"Request mOTUs 3.0.1 and a SameStr marker database built from it".
+
+Draft the PR description (and show it to the user):
+
+```markdown
+Requests <database> <version> for the IDC: `data-managers/<table>/<version>.yaml`
+<(and the upstream it is built from, `data-managers/<upstream_table>/<version>.yaml`)>.
+
+- **Data:** <what it is, upstream release/DOI, download size and build time if known>
+- **Why:** <tool/workflow that needs it; which servers>
+- **Data manager:** `<tool_id>` (installed on test.galaxyproject.org)
+- **Not served yet:** `check_data_exists.py` on test: <output>
+- **Identifier:** <the `value` it will write; matches usegalaxy.eu's `<value>` via `<param>` / no other server has it>
+- **Chained:** <depends_on and whether the upstream exists on test / is built in this chain>, or n/a
+- Local lint: request_models, generate_schema --check, generate_build, pytest all pass.
+```
+
+Then ask the user whether to push and open the PR. Contributors usually can't
+push to `galaxyproject/idc`: check `git remote -v`, and if there's no fork
+remote, `gh repo fork --remote --remote-name fork` creates one (also on the
+user's say-so). Then `git push -u fork <branch>` and
+`gh pr create --repo galaxyproject/idc --head <user>:<branch> --title ... --body-file ...`. After it's
+open, the `check-reference-data-request` skill follows it through the pipeline.
+
+## Done when
+
+- the request file, and any upstream request, schema, table config or
+  `CHAIN_WIRING` change it needs, is committed on a branch;
+- every command in step 7 passes;
+- the PR text is drafted and the user has decided about pushing;
+- anything the idc PR can't do itself (installing the data manager on test) is
+  spelled out for the user.

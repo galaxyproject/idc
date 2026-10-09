@@ -1,0 +1,74 @@
+name: Site
+
+# Builds the IDC site (mkdocs.yml, docs/) with --strict on every pull request
+# that could change it, and deploys it to GitHub Pages from main. The catalog
+# page is generated from data-managers/, config/, schemas/ and genomes.yml by
+# scripts/site_catalog.py, so those paths rebuild it too.
+
+on:
+  pull_request:
+    paths:
+      - "docs/**"
+      - "mkdocs.yml"
+      - "requirements-docs.txt"
+      - "data-managers/**"
+      - "config/tool_data_table_conf.xml"
+      - "schemas/data_managers.yml"
+      - "genomes.yml"
+      - "scripts/**"
+      - ".github/workflows/pages.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "docs/**"
+      - "mkdocs.yml"
+      - "requirements-docs.txt"
+      - "data-managers/**"
+      - "config/tool_data_table_conf.xml"
+      - "schemas/data_managers.yml"
+      - "genomes.yml"
+      - "scripts/**"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# A newer PR build supersedes an older one; a deploy from main is never cut off.
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: pip install -r requirements-docs.txt
+      - name: Build the site
+        run: mkdocs build --strict --site-dir _site
+      - name: Upload the Pages artifact
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+
+  deploy:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
