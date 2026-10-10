@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/galaxyproject/idc/main/schemas/request.schema.json
+# DefenseFinder models v2.0.2 (MacSyFinder models allowing for a systematic
+# search of anti-phage systems, from the defense-finder-models releases).
+# Standalone build: the data manager downloads the models by version.
+tool_id: toolshed.g2.bx.psu.edu/repos/rplanel/data_manager_defense_finder/defense_finder_models_fetcher_data_manager/2.0.0+galaxy2
+data_tables:
+  - defense-finder-2
+params:
+  model_version: "2.0.2"   # the tool's "Defense finder models version" param
+  # the tool's "List of defenseFinder versions compatibility" param: set to the
+  # value usegalaxy.eu's existing 2.0.2 row uses, so the row matches there
+  soft_compatibility_version: "2.0.0"
+description: MacSyFinder/DefenseFinder models allowing for a systematic search of anti-phage systems, models version 2.0.2
+doi: 10.24072/pcjournal.250

@@ -1,0 +1,38 @@
+{
+    "additionalProperties": false,
+    "properties": {
+        "model_version": {
+            "anyOf": [
+                {
+                    "type": "string"
+                },
+                {
+                    "type": "null"
+                }
+            ],
+            "default": null,
+            "description": "The available versions can be found at : https://github.com/mdmparis/defense-finder-models/releases",
+            "gx_area": false,
+            "gx_type": "gx_text",
+            "title": "Defense finder models version"
+        },
+        "soft_compatibility_version": {
+            "anyOf": [
+                {
+                    "type": "string"
+                },
+                {
+                    "type": "null"
+                }
+            ],
+            "default": null,
+            "description": "Enter the list of defenseFinder software versions that are compatible with the current model (e.g., 1.2.0,1.3.0,2.0.0). Separate multiple versions with commas if required.",
+            "gx_area": false,
+            "gx_type": "gx_text",
+            "title": "List of defenseFinder versions compatibility"
+        }
+    },
+    "title": "DynamicModelForTool",
+    "type": "object",
+    "$schema": "https://json-schema.org/draft/2020-12/schema"
+}
