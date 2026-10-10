@@ -502,24 +502,37 @@ def test_lint_mode_warns_without_failing(tmp_path, monkeypatch, capsys):
 class _FakeGi:
     """Minimal stand-in for a bioblend GalaxyInstance for history resolution."""
 
-    def __init__(self, invocations, invocation_detail, datasets=None):
+    def __init__(self, invocations, invocation_detail, datasets=None, histories=None):
         self._invocations = invocations
         self._invocation_detail = invocation_detail
         self._datasets = datasets or []
+        # show_history dicts; each may carry its own "invocations" list of full
+        # show_invocation dicts
+        self._histories = histories or [{"id": "hist1", "create_time": "2026-01-01T00:00:00"}]
         # dataset id -> state for show_dataset (default "ok")
         self.dataset_states: dict[str, str] = {}
+        # dataset ids that show_dataset reports as deleted
+        self.deleted_datasets: set[str] = set()
 
         outer = self
 
         class _Histories:
             def get_histories(self, name, deleted=False):
-                return [{"id": "hist1", "name": name}]
+                return [{"id": h["id"], "name": name} for h in outer._histories]
+
+            def show_history(self, history_id):
+                return next(h for h in outer._histories if h["id"] == history_id)
 
         class _Invocations:
             def get_invocations(self, history_id):
-                return outer._invocations
+                history = next(h for h in outer._histories if h["id"] == history_id)
+                return history.get("invocations", outer._invocations)
 
             def show_invocation(self, invocation_id):
+                for history in outer._histories:
+                    for invocation in history.get("invocations", []):
+                        if invocation["id"] == invocation_id:
+                            return invocation
                 return outer._invocation_detail
 
         class _Datasets:
@@ -527,7 +540,11 @@ class _FakeGi:
                 return outer._datasets
 
             def show_dataset(self, dataset_id):
-                return {"id": dataset_id, "state": outer.dataset_states.get(dataset_id, "ok")}
+                return {
+                    "id": dataset_id,
+                    "state": outer.dataset_states.get(dataset_id, "ok"),
+                    "deleted": dataset_id in outer.deleted_datasets,
+                }
 
         self.histories = _Histories()
         self.invocations = _Invocations()
@@ -545,6 +562,113 @@ def test_history_resolution_prefers_latest_invocation():
     result = gburls.bundles_from_history(gi, "idc-samestr_db-v1")
     # precise: exactly the two bundle outputs, not a dataset scan
     assert result == {"metaphlan_database_versioned_bundle": "dsMETA", "samestr_db_bundle": "dsSAM"}
+
+
+def _build(history_id, create_time, state="scheduled", bundle=True):
+    """A build history whose single invocation has one bundle output ds-<id>."""
+    outputs = {"motus_db_versioned_bundle": {"id": f"ds-{history_id}", "src": "hda"}} if bundle else {}
+    invocation = {"id": f"inv-{history_id}", "create_time": create_time, "state": state, "outputs": outputs}
+    return {"id": history_id, "create_time": create_time, "invocations": [invocation]}
+
+
+def _picked(gi):
+    invocation = gburls.build_invocation(gi, "idc-motus_db_versioned-3.1.0")
+    return invocation and invocation["id"].removeprefix("inv-")
+
+
+def test_build_prefers_newest_history():
+    gi = _FakeGi([], {}, histories=[_build("old", "2026-01-01T00:00:00"), _build("new", "2026-02-01T00:00:00")])
+    assert _picked(gi) == "new"
+
+
+def test_build_skips_newer_failed_builds():
+    gi = _FakeGi([], {}, histories=[
+        _build("good", "2026-01-01T00:00:00"),
+        _build("errored", "2026-02-01T00:00:00"),
+        _build("paused", "2026-03-01T00:00:00"),
+        _build("deleted", "2026-04-01T00:00:00"),
+        _build("cancelled", "2026-05-01T00:00:00", state="cancelled"),
+        _build("cancelling", "2026-06-01T00:00:00", state="cancelling"),
+        _build("failed", "2026-07-01T00:00:00", state="failed"),
+    ])
+    gi.dataset_states.update({"ds-errored": "error", "ds-paused": "paused"})
+    gi.deleted_datasets.add("ds-deleted")
+    assert _picked(gi) == "good"
+
+
+def test_build_judges_the_latest_invocation_not_older_ones_or_other_datasets():
+    # an older failed invocation in the same history (re-invoked after a failure)
+    # does not count against the build
+    history = _build("rerun", "2026-02-01T00:00:00")
+    history["invocations"].insert(0, {
+        "id": "inv-first-try", "create_time": "2026-01-15T00:00:00", "state": "failed", "outputs": {},
+    })
+    gi = _FakeGi([], {}, histories=[_build("older", "2026-01-01T00:00:00"), history])
+    assert _picked(gi) == "rerun"
+
+
+def test_build_takes_a_newer_running_build_over_an_older_good_one():
+    gi = _FakeGi([], {}, histories=[_build("good", "2026-01-01T00:00:00"), _build("running", "2026-02-01T00:00:00")])
+    gi.dataset_states["ds-running"] = "running"
+    assert _picked(gi) == "running"
+
+
+def test_history_without_invocation_is_not_a_build():
+    never_invoked = {"id": "empty", "create_time": "2026-02-01T00:00:00", "invocations": []}
+    gi = _FakeGi([], {}, histories=[_build("good", "2026-01-01T00:00:00"), never_invoked])
+    assert _picked(gi) == "good"
+    with pytest.raises(gburls.BuildUnavailable):
+        gburls.build_invocation(_FakeGi([], {}, histories=[never_invoked]), "idc-motus_db_versioned-3.1.0")
+
+
+def test_build_raises_when_every_build_failed():
+    gi = _FakeGi([], {}, histories=[
+        _build("a", "2026-01-01T00:00:00"),
+        _build("b", "2026-02-01T00:00:00", state="failed"),
+    ])
+    gi.dataset_states["ds-a"] = "failed_metadata"
+    with pytest.raises(gburls.BuildUnavailable):
+        gburls.build_invocation(gi, "idc-motus_db_versioned-3.1.0")
+
+
+def test_bundles_from_history_refuses_a_build_without_bundle_outputs_yet():
+    gi = _FakeGi([], {}, histories=[_build("starting", "2026-02-01T00:00:00", state="new", bundle=False)])
+    with pytest.raises(gburls.BuildUnavailable, match="no bundle outputs yet"):
+        gburls.bundles_from_history(gi, "idc-motus_db_versioned-3.1.0")
+
+
+def test_import_fails_when_no_build_can_be_imported(tmp_path, monkeypatch, capsys):
+    gi = _FakeGi([], {}, histories=[_build("a", "2026-01-01T00:00:00", state="failed")])
+    monkeypatch.setattr(imp, "_galaxy_connection", lambda args: gi)
+    rc = imp.main([
+        "--history-name", "idc-motus_db_versioned-3.1.0",
+        "--dm", "motus_db_versioned", "--version", "3.1.0",
+        "--cvmfs-root", str(tmp_path), "--dry-run",
+    ])
+    assert rc == 1
+    assert "holds a build that has not failed" in capsys.readouterr().err
+
+
+def test_import_uses_the_older_build_when_the_newer_one_failed(tmp_path, monkeypatch, capsys):
+    gi = _FakeGi([], {}, histories=[_build("good", "2026-01-01T00:00:00"), _build("bad", "2026-02-01T00:00:00")])
+    gi.dataset_states["ds-bad"] = "error"
+    monkeypatch.setattr(imp, "_galaxy_connection", lambda args: gi)
+    rc = imp.main([
+        "--galaxy-url", "https://test.galaxyproject.org",
+        "--history-name", "idc-motus_db_versioned-3.1.0",
+        "--dm", "motus_db_versioned", "--version", "3.1.0",
+        "--cvmfs-root", str(tmp_path), "--dry-run",
+    ])
+    assert rc == 0
+    out = capsys.readouterr().out
+    assert "ds-good" in out and "ds-bad" not in out
+
+
+def test_import_refuses_deleted_bundles(tmp_path):
+    gi = _FakeGi([], {}, histories=[_build("a", "2026-01-01T00:00:00")])
+    gi.deleted_datasets.add("ds-a")
+    with pytest.raises(SystemExit, match="deleted"):
+        imp.check_bundles_ready(gi, {"motus_db_versioned_bundle": "ds-a"})
 
 
 def test_history_resolution_returns_empty_when_history_missing():
@@ -567,16 +691,6 @@ def test_import_skips_gracefully_when_no_bundles(tmp_path, capsys):
     ])
     assert rc == 0
     assert "skipping" in capsys.readouterr().out
-
-
-def test_history_resolution_falls_back_to_dataset_scan_without_invocation():
-    gi = _FakeGi(
-        invocations=[],
-        invocation_detail={},
-        datasets=[{"id": "d0"}, {"id": "d1"}],
-    )
-    result = gburls.bundles_from_history(gi, "idc-motus_db_versioned-3.1.0")
-    assert list(result.values()) == ["d0", "d1"]
 
 
 def test_import_dry_run_and_idempotency(tmp_path, capsys):
