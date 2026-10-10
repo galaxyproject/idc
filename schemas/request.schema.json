@@ -16786,6 +16786,43 @@
       "title": "DynamicModelForTool",
       "type": "object"
     },
+    "params__rplanel__data_manager_defense_finder__defense_finder_models_fetcher_data_manager__2.0.0+galaxy2": {
+      "additionalProperties": false,
+      "properties": {
+        "model_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The available versions can be found at : https://github.com/mdmparis/defense-finder-models/releases",
+          "gx_area": false,
+          "gx_type": "gx_text",
+          "title": "Defense finder models version"
+        },
+        "soft_compatibility_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Enter the list of defenseFinder software versions that are compatible with the current model (e.g., 1.2.0,1.3.0,2.0.0). Separate multiple versions with commas if required.",
+          "gx_area": false,
+          "gx_type": "gx_text",
+          "title": "List of defenseFinder versions compatibility"
+        }
+      },
+      "title": "DynamicModelForTool",
+      "type": "object"
+    },
     "params__scottx611x__data_manager_fetch_gene_annotation__gene_annotation_fetcher_data_manager__1.0.2": {
       "additionalProperties": false,
       "properties": {
@@ -18612,6 +18649,25 @@
         "properties": {
           "params": {
             "$ref": "#/$defs/params__rnateam__data_manager_sortmerna_database_downloader__data_manager_sortmerna_download__2.1b.1"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "tool_id": {
+            "const": "toolshed.g2.bx.psu.edu/repos/rplanel/data_manager_defense_finder/defense_finder_models_fetcher_data_manager/2.0.0+galaxy2"
+          }
+        },
+        "required": [
+          "tool_id"
+        ]
+      },
+      "then": {
+        "properties": {
+          "params": {
+            "$ref": "#/$defs/params__rplanel__data_manager_defense_finder__defense_finder_models_fetcher_data_manager__2.0.0+galaxy2"
           }
         }
       }
