@@ -295,6 +295,67 @@ def flatten_params(params: dict, prefix: str = "") -> dict:
     return out
 
 
+def _resolve(node: dict, root: dict) -> dict:
+    """``node`` itself, or what its local ``$ref`` points at."""
+    ref = node.get("$ref")
+    if not isinstance(ref, str) or not ref.startswith("#/"):
+        return node
+    target: Any = root
+    for part in ref[2:].split("/"):
+        target = target[part.replace("~1", "/").replace("~0", "~")]
+    return target
+
+
+def _default_case(conditional: dict, discriminator: dict) -> str:
+    """The case Galaxy's tool form starts a conditional on: its selected option, else the first."""
+    options = conditional.get("gx_options") or []
+    for option in options:
+        if option.get("selected"):
+            return option["value"]
+    return options[0]["value"] if options else next(iter(discriminator["mapping"]))
+
+
+def split_params(schema: dict, params: dict, root: Optional[dict] = None, prefix: str = "") -> tuple[dict, dict]:
+    """Split ``params`` into a workflow step's ``tool_state`` and its connectable ``a|b`` values.
+
+    A workflow input can't be connected to a conditional's selector or to a
+    repeat, and Galaxy fails to import a step that has a connection while one
+    of its conditionals has no state. So every conditional's case goes into the
+    state, the requested one or else the tool's default, and so do repeats;
+    every other value stays connectable.
+    """
+    root = schema if root is None else root
+    state: dict = {}
+    inputs: dict = {}
+    properties = schema.get("properties", {})
+    for name, prop in properties.items():
+        given = params.get(name)
+        gx_type = prop.get("gx_type")
+        if gx_type == "gx_conditional":
+            discriminator = _resolve(prop, root)["discriminator"]
+            selector = discriminator["propertyName"]
+            given = given or {}
+            case = given.get(selector, _default_case(prop, discriminator))
+            branch = _resolve({"$ref": discriminator["mapping"][case]}, root)
+            rest = {k: v for k, v in given.items() if k != selector}
+            branch_state, branch_inputs = split_params(branch, rest, root, f"{prefix}{name}|")
+            state[name] = {selector: case, **branch_state}
+            inputs.update(branch_inputs)
+        elif gx_type == "gx_section":
+            section_state, section_inputs = split_params(_resolve(prop, root), given or {}, root, f"{prefix}{name}|")
+            if section_state:
+                state[name] = section_state
+            inputs.update(section_inputs)
+        elif name in params:
+            if gx_type == "gx_repeat":
+                state[name] = given
+            else:
+                inputs[f"{prefix}{name}"] = given
+    for name in params.keys() - properties.keys():
+        inputs.update(flatten_params({name: params[name]}, prefix))
+    return state, inputs
+
+
 def _allowed_values(subschema: dict, root: dict) -> list | None:
     """The literal values a schema admits, if it is a plain enumeration (one level of local $ref resolved)."""
     if "enum" in subschema:

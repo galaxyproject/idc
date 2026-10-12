@@ -144,7 +144,8 @@ already exists. It needs no secrets, so it runs on pull requests from forks.
 `build.yml` runs on pushes to `main` that change `data-managers/`, and can be
 started by hand for a single request. It drops requests whose data test already
 serves, and for a chained request whose upstream is already served it uses that
-entry instead of building it again. Each data manager runs in bundle mode and
+entry instead of building it again (unless started by hand with
+`rebuild_upstream`). Each data manager runs in bundle mode and
 writes the data together with `_gx_data_bundle_index.json`, which describes the
 new rows with paths relative to the bundle. In a chained build, the upstream
 step's bundle goes straight into the downstream data manager. planemo returns

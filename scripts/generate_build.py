@@ -11,8 +11,9 @@ CVMFS.
 Build parameters are **exposed as workflow inputs** and connected to the tool
 parameters (a ``string`` input feeds a ``select`` parameter just fine - see
 Galaxy's ``lib/galaxy_test/workflow/multiple_text.gxwf.yml``); their concrete
-values live in the generated ``job.yml``. Only the structural selector of a
-chained tool (e.g. samestr's ``db_source.db_type``) is baked into ``tool_state``.
+values live in the generated ``job.yml``. What can't be connected is baked into
+``tool_state``, using the data manager's parameter schema: the case of every
+conditional (requested, or the tool's default) and repeats.
 
 Chained builds (a request with ``depends_on``) become multi-step workflows: the
 upstream data manager runs first (also in bundle mode) and its ``out_file``
@@ -44,12 +45,12 @@ from request_models import (  # noqa: E402
     iter_request_files,
     version_id,
 )
-from tool_schemas import flatten_params  # noqa: E402
+from tool_schemas import SchemaResolver, SchemaSource, split_params  # noqa: E402
 
 # How to wire an upstream bundle into a downstream (chained) data manager. Keyed
 # on (downstream data manager, upstream data table). ``tool_state`` (optional)
-# selects the branch of the downstream tool's conditional, e.g. ``db_type``;
-# ``connect_param`` is the downstream input parameter (gxformat2 ``|`` notation)
+# selects a non-default branch of the downstream tool's conditional, e.g.
+# ``db_type``; ``connect_param`` is the downstream input parameter (gxformat2 ``|`` notation)
 # that receives the upstream step's bundle output.
 CHAIN_WIRING = {
     ("samestr_db", "metaphlan_database_versioned"): {
@@ -91,7 +92,8 @@ def load_request(path: Path) -> tuple[Request, str, str]:
 class WorkflowBuilder:
     """Accumulates gxformat2 steps, workflow inputs, and the planemo job."""
 
-    def __init__(self) -> None:
+    def __init__(self, tool_schemas: SchemaResolver) -> None:
+        self.tool_schemas = tool_schemas
         self.steps: dict = {}
         self.inputs: dict = {}
         self.outputs: dict = {}
@@ -107,14 +109,15 @@ class WorkflowBuilder:
         connections: dict | None = None,
         input_prefix: str = "",
     ) -> None:
-        tool_state = dict(baked_state or {})
+        tool_state, connectable = split_params(
+            self.tool_schemas(tool_id), deep_merge(params, baked_state or {})
+        )
         tool_state["__data_manager_mode"] = "bundle"
 
         in_map: dict = {}
-        # Each build parameter -> a workflow input (string), connected to the
-        # tool parameter and given its value in the job file. Request files
-        # nest params like the tool form; workflows connect by a|b paths.
-        for param_path, value in flatten_params(params).items():
+        # Each other build parameter -> a workflow input (string), connected
+        # to the tool parameter and given its value in the job file.
+        for param_path, value in connectable.items():
             input_name = (input_prefix + param_path).replace("|", "_")
             self.inputs[input_name] = {"type": "string"}
             self.job[input_name] = value
@@ -156,7 +159,13 @@ def _resolve_request_path(dm: str, version: str) -> Path:
     )
 
 
-def build(request: Request, dm: str, version: str, reference_galaxy: str | None = None) -> tuple[dict, dict]:
+def build(
+    request: Request,
+    dm: str,
+    version: str,
+    reference_galaxy: str | None = None,
+    tool_schemas: SchemaResolver | None = None,
+) -> tuple[dict, dict]:
     """Return (gxformat2 workflow dict, planemo job dict) for one request.
 
     For a chained request (``depends_on``): if ``reference_galaxy`` is given and
@@ -165,10 +174,13 @@ def build(request: Request, dm: str, version: str, reference_galaxy: str | None 
     against the upstream request's pinned ``sha256``, if any (needs an admin key
     in ``$GALAXY_API_KEY``). Otherwise the upstream data manager is added as a
     step and rebuilt.
+
+    ``tool_schemas`` resolves a tool GUID to its parameter schema (default: the
+    committed schemas, then the Tool Shed).
     """
     from check_data_exists import resolve_existing_value
 
-    wb = WorkflowBuilder()
+    wb = WorkflowBuilder(tool_schemas or SchemaSource())
 
     connections: dict = {}
     baked_state: dict = {}

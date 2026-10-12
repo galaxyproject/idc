@@ -317,12 +317,44 @@ def test_chained_build_references_existing_upstream(monkeypatch):
 
 def test_genome_index_chain_fetches_the_genome_first():
     request, dm, version = gb.load_request(SEEDS["rnastar"])
-    workflow, _ = gb.build(request, dm, version)
+    workflow, job = gb.build(request, dm, version, tool_schemas=fixture_schema)
     assert list(workflow["steps"]) == ["all_fasta", "rnastar_index2x_versioned"]
+
+    # Conditional cases and repeats can't be connected: they are the step's state.
+    fetch = workflow["steps"]["all_fasta"]
+    chromosomes = [f"chr{c}" for c in [*range(1, 23), "X", "Y", "M"]]
+    assert fetch["tool_state"] == {
+        "dbkey_source": {"dbkey_source_selector": "existing"},
+        "reference_source": {"reference_source_selector": "ucsc"},
+        "sorting": {"sort_selector": "custom", "sequence_identifiers": [{"identifier": c} for c in chromosomes]},
+        "__data_manager_mode": "bundle",
+    }
+    assert sorted(fetch["in"]) == [
+        "dbkey_source|dbkey",
+        "reference_source|requested_dbkey",
+        "sequence_id",
+        "sequence_name",
+        "sorting|handle_not_listed_selector",
+    ]
+    assert job["all_fasta_sequence_id"] == "hg38canon"
+
+    # STAR's request sets no params, so its conditionals take the tool's defaults.
     star = workflow["steps"]["rnastar_index2x_versioned"]
-    assert star["tool_state"] == {"__data_manager_mode": "bundle"}  # wiring without tool_state
+    assert star["tool_state"] == {
+        "GTFconditional": {"GTFselect": "withoutGTF"},
+        "advanced_options": {"advanced_options_selector": "default"},
+        "__data_manager_mode": "bundle",
+    }
     assert star["in"]["all_fasta_source"]["source"] == "all_fasta/out_file"
     gb.validate_workflow(workflow)
+
+
+def test_chain_wiring_picks_the_branch_the_upstream_feeds():
+    request, dm, version = gb.load_request(SEEDS["samestr"])
+    workflow, _ = gb.build(request, dm, version, tool_schemas=fixture_schema)
+    samestr = workflow["steps"]["samestr_db"]
+    assert samestr["tool_state"]["db_source"] == {"db_type": "metaphlan"}
+    assert samestr["in"]["db_source|database"]["source"] == "metaphlan_database_versioned/out_file"
 
 
 def test_served_upstream_is_referenced_only_if_its_files_match_the_pin(monkeypatch):
