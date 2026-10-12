@@ -59,13 +59,21 @@ params: {}
 ```
 
 If the genome is already served (and matches its `sha256`, if pinned), the
-build indexes that copy; otherwise it's fetched first, in the same workflow.
+build indexes that copy; otherwise it's fetched first, in the same workflow. A
+maintainer can have the genome fetched again anyway by running `build.yml` by
+hand with `rebuild_upstream` set:
+
+```bash
+gh workflow run build.yml --repo galaxyproject/idc \
+  -f request=data-managers/rnastar_index2x_versioned/hg38canon.yaml -f rebuild_upstream=true
+```
 
 Each indexer needs a `CHAIN_WIRING` entry in
 [`scripts/generate_build.py`](https://github.com/galaxyproject/idc/blob/main/scripts/generate_build.py)
 the first time it's requested, naming the input that takes the `all_fasta`
-entry. Most indexers have no conditional to set, so the entry needs no
-`tool_state`. For STAR it is
+entry. The build sets every conditional the request doesn't to the tool's
+default, so the entry needs a `tool_state` only when the genome goes in on
+another branch. For STAR it is
 
 ```python
 ("rnastar_index2x_versioned", "all_fasta"): {

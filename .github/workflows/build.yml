@@ -20,6 +20,11 @@ on:
         description: "Specific request file to build (default: all requests changed in the push)"
         required: false
         default: ""
+      rebuild_upstream:
+        description: "Chained requests: rebuild the upstream data in the same workflow, even if it is already served"
+        type: boolean
+        required: false
+        default: false
 
 concurrency:
   group: idc-build
@@ -69,15 +74,16 @@ jobs:
         run: |
           set -euo pipefail
           if [ ! -s requests.txt ]; then echo "Nothing to build."; exit 0; fi
+          # --reference-galaxy: if a chained request's upstream database already
+          # exists on the Galaxy, reference it instead of rebuilding it.
+          reference=(--reference-galaxy https://test.galaxyproject.org)
+          if [ "${{ github.event.inputs.rebuild_upstream }}" = "true" ]; then reference=(); fi
           while read -r req; do
             [ -n "$req" ] || continue
             dm=$(basename "$(dirname "$req")")
             version=$(basename "$req"); version="${version%.*}"
             echo "::group::Building ${dm}/${version}"
-            # --reference-galaxy: if a chained request's upstream database already
-            # exists on the Galaxy, reference it instead of rebuilding it.
-            python scripts/generate_build.py "$req" --outdir build \
-              --reference-galaxy https://test.galaxyproject.org
+            python scripts/generate_build.py "$req" --outdir build "${reference[@]}"
             b="build/${dm}/${version}"
             # --no_use_cache: a rebuild must actually re-run the data manager;
             # planemo defaults to Galaxy's job cache, which would hand back a
