@@ -28,13 +28,14 @@ Exit code is non-zero if any file fails validation.
 import argparse
 import sys
 from pathlib import Path
-from typing import Optional
+from typing import Annotated, Optional
 
 import yaml
 from pydantic import (
     BaseModel,
     ConfigDict,
     Field,
+    StringConstraints,
     field_validator,
 )
 
@@ -93,6 +94,18 @@ class Request(BaseModel):
         description=(
             "Chained builds: upstream data table name -> the upstream version this build is derived from. "
             "A request file must exist at data-managers/<table>/<version>.yaml."
+        ),
+    )
+
+    # The entry's files as the data manager writes them. An entry that is
+    # already served under this request's name only counts as this data if its
+    # files match (check_data_exists.py).
+    sha256: Optional[dict[str, Annotated[str, StringConstraints(pattern=r"^[0-9a-f]{64}$")]]] = Field(
+        default=None,
+        description=(
+            "Expected SHA-256 of the entry's files, keyed by file name as Galaxy lists them "
+            "(GET /api/tool_data/<table>/fields/<value>). A served entry with the same name but "
+            "other content is an error rather than this data."
         ),
     )
 

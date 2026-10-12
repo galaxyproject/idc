@@ -203,7 +203,12 @@ ls data-managers/<upstream_table>/                                        # upst
 - No upstream request file: add it too, in the same PR, following steps 1 to 4
   for the upstream (it must pass the existence check on its own, unless it's
   already served, in which case its request file still has to exist but the
-  build will reference the served entry instead of rebuilding it).
+  build will reference the served entry instead of rebuilding it). An upstream
+  served from outside the IDC needs a recipe that reproduces it and a `sha256`
+  pin of its files, so the build references it only if the content matches
+  (`data-managers/all_fasta/hg38canon.yaml` is the example). Computing the
+  served copy's checksum needs an admin key; if the user doesn't have one, say
+  a maintainer has to confirm it.
 - When the upstream is new in the same PR, expect it to be built twice on test:
   once for its own request and once as the first step of the chained workflow
   (neither exists on test when the build runs). The publish imports it only
@@ -214,8 +219,7 @@ Genomes and indexes are chains too: a genome is a request in `all_fasta` for
 the `data_manager_fetch_genome_dbkeys_all_fasta` data manager, named after the
 dbkey, and each index is a request in the index's table with
 `depends_on: {all_fasta: <dbkey>}`. Every indexer needs a `CHAIN_WIRING` entry
-the first time (for Bowtie2, `tool_state: {}` and
-`connect_param: all_fasta_source`); `docs/genome-indexing.md` has the example
+the first time (for STAR, just `connect_param: all_fasta_source`); `docs/genome-indexing.md` has the example
 files.
 
 ## 6. Write the file

@@ -1,0 +1,635 @@
+{
+    "$defs": {
+        "BatchDataDceInstance": {
+            "additionalProperties": false,
+            "properties": {
+                "src": {
+                    "const": "dce",
+                    "title": "Src",
+                    "type": "string"
+                },
+                "id": {
+                    "title": "Id",
+                    "type": "string"
+                },
+                "map_over_type": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "Map Over Type"
+                }
+            },
+            "required": [
+                "src",
+                "id"
+            ],
+            "title": "BatchDataDceInstance",
+            "type": "object"
+        },
+        "BatchDataHdcaInstance": {
+            "additionalProperties": false,
+            "properties": {
+                "src": {
+                    "const": "hdca",
+                    "title": "Src",
+                    "type": "string"
+                },
+                "id": {
+                    "title": "Id",
+                    "type": "string"
+                },
+                "map_over_type": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "Map Over Type"
+                }
+            },
+            "required": [
+                "src",
+                "id"
+            ],
+            "title": "BatchDataHdcaInstance",
+            "type": "object"
+        },
+        "BatchDataNonCollectionInstance": {
+            "additionalProperties": false,
+            "properties": {
+                "src": {
+                    "enum": [
+                        "hda",
+                        "ldda"
+                    ],
+                    "title": "Src",
+                    "type": "string"
+                },
+                "id": {
+                    "title": "Id",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "src",
+                "id"
+            ],
+            "title": "BatchDataNonCollectionInstance",
+            "type": "object"
+        },
+        "BatchRequest": {
+            "additionalProperties": false,
+            "properties": {
+                "__class__": {
+                    "const": "Batch",
+                    "title": "Class",
+                    "type": "string"
+                },
+                "values": {
+                    "items": {
+                        "discriminator": {
+                            "mapping": {
+                                "dce": "#/$defs/BatchDataDceInstance",
+                                "hda": "#/$defs/BatchDataNonCollectionInstance",
+                                "hdca": "#/$defs/BatchDataHdcaInstance",
+                                "ldda": "#/$defs/BatchDataNonCollectionInstance"
+                            },
+                            "propertyName": "src"
+                        },
+                        "oneOf": [
+                            {
+                                "$ref": "#/$defs/BatchDataHdcaInstance"
+                            },
+                            {
+                                "$ref": "#/$defs/BatchDataDceInstance"
+                            },
+                            {
+                                "$ref": "#/$defs/BatchDataNonCollectionInstance"
+                            }
+                        ]
+                    },
+                    "title": "Values",
+                    "type": "array"
+                },
+                "linked": {
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "Linked"
+                }
+            },
+            "required": [
+                "__class__",
+                "values"
+            ],
+            "title": "BatchRequest",
+            "type": "object"
+        },
+        "DataRequestDce": {
+            "additionalProperties": false,
+            "properties": {
+                "src": {
+                    "const": "dce",
+                    "default": "dce",
+                    "title": "Src",
+                    "type": "string"
+                },
+                "id": {
+                    "title": "Id",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "title": "DataRequestDce",
+            "type": "object"
+        },
+        "DataRequestHda": {
+            "additionalProperties": false,
+            "properties": {
+                "src": {
+                    "const": "hda",
+                    "default": "hda",
+                    "title": "Src",
+                    "type": "string"
+                },
+                "id": {
+                    "title": "Id",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "title": "DataRequestHda",
+            "type": "object"
+        },
+        "DataRequestLd": {
+            "additionalProperties": false,
+            "properties": {
+                "src": {
+                    "const": "ld",
+                    "deprecated": true,
+                    "title": "Src",
+                    "type": "string"
+                },
+                "id": {
+                    "title": "Id",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "src",
+                "id"
+            ],
+            "title": "DataRequestLd",
+            "type": "object"
+        },
+        "DataRequestLdda": {
+            "additionalProperties": false,
+            "properties": {
+                "src": {
+                    "const": "ldda",
+                    "default": "ldda",
+                    "title": "Src",
+                    "type": "string"
+                },
+                "id": {
+                    "title": "Id",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "title": "DataRequestLdda",
+            "type": "object"
+        },
+        "DataRequestUri": {
+            "additionalProperties": false,
+            "properties": {
+                "url": {
+                    "title": "Url",
+                    "type": "string"
+                },
+                "name": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "Name"
+                },
+                "ext": {
+                    "title": "Ext",
+                    "type": "string"
+                },
+                "dbkey": {
+                    "default": "?",
+                    "title": "Dbkey",
+                    "type": "string"
+                },
+                "deferred": {
+                    "default": false,
+                    "title": "Deferred",
+                    "type": "boolean"
+                },
+                "created_from_basename": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "Created From Basename"
+                },
+                "info": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "Info"
+                },
+                "tags": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "Tags"
+                },
+                "hashes": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "$ref": "#/$defs/FileHash"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "Hashes"
+                },
+                "space_to_tab": {
+                    "default": false,
+                    "title": "Space To Tab",
+                    "type": "boolean"
+                },
+                "to_posix_lines": {
+                    "default": false,
+                    "title": "To Posix Lines",
+                    "type": "boolean"
+                },
+                "src": {
+                    "const": "url",
+                    "default": "url",
+                    "title": "Src",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "url",
+                "ext"
+            ],
+            "title": "DataRequestUri",
+            "type": "object"
+        },
+        "FileHash": {
+            "additionalProperties": false,
+            "properties": {
+                "hash_function": {
+                    "enum": [
+                        "MD5",
+                        "SHA-1",
+                        "SHA-256",
+                        "SHA-512"
+                    ],
+                    "title": "Hash Function",
+                    "type": "string"
+                },
+                "hash_value": {
+                    "title": "Hash Value",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "hash_function",
+                "hash_value"
+            ],
+            "title": "FileHash",
+            "type": "object"
+        },
+        "When_GTFselect___absent": {
+            "additionalProperties": false,
+            "properties": {},
+            "title": "When GTFselect is absent",
+            "type": "object"
+        },
+        "When_GTFselect_withGTF": {
+            "additionalProperties": false,
+            "properties": {
+                "GTFselect": {
+                    "const": "withGTF",
+                    "title": "Gtfselect",
+                    "type": "string"
+                },
+                "sjdbGTFfile": {
+                    "anyOf": [
+                        {
+                            "discriminator": {
+                                "mapping": {
+                                    "dce": "#/$defs/DataRequestDce",
+                                    "hda": "#/$defs/DataRequestHda",
+                                    "ld": "#/$defs/DataRequestLd",
+                                    "ldda": "#/$defs/DataRequestLdda",
+                                    "url": "#/$defs/DataRequestUri"
+                                },
+                                "propertyName": "src"
+                            },
+                            "oneOf": [
+                                {
+                                    "$ref": "#/$defs/DataRequestHda"
+                                },
+                                {
+                                    "$ref": "#/$defs/DataRequestLdda"
+                                },
+                                {
+                                    "$ref": "#/$defs/DataRequestLd"
+                                },
+                                {
+                                    "$ref": "#/$defs/DataRequestDce"
+                                },
+                                {
+                                    "$ref": "#/$defs/DataRequestUri"
+                                }
+                            ]
+                        },
+                        {
+                            "$ref": "#/$defs/BatchRequest"
+                        }
+                    ],
+                    "description": "Exon junction information for mapping splices",
+                    "gx_extensions": [
+                        "data"
+                    ],
+                    "gx_multiple": false,
+                    "gx_type": "gx_data",
+                    "title": "Gene model (gff3,gtf) file for splice junctions"
+                },
+                "sjdbOverhang": {
+                    "default": null,
+                    "description": "Used in constructing the splice junctions database. Ideal value is ReadLength-1",
+                    "gx_min": 1,
+                    "gx_type": "gx_integer",
+                    "minimum": 1,
+                    "title": "Length of the genomic sequence around annotated junctions",
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "sjdbGTFfile",
+                "GTFselect"
+            ],
+            "title": "When GTFselect = withGTF",
+            "type": "object"
+        },
+        "When_GTFselect_withoutGTF": {
+            "additionalProperties": false,
+            "properties": {
+                "GTFselect": {
+                    "const": "withoutGTF",
+                    "title": "Gtfselect",
+                    "type": "string"
+                }
+            },
+            "title": "When GTFselect = withoutGTF",
+            "type": "object",
+            "required": [
+                "GTFselect"
+            ]
+        },
+        "When_advanced_options_selector___absent": {
+            "additionalProperties": false,
+            "properties": {},
+            "title": "When advanced_options_selector is absent",
+            "type": "object"
+        },
+        "When_advanced_options_selector_advanced": {
+            "additionalProperties": false,
+            "properties": {
+                "advanced_options_selector": {
+                    "const": "advanced",
+                    "title": "Advanced Options Selector",
+                    "type": "string"
+                },
+                "genomeSAindexNbases": {
+                    "default": null,
+                    "description": "Typically between 10 and 15. Longer strings will use much more memory, but allow                         faster searches. For small genomes, the parameter \u2013genomeSAindexNbases must be scaled                         down to min(14, log2(GenomeLength)/2 - 1). For example, for 1 megaBase genome, this is                         equal to 9, for 100 kiloBase genome, this is equal to 7.",
+                    "gx_min": 1,
+                    "gx_type": "gx_integer",
+                    "minimum": 1,
+                    "title": "Length (bases) of the SA pre-indexing string",
+                    "type": "integer"
+                },
+                "genomeChrBinNbits": {
+                    "default": null,
+                    "description": "Each chromosome will occupy an integer number of bins. For a genome with large number                         of contigs, it is recommended to scale this parameter as min(18,                         log2[max(GenomeLength/NumberOfReferences,ReadLength)]). For example, for 3 gigaBase                         genome with 100,000 chromosomes/scaffolds, this is equal to 15.",
+                    "gx_min": 1,
+                    "gx_type": "gx_integer",
+                    "minimum": 1,
+                    "title": "Log2(chrBin), where chrBin is the size of the bins for genome storage",
+                    "type": "integer"
+                },
+                "genomeSAsparseD": {
+                    "default": null,
+                    "description": "The distance between indices: use bigger numbers to decrease needed RAM at the cost of                         mapping speed reduction",
+                    "gx_min": 1,
+                    "gx_type": "gx_integer",
+                    "minimum": 1,
+                    "title": "Suffix array sparsity",
+                    "type": "integer"
+                }
+            },
+            "title": "When advanced_options_selector = advanced",
+            "type": "object",
+            "required": [
+                "advanced_options_selector"
+            ]
+        },
+        "When_advanced_options_selector_default": {
+            "additionalProperties": false,
+            "properties": {
+                "advanced_options_selector": {
+                    "const": "default",
+                    "title": "Advanced Options Selector",
+                    "type": "string"
+                }
+            },
+            "title": "When advanced_options_selector = default",
+            "type": "object",
+            "required": [
+                "advanced_options_selector"
+            ]
+        },
+        "galaxy__tool_util_models__parameters__ConditionalParameterModel__pydantic_template___locals___ConditionalType__1": {
+            "oneOf": [
+                {
+                    "$ref": "#/$defs/When_GTFselect_withGTF"
+                },
+                {
+                    "$ref": "#/$defs/When_GTFselect_withoutGTF"
+                },
+                {
+                    "$ref": "#/$defs/When_GTFselect___absent"
+                }
+            ],
+            "title": "ConditionalType",
+            "discriminator": {
+                "propertyName": "GTFselect",
+                "mapping": {
+                    "withGTF": "#/$defs/When_GTFselect_withGTF",
+                    "withoutGTF": "#/$defs/When_GTFselect_withoutGTF"
+                }
+            }
+        },
+        "galaxy__tool_util_models__parameters__ConditionalParameterModel__pydantic_template___locals___ConditionalType__2": {
+            "oneOf": [
+                {
+                    "$ref": "#/$defs/When_advanced_options_selector_default"
+                },
+                {
+                    "$ref": "#/$defs/When_advanced_options_selector___absent"
+                },
+                {
+                    "$ref": "#/$defs/When_advanced_options_selector_advanced"
+                }
+            ],
+            "title": "ConditionalType",
+            "discriminator": {
+                "propertyName": "advanced_options_selector",
+                "mapping": {
+                    "default": "#/$defs/When_advanced_options_selector_default",
+                    "advanced": "#/$defs/When_advanced_options_selector_advanced"
+                }
+            }
+        }
+    },
+    "additionalProperties": false,
+    "properties": {
+        "all_fasta_source": {
+            "default": null,
+            "gx_multiple": false,
+            "gx_type": "gx_select",
+            "title": "Source FASTA Sequence",
+            "type": "string"
+        },
+        "name": {
+            "anyOf": [
+                {
+                    "type": "string"
+                },
+                {
+                    "type": "null"
+                }
+            ],
+            "default": null,
+            "description": "By using different settings, you may have several indices per reference genome. Give an appropriate description to the index to distinguish between indices",
+            "gx_area": false,
+            "gx_type": "gx_text",
+            "title": "Informative name for sequence index"
+        },
+        "GTFconditional": {
+            "$ref": "#/$defs/galaxy__tool_util_models__parameters__ConditionalParameterModel__pydantic_template___locals___ConditionalType__1",
+            "default": null,
+            "gx_options": [
+                {
+                    "label": "use genome reference without builtin gene-model",
+                    "selected": false,
+                    "value": "withoutGTF"
+                },
+                {
+                    "label": "use genome reference with builtin gene-model",
+                    "selected": false,
+                    "value": "withGTF"
+                }
+            ],
+            "gx_test_help": "Must the index have been created WITH a GTF file (if not you can specify one afterward).",
+            "gx_test_label": "Reference genome with or without an annotation",
+            "gx_type": "gx_conditional"
+        },
+        "auto_sa_index_nbases": {
+            "default": null,
+            "description": "The value specified for --genomeSAindexNbases in advanced options will be ignored if this option is selected",
+            "gx_type": "gx_boolean",
+            "title": "Automatically calculate --genomeSAindexNbases",
+            "type": "boolean"
+        },
+        "auto_chr_bin_nbits": {
+            "default": null,
+            "description": "The value specified for --genomeChrBinNbits in advanced options will be ignored if this option is selected",
+            "gx_type": "gx_boolean",
+            "title": "Automatically calculate --genomeChrBinNbits",
+            "type": "boolean"
+        },
+        "advanced_options": {
+            "$ref": "#/$defs/galaxy__tool_util_models__parameters__ConditionalParameterModel__pydantic_template___locals___ConditionalType__2",
+            "default": null,
+            "gx_options": [
+                {
+                    "label": "Use default options",
+                    "selected": true,
+                    "value": "default"
+                },
+                {
+                    "label": "Set advanced options",
+                    "selected": false,
+                    "value": "advanced"
+                }
+            ],
+            "gx_test_label": "Advanced options",
+            "gx_type": "gx_conditional"
+        }
+    },
+    "title": "DynamicModelForTool",
+    "type": "object",
+    "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

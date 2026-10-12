@@ -1,0 +1,49 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/galaxyproject/idc/main/schemas/request.schema.json
+# hg38 restricted to the canonical chromosomes, in karyotypic order. Already
+# served from /cvmfs/data.galaxyproject.org/byhand/hg38/seq/hg38canon.fa; this
+# recipe reproduces that file byte for byte (sha256 below), so the build checks
+# the served copy against it instead of rebuilding.
+tool_id: toolshed.g2.bx.psu.edu/repos/devteam/data_manager_fetch_genome_dbkeys_all_fasta/data_manager_fetch_genome_all_fasta_dbkey/0.0.3
+data_tables:
+  - all_fasta
+params:
+  dbkey_source:
+    dbkey_source_selector: existing
+    dbkey: hg38
+  reference_source:
+    reference_source_selector: ucsc   # fetches hg38.chromFa.tar.gz (2014-01-24)
+    requested_dbkey: hg38
+  sequence_id: hg38canon
+  sequence_name: "Human (Homo sapiens) (b38): hg38 Canonical"
+  sorting:
+    sort_selector: custom
+    sequence_identifiers:
+      - identifier: chr1
+      - identifier: chr2
+      - identifier: chr3
+      - identifier: chr4
+      - identifier: chr5
+      - identifier: chr6
+      - identifier: chr7
+      - identifier: chr8
+      - identifier: chr9
+      - identifier: chr10
+      - identifier: chr11
+      - identifier: chr12
+      - identifier: chr13
+      - identifier: chr14
+      - identifier: chr15
+      - identifier: chr16
+      - identifier: chr17
+      - identifier: chr18
+      - identifier: chr19
+      - identifier: chr20
+      - identifier: chr21
+      - identifier: chr22
+      - identifier: chrX
+      - identifier: chrY
+      - identifier: chrM
+    handle_not_listed_selector: discard
+sha256:
+  hg38canon.fa: 87b0ea46eefe6158fcdb7343980c5c9ea31f681c99a9c96bf2f6cbc64b86b335
+description: Human hg38 (UCSC), canonical chromosomes chr1-22, X, Y, M only

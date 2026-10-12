@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/galaxyproject/idc/main/schemas/request.schema.json
+# STAR index of hg38canon. The genome is already served (all_fasta, from the
+# byhand CVMFS), so it has no request file and the build indexes that copy.
+tool_id: toolshed.g2.bx.psu.edu/repos/iuc/data_manager_star_index_builder/rna_star_index_builder_data_manager/2.7.4a+galaxy3
+data_tables:
+  - rnastar_index2x_versioned
+depends_on:
+  all_fasta: "hg38canon"
+description: STAR 2.7.4a index of human hg38, canonical chromosomes only (hg38canon)

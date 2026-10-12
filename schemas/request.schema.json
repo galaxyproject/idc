@@ -44,6 +44,23 @@
       "description": "Chained builds: upstream data table name -> the upstream version this build is derived from. A request file must exist at data-managers/<table>/<version>.yaml.",
       "title": "Depends On"
     },
+    "sha256": {
+      "anyOf": [
+        {
+          "additionalProperties": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Expected SHA-256 of the entry's files, keyed by file name as Galaxy lists them (GET /api/tool_data/<table>/fields/<value>). A served entry with the same name but other content is an error rather than this data.",
+      "title": "Sha256"
+    },
     "description": {
       "anyOf": [
         {
