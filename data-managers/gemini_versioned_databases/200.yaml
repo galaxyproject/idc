@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/galaxyproject/idc/main/schemas/request.schema.json
+# Full hg19 annotations with CADD and base-pair GERP.
+tool_id: toolshed.g2.bx.psu.edu/repos/iuc/data_manager_gemini_database_downloader/data_manager_gemini_download/0.20.1+galaxy1
+data_tables:
+  - gemini_versioned_databases
+params:
+  cadd: true
+  gerp_bp: true
+description: >-
+  Full GEMINI 0.20.1 hg19 annotations with CADD and base-pair GERP
+  (compatibility version 200).
+doi: 10.1371/journal.pcbi.1003153
