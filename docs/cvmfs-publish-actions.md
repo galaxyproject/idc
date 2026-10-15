@@ -16,7 +16,8 @@ unchanged as a fallback; both run the same `scripts/import_bundles.py`.
    `ok`.
 3. *Actions → Publish reference data to CVMFS → Run workflow* (from `main`).
    `publish: false` imports into a CVMFS transaction and then aborts it - a full
-   rehearsal that changes nothing on CVMFS.
+   rehearsal that changes nothing on CVMFS. One publish runs at a time: a second
+   dispatch waits for the first, and a third replaces the one waiting.
 4. The job SSHes to the Stratum 0 as the `idc` user, bootstraps a pinned Python
    (through a uv release pinned by version and SHA-256), installs
    `galaxy-maintenance-scripts`, opens a transaction, runs

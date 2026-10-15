@@ -23,6 +23,12 @@ on:
 permissions:
   contents: read
 
+# One publish at a time: a second run waits for the first instead of failing on
+# the Stratum 0's transaction lock.
+concurrency:
+  group: idc-publish
+  cancel-in-progress: false
+
 jobs:
   publish:
     runs-on:
