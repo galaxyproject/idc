@@ -31,6 +31,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from get_bundle_urls import (  # noqa: E402
     DEFAULT_BUNDLE_SUFFIX,
+    BuildUnavailable,
     bundle_dataset_ids_from_invocation,
     bundle_url,
     bundles_from_history,
@@ -87,8 +88,11 @@ def check_bundles_ready(gi, bundles: dict[str, str]) -> None:
     """
     not_ready = {}
     for label, dataset_id in bundles.items():
-        state = gi.datasets.show_dataset(dataset_id).get("state")
-        if state != "ok":
+        dataset = gi.datasets.show_dataset(dataset_id)
+        state = dataset.get("state")
+        if dataset.get("purged") or dataset.get("deleted"):
+            not_ready[label] = "purged" if dataset.get("purged") else "deleted"
+        elif state != "ok":
             not_ready[label] = state
     if not_ready:
         detail = ", ".join(f"{label} is {state!r}" for label, state in not_ready.items())
@@ -152,7 +156,11 @@ def main(argv: list[str] | None = None) -> int:
         print(f"Already imported: {args.dm}/{args.version} (record {marker} exists); skipping")
         return 0
 
-    bundles = resolve_bundles(args)
+    try:
+        bundles = resolve_bundles(args)
+    except BuildUnavailable as exc:
+        print(f"Cannot import {args.dm}/{args.version}: {exc}", file=sys.stderr)
+        return 1
     if not bundles:
         # Nothing to import - no build history/invocation (e.g. the build was
         # skipped because the data already exists). Not an error.

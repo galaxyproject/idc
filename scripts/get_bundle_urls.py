@@ -30,6 +30,12 @@ import sys
 EXT = "data_manager_json"
 DEFAULT_BUNDLE_SUFFIX = "_bundle"
 HDA_SRC = "hda"
+FAILED_DATASET_STATES = ("error", "failed_metadata", "paused")
+FAILED_INVOCATION_STATES = ("failed", "cancelled", "cancelling")
+
+
+class BuildUnavailable(Exception):
+    """A build history exists but holds no build that can be imported."""
 
 
 def bundle_url(galaxy_url: str, dataset_id: str) -> str:
@@ -59,30 +65,70 @@ def bundle_dataset_ids_from_invocation(
     return result
 
 
-def bundles_from_history(gi, history_name: str, suffix: str = DEFAULT_BUNDLE_SUFFIX) -> dict[str, str]:
-    """Resolve a build's bundles from its history name (the stable key shared by
-    the build and import stages).
+def latest_invocation(gi, history_id: str) -> dict | None:
+    """The newest workflow invocation in a history (full ``show_invocation``
+    dict), or None if the history has none."""
+    invocations = gi.invocations.get_invocations(history_id=history_id)
+    if not invocations:
+        return None
+    latest = max(invocations, key=lambda i: i.get("create_time", ""))
+    return gi.invocations.show_invocation(latest["id"])
 
-    Prefers the workflow **invocation** in that history: its named ``*_bundle``
-    outputs are exactly the bundles this build produced, so this is precise even
-    if the history also holds a re-run or a failed job's output. Falls back to
-    scanning ``data_manager_json`` datasets only if the history has no invocation.
+
+def build_failed(gi, invocation: dict, suffix: str = DEFAULT_BUNDLE_SUFFIX) -> bool:
+    """True if ``invocation`` can no longer deliver its bundles: it failed or was
+    cancelled, or one of its bundle outputs errored, was paused or was deleted."""
+    if invocation.get("state") in FAILED_INVOCATION_STATES:
+        return True
+    for dataset_id in bundle_dataset_ids_from_invocation(invocation, suffix=suffix).values():
+        dataset = gi.datasets.show_dataset(dataset_id)
+        if dataset.get("state") in FAILED_DATASET_STATES or dataset.get("deleted") or dataset.get("purged"):
+            return True
+    return False
+
+
+def build_invocation(gi, history_name: str, suffix: str = DEFAULT_BUNDLE_SUFFIX) -> dict | None:
+    """The build to import for ``history_name`` (``idc-<dm>-<version>``).
+
+    A build is the latest workflow invocation in a history of that name; a
+    rebuild creates another history with the same name, and a history without an
+    invocation holds no build. The newest build that has not failed is the one to
+    import, even if it is still running: the import then refuses its bundles
+    until they are ``ok``. Returns None if no history of that name exists (the
+    build was skipped because the data already exists) and raises
+    BuildUnavailable if there are histories but none holds a build that has not
+    failed.
     """
     histories = gi.histories.get_histories(name=history_name, deleted=False)
     if not histories:
-        # No build history - e.g. the build was skipped because the data already
-        # exists. Return nothing so callers can skip gracefully.
+        return None
+    details = [gi.histories.show_history(h["id"]) for h in histories]
+    for history in sorted(details, key=lambda h: h.get("create_time", ""), reverse=True):
+        invocation = latest_invocation(gi, history["id"])
+        if invocation is not None and not build_failed(gi, invocation, suffix=suffix):
+            return invocation
+    raise BuildUnavailable(
+        f"no history named {history_name!r} holds a build that has not failed; rebuild it before importing"
+    )
+
+
+def bundles_from_history(gi, history_name: str, suffix: str = DEFAULT_BUNDLE_SUFFIX) -> dict[str, str]:
+    """Resolve a build's bundles from its history name (the stable key shared by
+    the build and import stages): the named ``*_bundle`` outputs of the
+    invocation ``build_invocation`` picks.
+
+    Returns ``{}`` if there is no history of that name, so callers can skip, and
+    raises BuildUnavailable if the build has not produced its bundle outputs yet.
+    """
+    invocation = build_invocation(gi, history_name, suffix=suffix)
+    if invocation is None:
         return {}
-    history_id = histories[0]["id"]
-
-    invocations = gi.invocations.get_invocations(history_id=history_id)
-    if invocations:
-        latest = sorted(invocations, key=lambda i: i.get("create_time", ""))[-1]
-        invocation = gi.invocations.show_invocation(latest["id"])
-        return bundle_dataset_ids_from_invocation(invocation, suffix=suffix)
-
-    datasets = gi.datasets.get_datasets(history_id=history_id, extension=EXT, order="create_time-asc")
-    return {f"{history_name}_{i}": d["id"] for i, d in enumerate(datasets)}
+    bundles = bundle_dataset_ids_from_invocation(invocation, suffix=suffix)
+    if not bundles:
+        raise BuildUnavailable(
+            f"the build in {history_name!r} (invocation {invocation.get('id')}) has no bundle outputs yet"
+        )
+    return bundles
 
 
 def _galaxy_connection(args):
@@ -107,8 +153,11 @@ def _load_invocation(args) -> dict:
 
 
 def _bundles_from_history(args) -> dict[str, str]:
-    """Fallback: every data_manager_json dataset in a named history, in order."""
-    return bundles_from_history(_galaxy_connection(args), args.history_name)
+    """The bundle outputs of the build to import from a named history."""
+    try:
+        return bundles_from_history(_galaxy_connection(args), args.history_name, suffix=args.bundle_suffix)
+    except BuildUnavailable as exc:
+        raise SystemExit(str(exc)) from exc
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -118,7 +167,7 @@ def _parser() -> argparse.ArgumentParser:
     source = parser.add_mutually_exclusive_group(required=True)
     source.add_argument("--invocation-json", help="Path to a saved invocation dict (offline)")
     source.add_argument("--invocation-id", help="Workflow invocation id to fetch from Galaxy")
-    source.add_argument("--history-name", help="History to scan for data_manager_json datasets (fallback)")
+    source.add_argument("--history-name", help="Build history name (idc-<dm>-<version>); uses its newest build that has not failed")
     parser.add_argument(
         "--bundle-suffix",
         default=DEFAULT_BUNDLE_SUFFIX,
