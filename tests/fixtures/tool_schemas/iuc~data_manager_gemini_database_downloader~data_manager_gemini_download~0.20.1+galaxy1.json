@@ -1,0 +1,34 @@
+{
+    "additionalProperties": false,
+    "properties": {
+        "cadd": {
+            "default": null,
+            "description": "(--extra cadd_score)",
+            "gx_type": "gx_boolean",
+            "title": "Download CADD scores for GEMINI database annotation",
+            "type": "boolean"
+        },
+        "gerp_bp": {
+            "default": null,
+            "description": "(--extra gerp_bp)",
+            "gx_type": "gx_boolean",
+            "title": "Download GERP for GEMINI database annotation",
+            "type": "boolean"
+        },
+        "gemini_db_version": {
+            "default": null,
+            "gx_type": "gx_hidden",
+            "title": "Gemini Db Version",
+            "type": "string"
+        },
+        "test_data_manager": {
+            "default": null,
+            "gx_type": "gx_hidden",
+            "title": "Test Data Manager",
+            "type": "string"
+        }
+    },
+    "title": "DynamicModelForTool",
+    "type": "object",
+    "$schema": "https://json-schema.org/draft/2020-12/schema"
+}
