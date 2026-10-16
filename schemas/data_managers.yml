@@ -3,13 +3,13 @@
 #   python scripts/generate_schema.py --from-lock <data_managers.yml.lock>
 # Their parameter schemas are baked into request.schema.json so editors can
 # complete params for any of them. Do not edit by hand.
-source: https://raw.githubusercontent.com/mvdbeek/usegalaxy-tools/6a064f9f4f7de1ce7d65cb2437ec8a62a704836f/test.galaxyproject.org/data_managers.yml.lock
+source: https://raw.githubusercontent.com/galaxyproject/usegalaxy-tools/b0357d41299962cdd0a756b36ce168c3042cc7f7/test.galaxyproject.org/data_managers.yml.lock
 repositories:
 - owner: bgruening
   name: data_manager_diamond_database_builder
-  revision: ce62d0912b10
+  revision: c1aaeaced1b6
   tool_ids:
-  - toolshed.g2.bx.psu.edu/repos/bgruening/data_manager_diamond_database_builder/diamond_database_builder/0.0.1
+  - toolshed.g2.bx.psu.edu/repos/bgruening/data_manager_diamond_database_builder/diamond_database_builder/0.0.5
 - owner: bgruening
   name: data_manager_motus
   revision: 27bce4678358
@@ -27,14 +27,14 @@ repositories:
   - toolshed.g2.bx.psu.edu/repos/bgruening/data_manager_sylph_tax_database/data_manager_sylph_tax_database/1.9.1+galaxy0
 - owner: bgruening
   name: kmetashot_build_database
-  revision: 22847889f95e
+  revision: 27a102c1f443
   tool_ids:
-  - toolshed.g2.bx.psu.edu/repos/bgruening/kmetashot_build_database/kmetashot_build_database/2.0+galaxy0
+  - toolshed.g2.bx.psu.edu/repos/bgruening/kmetashot_build_database/kmetashot_build_database/2.0+galaxy2
 - owner: bgruening
   name: mirge3_build_database
-  revision: f27ca8442e03
+  revision: '322699174723'
   tool_ids:
-  - toolshed.g2.bx.psu.edu/repos/bgruening/mirge3_build_database/mirge3_build_database/0.1.4+galaxy0
+  - toolshed.g2.bx.psu.edu/repos/bgruening/mirge3_build_database/mirge3_build_database/0.1.4+galaxy1
 - owner: dave
   name: data_manager_fetch_index_maf
   revision: edf39ed96bc3
@@ -42,9 +42,9 @@ repositories:
   - toolshed.g2.bx.psu.edu/repos/dave/data_manager_fetch_index_maf/data_manager_fetch_and_index_maf/1.1.0
 - owner: devteam
   name: data_manager_bowtie2_index_builder
-  revision: d1d5feb31804
+  revision: 6754002631cd
   tool_ids:
-  - toolshed.g2.bx.psu.edu/repos/devteam/data_manager_bowtie2_index_builder/bowtie2_index_builder_data_manager/2.3.4.3
+  - toolshed.g2.bx.psu.edu/repos/devteam/data_manager_bowtie2_index_builder/bowtie2_index_builder_data_manager/2.5.4+galaxy1
 - owner: devteam
   name: data_manager_build_kraken_database
   revision: 4269aa2e0125
@@ -52,19 +52,19 @@ repositories:
   - toolshed.g2.bx.psu.edu/repos/devteam/data_manager_build_kraken_database/kraken_database_builder/1.1.2
 - owner: devteam
   name: data_manager_bwa_mem_index_builder
-  revision: 46066df8813d
+  revision: 966d4de7bf2d
   tool_ids:
-  - toolshed.g2.bx.psu.edu/repos/devteam/data_manager_bwa_mem_index_builder/bwa_mem_index_builder_data_manager/0.0.3
+  - toolshed.g2.bx.psu.edu/repos/devteam/data_manager_bwa_mem_index_builder/bwa_mem_index_builder_data_manager/0.7.18+galaxy1
 - owner: devteam
   name: data_manager_fetch_genome_dbkeys_all_fasta
-  revision: 14eb0fc65c62
+  revision: 7e9b2f60c9e1
   tool_ids:
-  - toolshed.g2.bx.psu.edu/repos/devteam/data_manager_fetch_genome_dbkeys_all_fasta/data_manager_fetch_genome_all_fasta_dbkey/0.0.3
+  - toolshed.g2.bx.psu.edu/repos/devteam/data_manager_fetch_genome_dbkeys_all_fasta/data_manager_fetch_genome_all_fasta_dbkey/0.0.6
 - owner: devteam
   name: data_manager_fetch_ncbi_taxonomy
-  revision: 926847693e4d
+  revision: 2649aece3781
   tool_ids:
-  - toolshed.g2.bx.psu.edu/repos/devteam/data_manager_fetch_ncbi_taxonomy/ncbi_taxonomy_fetcher/1.0.0
+  - toolshed.g2.bx.psu.edu/repos/devteam/data_manager_fetch_ncbi_taxonomy/ncbi_taxonomy_fetcher/1.1
 - owner: devteam
   name: data_manager_gatk_picard_index_builder
   revision: 0f85d523291e
@@ -72,9 +72,9 @@ repositories:
   - toolshed.g2.bx.psu.edu/repos/devteam/data_manager_gatk_picard_index_builder/gatk_picard_index_builder/0.0.2
 - owner: devteam
   name: data_manager_picard_index_builder
-  revision: b99040168706
+  revision: 4ecc89d41604
   tool_ids:
-  - toolshed.g2.bx.psu.edu/repos/devteam/data_manager_picard_index_builder/picard_index_builder_data_manager/2.7.1
+  - toolshed.g2.bx.psu.edu/repos/devteam/data_manager_picard_index_builder/picard_index_builder_data_manager/2.7.1+galaxy1
 - owner: devteam
   name: data_manager_rsync_g2
   revision: e0329ab30f6d
@@ -82,14 +82,14 @@ repositories:
   - toolshed.g2.bx.psu.edu/repos/devteam/data_manager_rsync_g2/data_manager_rsync_g2/0.0.3
 - owner: devteam
   name: data_manager_sam_fasta_index_builder
-  revision: 1865e693d8b2
+  revision: defd3e9ddd2d
   tool_ids:
-  - toolshed.g2.bx.psu.edu/repos/devteam/data_manager_sam_fasta_index_builder/sam_fasta_index_builder/0.0.2
+  - toolshed.g2.bx.psu.edu/repos/devteam/data_manager_sam_fasta_index_builder/sam_fasta_index_builder/1.21+galaxy0
 - owner: devteam
   name: data_manager_twobit_builder
-  revision: 9946bc39c834
+  revision: 94a50db37d1a
   tool_ids:
-  - toolshed.g2.bx.psu.edu/repos/devteam/data_manager_twobit_builder/twobit_builder_data_manager/0.0.2
+  - toolshed.g2.bx.psu.edu/repos/devteam/data_manager_twobit_builder/twobit_builder_data_manager/0.0.4
 - owner: galaxyp
   name: custom_pro_db_annotation_data_manager
   revision: 9ee512decde8
@@ -117,9 +117,9 @@ repositories:
   - toolshed.g2.bx.psu.edu/repos/iuc/checkm2_build_database/checkm2_build_database/1.1.0+galaxy1
 - owner: iuc
   name: data_manager_bakta
-  revision: 97b1b5ad1cda
+  revision: f9189d4d22b8
   tool_ids:
-  - toolshed.g2.bx.psu.edu/repos/iuc/data_manager_bakta/bakta_build_database/1.9.3+galaxy1
+  - toolshed.g2.bx.psu.edu/repos/iuc/data_manager_bakta/bakta_build_database/1.12.1+galaxy0
 - owner: iuc
   name: data_manager_bowtie_index_builder
   revision: b3f54bd230de
@@ -172,9 +172,9 @@ repositories:
   - toolshed.g2.bx.psu.edu/repos/iuc/data_manager_clair3_models/data_manager_clair3_models/0.0.1
 - owner: iuc
   name: data_manager_dada2
-  revision: bf7b2c14cabc
+  revision: dc0cf156685f
   tool_ids:
-  - toolshed.g2.bx.psu.edu/repos/iuc/data_manager_dada2/dada2_fetcher/0.0.8
+  - toolshed.g2.bx.psu.edu/repos/iuc/data_manager_dada2/dada2_fetcher/0.1.4
 - owner: iuc
   name: data_manager_deeparg
   revision: c5511a9b1442
@@ -242,9 +242,9 @@ repositories:
   - toolshed.g2.bx.psu.edu/repos/iuc/data_manager_gtdbtk_database_installer/gtdbtk_database_installer/232+galaxy0
 - owner: iuc
   name: data_manager_hisat2_index_builder
-  revision: d210e1f185bd
+  revision: 596dfee9e3bc
   tool_ids:
-  - toolshed.g2.bx.psu.edu/repos/iuc/data_manager_hisat2_index_builder/hisat2_index_builder_data_manager/2.0.5
+  - toolshed.g2.bx.psu.edu/repos/iuc/data_manager_hisat2_index_builder/hisat2_index_builder_data_manager/2.2.1+galaxy2
 - owner: iuc
   name: data_manager_homer_preparse
   revision: 679673fbf0b4
@@ -348,9 +348,9 @@ repositories:
   - toolshed.g2.bx.psu.edu/repos/iuc/data_manager_packaged_annotation_data/data_manager_packaged_annotation_data/0.1
 - owner: iuc
   name: data_manager_pangolearn
-  revision: 6e24e79d3d69
+  revision: 29c738066906
   tool_ids:
-  - toolshed.g2.bx.psu.edu/repos/iuc/data_manager_pangolearn/data_manager_pangolearn/0.0.3+galaxy1
+  - toolshed.g2.bx.psu.edu/repos/iuc/data_manager_pangolearn/data_manager_pangolearn/0.0.3+galaxy2
 - owner: iuc
   name: data_manager_pangolin_data
   revision: 7b57cdff1287
@@ -363,9 +363,9 @@ repositories:
   - toolshed.g2.bx.psu.edu/repos/iuc/data_manager_pharokka/pharokka_db_fetcher/1.3.2+galaxy0
 - owner: iuc
   name: data_manager_plant_tribes_scaffolds_downloader
-  revision: 5833ef61c1f8
+  revision: 898b956719ee
   tool_ids:
-  - toolshed.g2.bx.psu.edu/repos/iuc/data_manager_plant_tribes_scaffolds_downloader/data_manager_plant_tribes_scaffolds_download/1.1.0
+  - toolshed.g2.bx.psu.edu/repos/iuc/data_manager_plant_tribes_scaffolds_downloader/data_manager_plant_tribes_scaffolds_download/1.1.2
 - owner: iuc
   name: data_manager_primer_scheme_bedfiles
   revision: dd451e45681c
@@ -388,14 +388,14 @@ repositories:
   - toolshed.g2.bx.psu.edu/repos/iuc/data_manager_salmon_index_builder/salmon_index_builder_data_manager/1.10.1+galaxy1
 - owner: iuc
   name: data_manager_samestr
-  revision: 7d83c60dd27e
+  revision: f53963bacfd1
   tool_ids:
-  - toolshed.g2.bx.psu.edu/repos/iuc/data_manager_samestr/samestr_db/1.2025.111+galaxy4
+  - toolshed.g2.bx.psu.edu/repos/iuc/data_manager_samestr/samestr_db/1.2025.111+galaxy5
 - owner: iuc
   name: data_manager_selection_background
-  revision: 10ac95ec81d9
+  revision: 3f0af6aa8667
   tool_ids:
-  - toolshed.g2.bx.psu.edu/repos/iuc/data_manager_selection_background/data_manager_selection_background/1.0.3
+  - toolshed.g2.bx.psu.edu/repos/iuc/data_manager_selection_background/data_manager_selection_background/1.0.4
 - owner: iuc
   name: data_manager_semibin
   revision: d584aacd7d13
@@ -403,10 +403,10 @@ repositories:
   - toolshed.g2.bx.psu.edu/repos/iuc/data_manager_semibin/data_manager_semibin/2.0.2+galaxy0
 - owner: iuc
   name: data_manager_snpeff
-  revision: d107d20dc6bd
+  revision: c3cdca7f40a2
   tool_ids:
-  - toolshed.g2.bx.psu.edu/repos/iuc/data_manager_snpeff/data_manager_snpeff_databases/4.3r
-  - toolshed.g2.bx.psu.edu/repos/iuc/data_manager_snpeff/data_manager_snpeff_download/4.3r
+  - toolshed.g2.bx.psu.edu/repos/iuc/data_manager_snpeff/data_manager_snpeff_databases/5.4.0c
+  - toolshed.g2.bx.psu.edu/repos/iuc/data_manager_snpeff/data_manager_snpeff_download/5.4.0c
 - owner: iuc
   name: data_manager_snpsift_dbnsfp
   revision: 752439501b04
@@ -414,9 +414,9 @@ repositories:
   - toolshed.g2.bx.psu.edu/repos/iuc/data_manager_snpsift_dbnsfp/data_manager_snpsift_dbnsfp/4.1.1
 - owner: iuc
   name: data_manager_stanza_models
-  revision: 84347a6fd548
+  revision: 8d320da4d60e
   tool_ids:
-  - toolshed.g2.bx.psu.edu/repos/iuc/data_manager_stanza_models/data_manager_stanza_models/1.12.0+galaxy0
+  - toolshed.g2.bx.psu.edu/repos/iuc/data_manager_stanza_models/data_manager_stanza_models/1.14.0+galaxy0
 - owner: iuc
   name: data_manager_star_index_builder
   revision: 71c994a11f71
@@ -457,6 +457,11 @@ repositories:
   revision: 7d2252852f96
   tool_ids:
   - toolshed.g2.bx.psu.edu/repos/rnateam/data_manager_sortmerna_database_downloader/data_manager_sortmerna_download/2.1b.1
+- owner: rplanel
+  name: data_manager_defense_finder
+  revision: 502208b90cfe
+  tool_ids:
+  - toolshed.g2.bx.psu.edu/repos/rplanel/data_manager_defense_finder/defense_finder_models_fetcher_data_manager/2.0.0+galaxy2
 - owner: scottx611x
   name: data_manager_fetch_gene_annotation
   revision: e4b92f2ca217

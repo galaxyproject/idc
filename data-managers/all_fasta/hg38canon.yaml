@@ -2,8 +2,10 @@
 # hg38 restricted to the canonical chromosomes, in karyotypic order. Already
 # served from /cvmfs/data.galaxyproject.org/byhand/hg38/seq/hg38canon.fa; this
 # recipe reproduces that file byte for byte (sha256 below), so the build checks
-# the served copy against it instead of rebuilding.
-tool_id: toolshed.g2.bx.psu.edu/repos/devteam/data_manager_fetch_genome_dbkeys_all_fasta/data_manager_fetch_genome_all_fasta_dbkey/0.0.3
+# the served copy against it instead of rebuilding. Needs the data manager at
+# 0.0.6 or later: earlier versions write an empty line between chromosome files
+# (galaxyproject/tools-iuc#8533), which changes the sha256.
+tool_id: toolshed.g2.bx.psu.edu/repos/devteam/data_manager_fetch_genome_dbkeys_all_fasta/data_manager_fetch_genome_all_fasta_dbkey/0.0.6
 data_tables:
   - all_fasta
 params:

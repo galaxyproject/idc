@@ -14,7 +14,7 @@ in `data-managers/all_fasta/`, named after the dbkey:
 ```yaml
 # data-managers/all_fasta/GCF_000001405.40.yaml
 # yaml-language-server: $schema=https://raw.githubusercontent.com/galaxyproject/idc/main/schemas/request.schema.json
-tool_id: toolshed.g2.bx.psu.edu/repos/devteam/data_manager_fetch_genome_dbkeys_all_fasta/data_manager_fetch_genome_all_fasta_dbkey/0.0.3
+tool_id: toolshed.g2.bx.psu.edu/repos/devteam/data_manager_fetch_genome_dbkeys_all_fasta/data_manager_fetch_genome_all_fasta_dbkey/0.0.6
 data_tables:
   - all_fasta
   - __dbkeys__
