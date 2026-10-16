@@ -93,37 +93,8 @@
     "data_tables"
   ],
   "$defs": {
-    "params__bgruening__data_manager_diamond_database_builder__diamond_database_builder__0.0.1": {
+    "params__bgruening__data_manager_diamond_database_builder__diamond_database_builder__0.0.5": {
       "$defs": {
-        "ConditionalType": {
-          "oneOf": [
-            {
-              "$ref": "#/$defs/params__bgruening__data_manager_diamond_database_builder__diamond_database_builder__0.0.1/$defs/When_reference_source_selector_ncbi"
-            },
-            {
-              "$ref": "#/$defs/params__bgruening__data_manager_diamond_database_builder__diamond_database_builder__0.0.1/$defs/When_reference_source_selector_url"
-            },
-            {
-              "$ref": "#/$defs/params__bgruening__data_manager_diamond_database_builder__diamond_database_builder__0.0.1/$defs/When_reference_source_selector_history"
-            },
-            {
-              "$ref": "#/$defs/params__bgruening__data_manager_diamond_database_builder__diamond_database_builder__0.0.1/$defs/When_reference_source_selector___absent"
-            },
-            {
-              "$ref": "#/$defs/params__bgruening__data_manager_diamond_database_builder__diamond_database_builder__0.0.1/$defs/When_reference_source_selector_directory"
-            }
-          ],
-          "title": "ConditionalType",
-          "discriminator": {
-            "propertyName": "reference_source_selector",
-            "mapping": {
-              "ncbi": "#/$defs/params__bgruening__data_manager_diamond_database_builder__diamond_database_builder__0.0.1/$defs/When_reference_source_selector_ncbi",
-              "url": "#/$defs/params__bgruening__data_manager_diamond_database_builder__diamond_database_builder__0.0.1/$defs/When_reference_source_selector_url",
-              "history": "#/$defs/params__bgruening__data_manager_diamond_database_builder__diamond_database_builder__0.0.1/$defs/When_reference_source_selector_history",
-              "directory": "#/$defs/params__bgruening__data_manager_diamond_database_builder__diamond_database_builder__0.0.1/$defs/When_reference_source_selector_directory"
-            }
-          }
-        },
         "When_reference_source_selector___absent": {
           "additionalProperties": false,
           "properties": {},
@@ -217,6 +188,118 @@
           "required": [
             "reference_source_selector"
           ]
+        },
+        "When_tax_select___absent": {
+          "additionalProperties": false,
+          "properties": {},
+          "title": "When tax_select is absent",
+          "type": "object"
+        },
+        "When_tax_select_history": {
+          "additionalProperties": false,
+          "properties": {
+            "tax_select": {
+              "const": "history",
+              "title": "Tax Select",
+              "type": "string"
+            }
+          },
+          "required": [
+            "tax_select"
+          ],
+          "title": "When tax_select = history",
+          "type": "object"
+        },
+        "When_tax_select_ncbi": {
+          "additionalProperties": false,
+          "properties": {
+            "tax_select": {
+              "const": "ncbi",
+              "title": "Tax Select",
+              "type": "string"
+            },
+            "ncbi_tax": {
+              "default": null,
+              "gx_multiple": false,
+              "gx_type": "gx_select",
+              "title": "Select NCBI taxonomy",
+              "type": "string"
+            }
+          },
+          "title": "When tax_select = ncbi",
+          "type": "object",
+          "required": [
+            "tax_select"
+          ]
+        },
+        "When_tax_select_no": {
+          "additionalProperties": false,
+          "properties": {
+            "tax_select": {
+              "const": "no",
+              "title": "Tax Select",
+              "type": "string"
+            }
+          },
+          "title": "When tax_select = no",
+          "type": "object",
+          "required": [
+            "tax_select"
+          ]
+        },
+        "galaxy__tool_util_models__parameters__ConditionalParameterModel__pydantic_template___locals___ConditionalType__1": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/params__bgruening__data_manager_diamond_database_builder__diamond_database_builder__0.0.5/$defs/When_reference_source_selector_ncbi"
+            },
+            {
+              "$ref": "#/$defs/params__bgruening__data_manager_diamond_database_builder__diamond_database_builder__0.0.5/$defs/When_reference_source_selector_url"
+            },
+            {
+              "$ref": "#/$defs/params__bgruening__data_manager_diamond_database_builder__diamond_database_builder__0.0.5/$defs/When_reference_source_selector_history"
+            },
+            {
+              "$ref": "#/$defs/params__bgruening__data_manager_diamond_database_builder__diamond_database_builder__0.0.5/$defs/When_reference_source_selector___absent"
+            },
+            {
+              "$ref": "#/$defs/params__bgruening__data_manager_diamond_database_builder__diamond_database_builder__0.0.5/$defs/When_reference_source_selector_directory"
+            }
+          ],
+          "title": "ConditionalType",
+          "discriminator": {
+            "propertyName": "reference_source_selector",
+            "mapping": {
+              "ncbi": "#/$defs/params__bgruening__data_manager_diamond_database_builder__diamond_database_builder__0.0.5/$defs/When_reference_source_selector_ncbi",
+              "url": "#/$defs/params__bgruening__data_manager_diamond_database_builder__diamond_database_builder__0.0.5/$defs/When_reference_source_selector_url",
+              "history": "#/$defs/params__bgruening__data_manager_diamond_database_builder__diamond_database_builder__0.0.5/$defs/When_reference_source_selector_history",
+              "directory": "#/$defs/params__bgruening__data_manager_diamond_database_builder__diamond_database_builder__0.0.5/$defs/When_reference_source_selector_directory"
+            }
+          }
+        },
+        "galaxy__tool_util_models__parameters__ConditionalParameterModel__pydantic_template___locals___ConditionalType__2": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/params__bgruening__data_manager_diamond_database_builder__diamond_database_builder__0.0.5/$defs/When_tax_select_no"
+            },
+            {
+              "$ref": "#/$defs/params__bgruening__data_manager_diamond_database_builder__diamond_database_builder__0.0.5/$defs/When_tax_select___absent"
+            },
+            {
+              "$ref": "#/$defs/params__bgruening__data_manager_diamond_database_builder__diamond_database_builder__0.0.5/$defs/When_tax_select_ncbi"
+            },
+            {
+              "$ref": "#/$defs/params__bgruening__data_manager_diamond_database_builder__diamond_database_builder__0.0.5/$defs/When_tax_select_history"
+            }
+          ],
+          "title": "ConditionalType",
+          "discriminator": {
+            "propertyName": "tax_select",
+            "mapping": {
+              "no": "#/$defs/params__bgruening__data_manager_diamond_database_builder__diamond_database_builder__0.0.5/$defs/When_tax_select_no",
+              "ncbi": "#/$defs/params__bgruening__data_manager_diamond_database_builder__diamond_database_builder__0.0.5/$defs/When_tax_select_ncbi",
+              "history": "#/$defs/params__bgruening__data_manager_diamond_database_builder__diamond_database_builder__0.0.5/$defs/When_tax_select_history"
+            }
+          }
         }
       },
       "additionalProperties": false,
@@ -252,7 +335,7 @@
           "title": "Database ID"
         },
         "reference_source": {
-          "$ref": "#/$defs/params__bgruening__data_manager_diamond_database_builder__diamond_database_builder__0.0.1/$defs/ConditionalType",
+          "$ref": "#/$defs/params__bgruening__data_manager_diamond_database_builder__diamond_database_builder__0.0.5/$defs/galaxy__tool_util_models__parameters__ConditionalParameterModel__pydantic_template___locals___ConditionalType__1",
           "default": null,
           "gx_options": [
             {
@@ -277,6 +360,29 @@
             }
           ],
           "gx_test_label": "Choose the source for the reference genome",
+          "gx_type": "gx_conditional"
+        },
+        "tax_cond": {
+          "$ref": "#/$defs/params__bgruening__data_manager_diamond_database_builder__diamond_database_builder__0.0.5/$defs/galaxy__tool_util_models__parameters__ConditionalParameterModel__pydantic_template___locals___ConditionalType__2",
+          "default": null,
+          "gx_options": [
+            {
+              "label": "Do not add taxonomic information",
+              "selected": false,
+              "value": "no"
+            },
+            {
+              "label": "Use cached NCBI taxonomy",
+              "selected": false,
+              "value": "ncbi"
+            },
+            {
+              "label": "Use data from history",
+              "selected": false,
+              "value": "history"
+            }
+          ],
+          "gx_test_label": "Add taxonomic information",
           "gx_type": "gx_conditional"
         }
       },
@@ -961,7 +1067,7 @@
       "title": "DynamicModelForTool",
       "type": "object"
     },
-    "params__bgruening__kmetashot_build_database__kmetashot_build_database__2.0+galaxy0": {
+    "params__bgruening__kmetashot_build_database__kmetashot_build_database__2.0+galaxy2": {
       "additionalProperties": false,
       "properties": {
         "release": {
@@ -972,6 +1078,10 @@
             },
             {
               "const": "2",
+              "type": "string"
+            },
+            {
+              "const": "3",
               "type": "string"
             }
           ],
@@ -987,6 +1097,11 @@
               "label": "Second release",
               "selected": false,
               "value": "2"
+            },
+            {
+              "label": "Third release",
+              "selected": false,
+              "value": "3"
             }
           ],
           "gx_type": "gx_select",
@@ -996,7 +1111,7 @@
       "title": "DynamicModelForTool",
       "type": "object"
     },
-    "params__bgruening__mirge3_build_database__mirge3_build_database__0.1.4+galaxy0": {
+    "params__bgruening__mirge3_build_database__mirge3_build_database__0.1.4+galaxy1": {
       "additionalProperties": false,
       "properties": {
         "lib": {
@@ -1119,7 +1234,7 @@
       "title": "DynamicModelForTool",
       "type": "object"
     },
-    "params__devteam__data_manager_bowtie2_index_builder__bowtie2_index_builder_data_manager__2.3.4.3": {
+    "params__devteam__data_manager_bowtie2_index_builder__bowtie2_index_builder_data_manager__2.5.4+galaxy1": {
       "additionalProperties": false,
       "properties": {
         "all_fasta_source": {
@@ -1266,7 +1381,7 @@
       "title": "DynamicModelForTool",
       "type": "object"
     },
-    "params__devteam__data_manager_bwa_mem_index_builder__bwa_mem_index_builder_data_manager__0.0.3": {
+    "params__devteam__data_manager_bwa_mem_index_builder__bwa_mem_index_builder_data_manager__0.7.18+galaxy1": {
       "additionalProperties": false,
       "properties": {
         "all_fasta_source": {
@@ -1317,6 +1432,10 @@
             {
               "const": "bwtsw",
               "type": "string"
+            },
+            {
+              "const": "rb2",
+              "type": "string"
             }
           ],
           "default": null,
@@ -1336,6 +1455,11 @@
               "label": "BWT-SW (for large genomes)",
               "selected": false,
               "value": "bwtsw"
+            },
+            {
+              "label": "RB2",
+              "selected": false,
+              "value": "rb2"
             }
           ],
           "gx_type": "gx_select",
@@ -1345,12 +1469,12 @@
       "title": "DynamicModelForTool",
       "type": "object"
     },
-    "params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.3": {
+    "params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.6": {
       "$defs": {
         "RepeatType": {
           "default": null,
           "items": {
-            "$ref": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.3/$defs/Repeat_sequence_identifiers"
+            "$ref": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.6/$defs/Repeat_sequence_identifiers"
           },
           "minItems": 1,
           "title": "RepeatType",
@@ -1596,7 +1720,7 @@
               "type": "string"
             },
             "sequence_identifiers": {
-              "$ref": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.3/$defs/RepeatType",
+              "$ref": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.6/$defs/RepeatType",
               "gx_min": 1,
               "gx_type": "gx_repeat"
             },
@@ -1677,83 +1801,83 @@
         "galaxy__tool_util_models__parameters__ConditionalParameterModel__pydantic_template___locals___ConditionalType__1": {
           "oneOf": [
             {
-              "$ref": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.3/$defs/When_dbkey_source_selector_existing"
+              "$ref": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.6/$defs/When_dbkey_source_selector_existing"
             },
             {
-              "$ref": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.3/$defs/When_dbkey_source_selector___absent"
+              "$ref": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.6/$defs/When_dbkey_source_selector___absent"
             },
             {
-              "$ref": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.3/$defs/When_dbkey_source_selector_new"
+              "$ref": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.6/$defs/When_dbkey_source_selector_new"
             }
           ],
           "title": "ConditionalType",
           "discriminator": {
             "propertyName": "dbkey_source_selector",
             "mapping": {
-              "existing": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.3/$defs/When_dbkey_source_selector_existing",
-              "new": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.3/$defs/When_dbkey_source_selector_new"
+              "existing": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.6/$defs/When_dbkey_source_selector_existing",
+              "new": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.6/$defs/When_dbkey_source_selector_new"
             }
           }
         },
         "galaxy__tool_util_models__parameters__ConditionalParameterModel__pydantic_template___locals___ConditionalType__2": {
           "oneOf": [
             {
-              "$ref": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.3/$defs/When_reference_source_selector_ucsc"
+              "$ref": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.6/$defs/When_reference_source_selector_ucsc"
             },
             {
-              "$ref": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.3/$defs/When_reference_source_selector___absent"
+              "$ref": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.6/$defs/When_reference_source_selector___absent"
             },
             {
-              "$ref": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.3/$defs/When_reference_source_selector_ncbi"
+              "$ref": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.6/$defs/When_reference_source_selector_ncbi"
             },
             {
-              "$ref": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.3/$defs/When_reference_source_selector_url"
+              "$ref": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.6/$defs/When_reference_source_selector_url"
             },
             {
-              "$ref": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.3/$defs/When_reference_source_selector_history"
+              "$ref": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.6/$defs/When_reference_source_selector_history"
             },
             {
-              "$ref": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.3/$defs/When_reference_source_selector_directory"
+              "$ref": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.6/$defs/When_reference_source_selector_directory"
             }
           ],
           "title": "ConditionalType",
           "discriminator": {
             "propertyName": "reference_source_selector",
             "mapping": {
-              "ucsc": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.3/$defs/When_reference_source_selector_ucsc",
-              "ncbi": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.3/$defs/When_reference_source_selector_ncbi",
-              "url": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.3/$defs/When_reference_source_selector_url",
-              "history": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.3/$defs/When_reference_source_selector_history",
-              "directory": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.3/$defs/When_reference_source_selector_directory"
+              "ucsc": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.6/$defs/When_reference_source_selector_ucsc",
+              "ncbi": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.6/$defs/When_reference_source_selector_ncbi",
+              "url": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.6/$defs/When_reference_source_selector_url",
+              "history": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.6/$defs/When_reference_source_selector_history",
+              "directory": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.6/$defs/When_reference_source_selector_directory"
             }
           }
         },
         "galaxy__tool_util_models__parameters__ConditionalParameterModel__pydantic_template___locals___ConditionalType__3": {
           "oneOf": [
             {
-              "$ref": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.3/$defs/When_sort_selector_as_is"
+              "$ref": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.6/$defs/When_sort_selector_as_is"
             },
             {
-              "$ref": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.3/$defs/When_sort_selector___absent"
+              "$ref": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.6/$defs/When_sort_selector___absent"
             },
             {
-              "$ref": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.3/$defs/When_sort_selector_lexicographical"
+              "$ref": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.6/$defs/When_sort_selector_lexicographical"
             },
             {
-              "$ref": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.3/$defs/When_sort_selector_gatk"
+              "$ref": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.6/$defs/When_sort_selector_gatk"
             },
             {
-              "$ref": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.3/$defs/When_sort_selector_custom"
+              "$ref": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.6/$defs/When_sort_selector_custom"
             }
           ],
           "title": "ConditionalType",
           "discriminator": {
             "propertyName": "sort_selector",
             "mapping": {
-              "as_is": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.3/$defs/When_sort_selector_as_is",
-              "lexicographical": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.3/$defs/When_sort_selector_lexicographical",
-              "gatk": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.3/$defs/When_sort_selector_gatk",
-              "custom": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.3/$defs/When_sort_selector_custom"
+              "as_is": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.6/$defs/When_sort_selector_as_is",
+              "lexicographical": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.6/$defs/When_sort_selector_lexicographical",
+              "gatk": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.6/$defs/When_sort_selector_gatk",
+              "custom": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.6/$defs/When_sort_selector_custom"
             }
           }
         }
@@ -1761,7 +1885,7 @@
       "additionalProperties": false,
       "properties": {
         "dbkey_source": {
-          "$ref": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.3/$defs/galaxy__tool_util_models__parameters__ConditionalParameterModel__pydantic_template___locals___ConditionalType__1",
+          "$ref": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.6/$defs/galaxy__tool_util_models__parameters__ConditionalParameterModel__pydantic_template___locals___ConditionalType__1",
           "default": null,
           "gx_options": [
             {
@@ -1807,7 +1931,7 @@
           "title": "ID for sequence"
         },
         "reference_source": {
-          "$ref": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.3/$defs/galaxy__tool_util_models__parameters__ConditionalParameterModel__pydantic_template___locals___ConditionalType__2",
+          "$ref": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.6/$defs/galaxy__tool_util_models__parameters__ConditionalParameterModel__pydantic_template___locals___ConditionalType__2",
           "default": null,
           "gx_options": [
             {
@@ -1840,7 +1964,7 @@
           "gx_type": "gx_conditional"
         },
         "sorting": {
-          "$ref": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.3/$defs/galaxy__tool_util_models__parameters__ConditionalParameterModel__pydantic_template___locals___ConditionalType__3",
+          "$ref": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.6/$defs/galaxy__tool_util_models__parameters__ConditionalParameterModel__pydantic_template___locals___ConditionalType__3",
           "default": null,
           "gx_options": [
             {
@@ -1871,7 +1995,7 @@
       "title": "DynamicModelForTool",
       "type": "object"
     },
-    "params__devteam__data_manager_fetch_ncbi_taxonomy__ncbi_taxonomy_fetcher__1.0.0": {
+    "params__devteam__data_manager_fetch_ncbi_taxonomy__ncbi_taxonomy_fetcher__1.1": {
       "additionalProperties": false,
       "properties": {
         "database_name": {
@@ -1902,6 +2026,12 @@
           "gx_area": false,
           "gx_type": "gx_text",
           "title": "Enter URL for taxonomy files"
+        },
+        "name_maps": {
+          "default": null,
+          "gx_type": "gx_boolean",
+          "title": "Also download accession2taxid data",
+          "type": "boolean"
         }
       },
       "title": "DynamicModelForTool",
@@ -1949,7 +2079,7 @@
       "title": "DynamicModelForTool",
       "type": "object"
     },
-    "params__devteam__data_manager_picard_index_builder__picard_index_builder_data_manager__2.7.1": {
+    "params__devteam__data_manager_picard_index_builder__picard_index_builder_data_manager__2.7.1+galaxy1": {
       "additionalProperties": false,
       "properties": {
         "all_fasta_source": {
@@ -2040,7 +2170,7 @@
       "title": "DynamicModelForTool",
       "type": "object"
     },
-    "params__devteam__data_manager_sam_fasta_index_builder__sam_fasta_index_builder__0.0.2": {
+    "params__devteam__data_manager_sam_fasta_index_builder__sam_fasta_index_builder__1.21+galaxy0": {
       "additionalProperties": false,
       "properties": {
         "all_fasta_source": {
@@ -2082,7 +2212,7 @@
       "title": "DynamicModelForTool",
       "type": "object"
     },
-    "params__devteam__data_manager_twobit_builder__twobit_builder_data_manager__0.0.2": {
+    "params__devteam__data_manager_twobit_builder__twobit_builder_data_manager__0.0.4": {
       "additionalProperties": false,
       "properties": {
         "all_fasta_source": {
@@ -2507,11 +2637,19 @@
       "title": "DynamicModelForTool",
       "type": "object"
     },
-    "params__iuc__data_manager_bakta__bakta_build_database__1.9.3+galaxy1": {
+    "params__iuc__data_manager_bakta__bakta_build_database__1.12.1+galaxy0": {
       "additionalProperties": false,
       "properties": {
         "database_select": {
           "anyOf": [
+            {
+              "const": "6.0",
+              "type": "string"
+            },
+            {
+              "const": "6.0_light",
+              "type": "string"
+            },
             {
               "const": "5.1",
               "type": "string"
@@ -2558,8 +2696,18 @@
           "gx_multiple": false,
           "gx_options": [
             {
-              "label": "V5.1 (2024-01-19)",
+              "label": "V6.0 (2025-02-24)",
               "selected": true,
+              "value": "6.0"
+            },
+            {
+              "label": "V6.0 light (2025-02-24)",
+              "selected": false,
+              "value": "6.0_light"
+            },
+            {
+              "label": "V5.1 (2024-01-19)",
+              "selected": false,
               "value": "5.1"
             },
             {
@@ -7406,474 +7554,401 @@
       "title": "DynamicModelForTool",
       "type": "object"
     },
-    "params__iuc__data_manager_dada2__dada2_fetcher__0.0.8": {
-      "$defs": {
-        "ConditionalType": {
-          "oneOf": [
-            {
-              "$ref": "#/$defs/params__iuc__data_manager_dada2__dada2_fetcher__0.0.8/$defs/When_db_select_silva"
-            },
-            {
-              "$ref": "#/$defs/params__iuc__data_manager_dada2__dada2_fetcher__0.0.8/$defs/When_db_select___absent"
-            },
-            {
-              "$ref": "#/$defs/params__iuc__data_manager_dada2__dada2_fetcher__0.0.8/$defs/When_db_select_rdp"
-            },
-            {
-              "$ref": "#/$defs/params__iuc__data_manager_dada2__dada2_fetcher__0.0.8/$defs/When_db_select_greengenes"
-            },
-            {
-              "$ref": "#/$defs/params__iuc__data_manager_dada2__dada2_fetcher__0.0.8/$defs/When_db_select_unite"
-            },
-            {
-              "$ref": "#/$defs/params__iuc__data_manager_dada2__dada2_fetcher__0.0.8/$defs/When_db_select_RefSeq_RDP"
-            },
-            {
-              "$ref": "#/$defs/params__iuc__data_manager_dada2__dada2_fetcher__0.0.8/$defs/When_db_select_gtdb"
-            },
-            {
-              "$ref": "#/$defs/params__iuc__data_manager_dada2__dada2_fetcher__0.0.8/$defs/When_db_select_hitdb"
-            },
-            {
-              "$ref": "#/$defs/params__iuc__data_manager_dada2__dada2_fetcher__0.0.8/$defs/When_db_select_silva_euk_18S"
-            },
-            {
-              "$ref": "#/$defs/params__iuc__data_manager_dada2__dada2_fetcher__0.0.8/$defs/When_db_select_PR2"
-            }
-          ],
-          "title": "ConditionalType",
-          "discriminator": {
-            "propertyName": "db_select",
-            "mapping": {
-              "silva": "#/$defs/params__iuc__data_manager_dada2__dada2_fetcher__0.0.8/$defs/When_db_select_silva",
-              "rdp": "#/$defs/params__iuc__data_manager_dada2__dada2_fetcher__0.0.8/$defs/When_db_select_rdp",
-              "greengenes": "#/$defs/params__iuc__data_manager_dada2__dada2_fetcher__0.0.8/$defs/When_db_select_greengenes",
-              "unite": "#/$defs/params__iuc__data_manager_dada2__dada2_fetcher__0.0.8/$defs/When_db_select_unite",
-              "RefSeq_RDP": "#/$defs/params__iuc__data_manager_dada2__dada2_fetcher__0.0.8/$defs/When_db_select_RefSeq_RDP",
-              "gtdb": "#/$defs/params__iuc__data_manager_dada2__dada2_fetcher__0.0.8/$defs/When_db_select_gtdb",
-              "hitdb": "#/$defs/params__iuc__data_manager_dada2__dada2_fetcher__0.0.8/$defs/When_db_select_hitdb",
-              "silva_euk_18S": "#/$defs/params__iuc__data_manager_dada2__dada2_fetcher__0.0.8/$defs/When_db_select_silva_euk_18S",
-              "PR2": "#/$defs/params__iuc__data_manager_dada2__dada2_fetcher__0.0.8/$defs/When_db_select_PR2"
-            }
-          }
-        },
-        "When_db_select_PR2": {
-          "additionalProperties": false,
-          "properties": {
-            "db_select": {
-              "const": "PR2",
-              "title": "Db Select",
-              "type": "string"
-            },
-            "version_select": {
-              "const": "4.11.1",
-              "default": null,
-              "gx_multiple": false,
-              "gx_options": [
-                {
-                  "label": "4.11.1",
-                  "selected": false,
-                  "value": "4.11.1"
-                }
-              ],
-              "gx_type": "gx_select",
-              "title": "Database version",
-              "type": "string"
-            }
-          },
-          "title": "When db_select = PR2",
-          "type": "object",
-          "required": [
-            "db_select"
-          ]
-        },
-        "When_db_select_RefSeq_RDP": {
-          "additionalProperties": false,
-          "properties": {
-            "db_select": {
-              "const": "RefSeq_RDP",
-              "title": "Db Select",
-              "type": "string"
-            },
-            "version_select": {
-              "const": "2018_05",
-              "default": null,
-              "gx_multiple": false,
-              "gx_options": [
-                {
-                  "label": "05/2018",
-                  "selected": false,
-                  "value": "2018_05"
-                }
-              ],
-              "gx_type": "gx_select",
-              "title": "Database version",
-              "type": "string"
-            }
-          },
-          "title": "When db_select = RefSeq_RDP",
-          "type": "object",
-          "required": [
-            "db_select"
-          ]
-        },
-        "When_db_select___absent": {
-          "additionalProperties": false,
-          "properties": {
-            "version_select": {
-              "anyOf": [
-                {
-                  "const": "138",
-                  "type": "string"
-                },
-                {
-                  "const": "132",
-                  "type": "string"
-                },
-                {
-                  "const": "128",
-                  "type": "string"
-                }
-              ],
-              "default": null,
-              "gx_multiple": false,
-              "gx_options": [
-                {
-                  "label": "138",
-                  "selected": false,
-                  "value": "138"
-                },
-                {
-                  "label": "132",
-                  "selected": false,
-                  "value": "132"
-                },
-                {
-                  "label": "128",
-                  "selected": false,
-                  "value": "128"
-                }
-              ],
-              "gx_type": "gx_select",
-              "title": "Database version"
-            }
-          },
-          "title": "When db_select is absent",
-          "type": "object"
-        },
-        "When_db_select_greengenes": {
-          "additionalProperties": false,
-          "properties": {
-            "db_select": {
-              "const": "greengenes",
-              "title": "Db Select",
-              "type": "string"
-            },
-            "version_select": {
-              "const": "13.84",
-              "default": null,
-              "gx_multiple": false,
-              "gx_options": [
-                {
-                  "label": "13.84",
-                  "selected": false,
-                  "value": "13.84"
-                }
-              ],
-              "gx_type": "gx_select",
-              "title": "Database version",
-              "type": "string"
-            }
-          },
-          "title": "When db_select = greengenes",
-          "type": "object",
-          "required": [
-            "db_select"
-          ]
-        },
-        "When_db_select_gtdb": {
-          "additionalProperties": false,
-          "properties": {
-            "db_select": {
-              "const": "gtdb",
-              "title": "Db Select",
-              "type": "string"
-            },
-            "version_select": {
-              "const": "2018_11",
-              "default": null,
-              "gx_multiple": false,
-              "gx_options": [
-                {
-                  "label": "11/2018",
-                  "selected": false,
-                  "value": "2018_11"
-                }
-              ],
-              "gx_type": "gx_select",
-              "title": "Database version",
-              "type": "string"
-            }
-          },
-          "title": "When db_select = gtdb",
-          "type": "object",
-          "required": [
-            "db_select"
-          ]
-        },
-        "When_db_select_hitdb": {
-          "additionalProperties": false,
-          "properties": {
-            "db_select": {
-              "const": "hitdb",
-              "title": "Db Select",
-              "type": "string"
-            },
-            "version_select": {
-              "const": "1",
-              "default": null,
-              "gx_multiple": false,
-              "gx_options": [
-                {
-                  "label": "1",
-                  "selected": false,
-                  "value": "1"
-                }
-              ],
-              "gx_type": "gx_select",
-              "title": "Database version",
-              "type": "string"
-            }
-          },
-          "title": "When db_select = hitdb",
-          "type": "object",
-          "required": [
-            "db_select"
-          ]
-        },
-        "When_db_select_rdp": {
-          "additionalProperties": false,
-          "properties": {
-            "db_select": {
-              "const": "rdp",
-              "title": "Db Select",
-              "type": "string"
-            },
-            "version_select": {
-              "anyOf": [
-                {
-                  "const": "16",
-                  "type": "string"
-                },
-                {
-                  "const": "14",
-                  "type": "string"
-                }
-              ],
-              "default": null,
-              "gx_multiple": false,
-              "gx_options": [
-                {
-                  "label": "16",
-                  "selected": false,
-                  "value": "16"
-                },
-                {
-                  "label": "14",
-                  "selected": false,
-                  "value": "14"
-                }
-              ],
-              "gx_type": "gx_select",
-              "title": "Database version"
-            }
-          },
-          "title": "When db_select = rdp",
-          "type": "object",
-          "required": [
-            "db_select"
-          ]
-        },
-        "When_db_select_silva": {
-          "additionalProperties": false,
-          "properties": {
-            "db_select": {
-              "const": "silva",
-              "title": "Db Select",
-              "type": "string"
-            },
-            "version_select": {
-              "anyOf": [
-                {
-                  "const": "138",
-                  "type": "string"
-                },
-                {
-                  "const": "132",
-                  "type": "string"
-                },
-                {
-                  "const": "128",
-                  "type": "string"
-                }
-              ],
-              "default": null,
-              "gx_multiple": false,
-              "gx_options": [
-                {
-                  "label": "138",
-                  "selected": false,
-                  "value": "138"
-                },
-                {
-                  "label": "132",
-                  "selected": false,
-                  "value": "132"
-                },
-                {
-                  "label": "128",
-                  "selected": false,
-                  "value": "128"
-                }
-              ],
-              "gx_type": "gx_select",
-              "title": "Database version"
-            }
-          },
-          "title": "When db_select = silva",
-          "type": "object",
-          "required": [
-            "db_select"
-          ]
-        },
-        "When_db_select_silva_euk_18S": {
-          "additionalProperties": false,
-          "properties": {
-            "db_select": {
-              "const": "silva_euk_18S",
-              "title": "Db Select",
-              "type": "string"
-            },
-            "version_select": {
-              "const": "132",
-              "default": null,
-              "gx_multiple": false,
-              "gx_options": [
-                {
-                  "label": "132",
-                  "selected": false,
-                  "value": "132"
-                }
-              ],
-              "gx_type": "gx_select",
-              "title": "Database version",
-              "type": "string"
-            }
-          },
-          "title": "When db_select = silva_euk_18S",
-          "type": "object",
-          "required": [
-            "db_select"
-          ]
-        },
-        "When_db_select_unite": {
-          "additionalProperties": false,
-          "properties": {
-            "db_select": {
-              "const": "unite",
-              "title": "Db Select",
-              "type": "string"
-            },
-            "version_select": {
-              "anyOf": [
-                {
-                  "const": "8.0_fungi",
-                  "type": "string"
-                },
-                {
-                  "const": "8.0_fungi_singletons",
-                  "type": "string"
-                }
-              ],
-              "default": null,
-              "gx_multiple": false,
-              "gx_options": [
-                {
-                  "label": "release 8.0 for Fungi",
-                  "selected": false,
-                  "value": "8.0_fungi"
-                },
-                {
-                  "label": "release 8.0 for Fungi including global and 97% singletons",
-                  "selected": false,
-                  "value": "8.0_fungi_singletons"
-                }
-              ],
-              "gx_type": "gx_select",
-              "title": "Database version"
-            }
-          },
-          "title": "When db_select = unite",
-          "type": "object",
-          "required": [
-            "db_select"
-          ]
-        }
-      },
+    "params__iuc__data_manager_dada2__dada2_fetcher__0.1.4": {
       "additionalProperties": false,
       "properties": {
-        "db_cond": {
-          "$ref": "#/$defs/params__iuc__data_manager_dada2__dada2_fetcher__0.0.8/$defs/ConditionalType",
-          "default": null,
-          "gx_options": [
+        "taxonomy_databases": {
+          "anyOf": [
             {
-              "label": "Silva",
-              "selected": false,
-              "value": "silva"
+              "items": {
+                "anyOf": [
+                  {
+                    "const": "silva_138.2_toGenus",
+                    "type": "string"
+                  },
+                  {
+                    "const": "silva_138.2_toSpecies",
+                    "type": "string"
+                  },
+                  {
+                    "const": "silva_138.2_fungi_18S_toGenus",
+                    "type": "string"
+                  },
+                  {
+                    "const": "silva_138.2_fungi_18S_toSpecies",
+                    "type": "string"
+                  },
+                  {
+                    "const": "silva_138.2_fungi_26S_toGenus",
+                    "type": "string"
+                  },
+                  {
+                    "const": "silva_138.2_fungi_26S_toSpecies",
+                    "type": "string"
+                  },
+                  {
+                    "const": "silva_138",
+                    "type": "string"
+                  },
+                  {
+                    "const": "silva_132",
+                    "type": "string"
+                  },
+                  {
+                    "const": "silva_128",
+                    "type": "string"
+                  },
+                  {
+                    "const": "rdp_19_toGenus",
+                    "type": "string"
+                  },
+                  {
+                    "const": "rdp_19_toSpecies",
+                    "type": "string"
+                  },
+                  {
+                    "const": "rdp_16",
+                    "type": "string"
+                  },
+                  {
+                    "const": "rdp_14",
+                    "type": "string"
+                  },
+                  {
+                    "const": "greengenes2_2024.09_toGenus",
+                    "type": "string"
+                  },
+                  {
+                    "const": "greengenes2_2024.09_toSpecies",
+                    "type": "string"
+                  },
+                  {
+                    "const": "greengenes_13.84",
+                    "type": "string"
+                  },
+                  {
+                    "const": "unite_10.0_eukaryotes-2025-02-19",
+                    "type": "string"
+                  },
+                  {
+                    "const": "unite_10.0_eukaryotes_singletons-2025-02-19",
+                    "type": "string"
+                  },
+                  {
+                    "const": "unite_10.0_fungi-2025-02-19",
+                    "type": "string"
+                  },
+                  {
+                    "const": "unite_10.0_fungi_singletons-2025-02-19",
+                    "type": "string"
+                  },
+                  {
+                    "const": "unite_8.0_fungi",
+                    "type": "string"
+                  },
+                  {
+                    "const": "unite_8.0_fungi_singletons",
+                    "type": "string"
+                  },
+                  {
+                    "const": "RefSeq_RDP_2018_05",
+                    "type": "string"
+                  },
+                  {
+                    "const": "gtdb_202_toGenus",
+                    "type": "string"
+                  },
+                  {
+                    "const": "gtdb_202_toSpecies",
+                    "type": "string"
+                  },
+                  {
+                    "const": "gtdb_2018_11",
+                    "type": "string"
+                  },
+                  {
+                    "const": "hitdb_1",
+                    "type": "string"
+                  },
+                  {
+                    "const": "silva_euk_18S_132",
+                    "type": "string"
+                  },
+                  {
+                    "const": "PR2_4.11.1",
+                    "type": "string"
+                  }
+                ]
+              },
+              "type": "array"
             },
             {
-              "label": "RDP",
-              "selected": false,
-              "value": "rdp"
-            },
-            {
-              "label": "GreenGenes",
-              "selected": false,
-              "value": "greengenes"
-            },
-            {
-              "label": "UNITE Fungi: General Fasta",
-              "selected": false,
-              "value": "unite"
-            },
-            {
-              "label": "NCBI RefSeq 16S rRNA database supplemented by RDP",
-              "selected": false,
-              "value": "RefSeq_RDP"
-            },
-            {
-              "label": "GTDB: Genome Taxonomy Database (Bacteria & Archaea)",
-              "selected": false,
-              "value": "gtdb"
-            },
-            {
-              "label": "HitDB (Human InTestinal 16S)",
-              "selected": false,
-              "value": "hitdb"
-            },
-            {
-              "label": "Silva Eukaryotic 18S",
-              "selected": false,
-              "value": "silva_euk_18S"
-            },
-            {
-              "label": "Protist Ribosomal Reference database (PR2)",
-              "selected": false,
-              "value": "PR2"
+              "type": "null"
             }
           ],
-          "gx_test_label": "Taxonomic database",
-          "gx_type": "gx_conditional"
+          "default": null,
+          "description": "for assignTaxonomy",
+          "gx_multiple": true,
+          "gx_options": [
+            {
+              "label": "Silva 138.2 to Genus (for short reads)",
+              "selected": false,
+              "value": "silva_138.2_toGenus"
+            },
+            {
+              "label": "Silva 138.2 to Species (for long reads)",
+              "selected": false,
+              "value": "silva_138.2_toSpecies"
+            },
+            {
+              "label": "Silva 138.2 for Fungi 18S to Genus (for short reads)",
+              "selected": false,
+              "value": "silva_138.2_fungi_18S_toGenus"
+            },
+            {
+              "label": "Silva 138.2 for Fungi 18S to Species (for long read)",
+              "selected": false,
+              "value": "silva_138.2_fungi_18S_toSpecies"
+            },
+            {
+              "label": "Silva 138.2 for Fungi 26S to Genus (for short reads)",
+              "selected": false,
+              "value": "silva_138.2_fungi_26S_toGenus"
+            },
+            {
+              "label": "Silva 138.2 for Fungi 26S to Species (for long reads)",
+              "selected": false,
+              "value": "silva_138.2_fungi_26S_toSpecies"
+            },
+            {
+              "label": "Silva 138",
+              "selected": false,
+              "value": "silva_138"
+            },
+            {
+              "label": "Silva 132",
+              "selected": false,
+              "value": "silva_132"
+            },
+            {
+              "label": "Silva 128",
+              "selected": false,
+              "value": "silva_128"
+            },
+            {
+              "label": "RDP 19 to Genus (for short reads)",
+              "selected": false,
+              "value": "rdp_19_toGenus"
+            },
+            {
+              "label": "RDP 19 to Species (for long reads)",
+              "selected": false,
+              "value": "rdp_19_toSpecies"
+            },
+            {
+              "label": "RDP 16",
+              "selected": false,
+              "value": "rdp_16"
+            },
+            {
+              "label": "RDP 14",
+              "selected": false,
+              "value": "rdp_14"
+            },
+            {
+              "label": "GreenGenes2 2024.09 to Genus (for short reads)",
+              "selected": false,
+              "value": "greengenes2_2024.09_toGenus"
+            },
+            {
+              "label": "GreenGenes2 2024.09 to Species (for long reads)",
+              "selected": false,
+              "value": "greengenes2_2024.09_toSpecies"
+            },
+            {
+              "label": "GreenGenes 13.84",
+              "selected": false,
+              "value": "greengenes_13.84"
+            },
+            {
+              "label": "UNITE General Fasta release 10.0 (2025-02-19) for Eukaryota",
+              "selected": false,
+              "value": "unite_10.0_eukaryotes-2025-02-19"
+            },
+            {
+              "label": "UNITE: General Fasta release 10.0 (2025-02-19) for Eukaryota including global and 97% singletons",
+              "selected": false,
+              "value": "unite_10.0_eukaryotes_singletons-2025-02-19"
+            },
+            {
+              "label": "UNITE General Fasta release 10.0 (2025-02-19) for Fungi",
+              "selected": false,
+              "value": "unite_10.0_fungi-2025-02-19"
+            },
+            {
+              "label": "UNITE: General Fasta release 10.0 (2025-02-19) for Fungi including global and 97% singletons",
+              "selected": false,
+              "value": "unite_10.0_fungi_singletons-2025-02-19"
+            },
+            {
+              "label": "UNITE: General Fasta 8.0 for Fungi",
+              "selected": false,
+              "value": "unite_8.0_fungi"
+            },
+            {
+              "label": "UNITE: General Fasta release 8.0 for Fungi including global and 97% singletons",
+              "selected": false,
+              "value": "unite_8.0_fungi_singletons"
+            },
+            {
+              "label": "NCBI RefSeq 16S rRNA database supplemented by RDP 05/2018",
+              "selected": false,
+              "value": "RefSeq_RDP_2018_05"
+            },
+            {
+              "label": "GTDB: Genome Taxonomy Database 202 to Genus (for short reads) ",
+              "selected": false,
+              "value": "gtdb_202_toGenus"
+            },
+            {
+              "label": "GTDB: Genome Taxonomy Database 202 to Species (for long reads) ",
+              "selected": false,
+              "value": "gtdb_202_toSpecies"
+            },
+            {
+              "label": "GTDB: Genome Taxonomy Database 11/2018",
+              "selected": false,
+              "value": "gtdb_2018_11"
+            },
+            {
+              "label": "HitDB (Human InTestinal 16S) 1",
+              "selected": false,
+              "value": "hitdb_1"
+            },
+            {
+              "label": "Silva Eukaryotic 18S 132",
+              "selected": false,
+              "value": "silva_euk_18S_132"
+            },
+            {
+              "label": "Protist Ribosomal Reference database (PR2) 4.11.1",
+              "selected": false,
+              "value": "PR2_4.11.1"
+            }
+          ],
+          "gx_type": "gx_select",
+          "title": "Taxonomic database"
+        },
+        "species_databases": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "const": "silva_138.2",
+                    "type": "string"
+                  },
+                  {
+                    "const": "silva_138.2_fungi_18S",
+                    "type": "string"
+                  },
+                  {
+                    "const": "silva_138.2_fungi_26S",
+                    "type": "string"
+                  },
+                  {
+                    "const": "silva_138",
+                    "type": "string"
+                  },
+                  {
+                    "const": "silva_132",
+                    "type": "string"
+                  },
+                  {
+                    "const": "silva_128",
+                    "type": "string"
+                  },
+                  {
+                    "const": "rdp_16",
+                    "type": "string"
+                  },
+                  {
+                    "const": "rdp_14",
+                    "type": "string"
+                  },
+                  {
+                    "const": "gtdb_202",
+                    "type": "string"
+                  },
+                  {
+                    "const": "gtdb_2018_11",
+                    "type": "string"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "for addSpecies",
+          "gx_multiple": true,
+          "gx_options": [
+            {
+              "label": "Silva 138.2",
+              "selected": false,
+              "value": "silva_138.2"
+            },
+            {
+              "label": "Silva 138.2 for Fungi 18S",
+              "selected": false,
+              "value": "silva_138.2_fungi_18S"
+            },
+            {
+              "label": "Silva 138.2 for Fungi 26S",
+              "selected": false,
+              "value": "silva_138.2_fungi_26S"
+            },
+            {
+              "label": "Silva 138",
+              "selected": false,
+              "value": "silva_138"
+            },
+            {
+              "label": "Silva 132",
+              "selected": false,
+              "value": "silva_132"
+            },
+            {
+              "label": "Silva 128",
+              "selected": false,
+              "value": "silva_128"
+            },
+            {
+              "label": "RDP 16",
+              "selected": false,
+              "value": "rdp_16"
+            },
+            {
+              "label": "RDP 14",
+              "selected": false,
+              "value": "rdp_14"
+            },
+            {
+              "label": "GTDB: Genome Taxonomy Database 202",
+              "selected": false,
+              "value": "gtdb_202"
+            },
+            {
+              "label": "GTDB: Genome Taxonomy Database 11/2018",
+              "selected": false,
+              "value": "gtdb_2018_11"
+            }
+          ],
+          "gx_type": "gx_select",
+          "title": "Species databases"
         }
       },
       "title": "DynamicModelForTool",
@@ -9164,26 +9239,26 @@
       "title": "DynamicModelForTool",
       "type": "object"
     },
-    "params__iuc__data_manager_hisat2_index_builder__hisat2_index_builder_data_manager__2.0.5": {
+    "params__iuc__data_manager_hisat2_index_builder__hisat2_index_builder_data_manager__2.2.1+galaxy2": {
       "$defs": {
         "ConditionalType": {
           "oneOf": [
             {
-              "$ref": "#/$defs/params__iuc__data_manager_hisat2_index_builder__hisat2_index_builder_data_manager__2.0.5/$defs/When_adv_param_select_no"
+              "$ref": "#/$defs/params__iuc__data_manager_hisat2_index_builder__hisat2_index_builder_data_manager__2.2.1+galaxy2/$defs/When_adv_param_select_no"
             },
             {
-              "$ref": "#/$defs/params__iuc__data_manager_hisat2_index_builder__hisat2_index_builder_data_manager__2.0.5/$defs/When_adv_param_select___absent"
+              "$ref": "#/$defs/params__iuc__data_manager_hisat2_index_builder__hisat2_index_builder_data_manager__2.2.1+galaxy2/$defs/When_adv_param_select___absent"
             },
             {
-              "$ref": "#/$defs/params__iuc__data_manager_hisat2_index_builder__hisat2_index_builder_data_manager__2.0.5/$defs/When_adv_param_select_yes"
+              "$ref": "#/$defs/params__iuc__data_manager_hisat2_index_builder__hisat2_index_builder_data_manager__2.2.1+galaxy2/$defs/When_adv_param_select_yes"
             }
           ],
           "title": "ConditionalType",
           "discriminator": {
             "propertyName": "adv_param_select",
             "mapping": {
-              "no": "#/$defs/params__iuc__data_manager_hisat2_index_builder__hisat2_index_builder_data_manager__2.0.5/$defs/When_adv_param_select_no",
-              "yes": "#/$defs/params__iuc__data_manager_hisat2_index_builder__hisat2_index_builder_data_manager__2.0.5/$defs/When_adv_param_select_yes"
+              "no": "#/$defs/params__iuc__data_manager_hisat2_index_builder__hisat2_index_builder_data_manager__2.2.1+galaxy2/$defs/When_adv_param_select_no",
+              "yes": "#/$defs/params__iuc__data_manager_hisat2_index_builder__hisat2_index_builder_data_manager__2.2.1+galaxy2/$defs/When_adv_param_select_yes"
             }
           }
         },
@@ -9264,7 +9339,7 @@
           "type": "string"
         },
         "advanced": {
-          "$ref": "#/$defs/params__iuc__data_manager_hisat2_index_builder__hisat2_index_builder_data_manager__2.0.5/$defs/ConditionalType",
+          "$ref": "#/$defs/params__iuc__data_manager_hisat2_index_builder__hisat2_index_builder_data_manager__2.2.1+galaxy2/$defs/ConditionalType",
           "default": null,
           "gx_options": [
             {
@@ -13387,26 +13462,26 @@
       "title": "DynamicModelForTool",
       "type": "object"
     },
-    "params__iuc__data_manager_pangolearn__data_manager_pangolearn__0.0.3+galaxy1": {
+    "params__iuc__data_manager_pangolearn__data_manager_pangolearn__0.0.3+galaxy2": {
       "$defs": {
         "ConditionalType": {
           "oneOf": [
             {
-              "$ref": "#/$defs/params__iuc__data_manager_pangolearn__data_manager_pangolearn__0.0.3+galaxy1/$defs/When_which_latest"
+              "$ref": "#/$defs/params__iuc__data_manager_pangolearn__data_manager_pangolearn__0.0.3+galaxy2/$defs/When_which_latest"
             },
             {
-              "$ref": "#/$defs/params__iuc__data_manager_pangolearn__data_manager_pangolearn__0.0.3+galaxy1/$defs/When_which___absent"
+              "$ref": "#/$defs/params__iuc__data_manager_pangolearn__data_manager_pangolearn__0.0.3+galaxy2/$defs/When_which___absent"
             },
             {
-              "$ref": "#/$defs/params__iuc__data_manager_pangolearn__data_manager_pangolearn__0.0.3+galaxy1/$defs/When_which_date_range"
+              "$ref": "#/$defs/params__iuc__data_manager_pangolearn__data_manager_pangolearn__0.0.3+galaxy2/$defs/When_which_date_range"
             }
           ],
           "title": "ConditionalType",
           "discriminator": {
             "propertyName": "which",
             "mapping": {
-              "latest": "#/$defs/params__iuc__data_manager_pangolearn__data_manager_pangolearn__0.0.3+galaxy1/$defs/When_which_latest",
-              "date_range": "#/$defs/params__iuc__data_manager_pangolearn__data_manager_pangolearn__0.0.3+galaxy1/$defs/When_which_date_range"
+              "latest": "#/$defs/params__iuc__data_manager_pangolearn__data_manager_pangolearn__0.0.3+galaxy2/$defs/When_which_latest",
+              "date_range": "#/$defs/params__iuc__data_manager_pangolearn__data_manager_pangolearn__0.0.3+galaxy2/$defs/When_which_date_range"
             }
           }
         },
@@ -13482,7 +13557,7 @@
       "additionalProperties": false,
       "properties": {
         "release": {
-          "$ref": "#/$defs/params__iuc__data_manager_pangolearn__data_manager_pangolearn__0.0.3+galaxy1/$defs/ConditionalType",
+          "$ref": "#/$defs/params__iuc__data_manager_pangolearn__data_manager_pangolearn__0.0.3+galaxy2/$defs/ConditionalType",
           "default": null,
           "gx_options": [
             {
@@ -13807,7 +13882,7 @@
       "title": "DynamicModelForTool",
       "type": "object"
     },
-    "params__iuc__data_manager_plant_tribes_scaffolds_downloader__data_manager_plant_tribes_scaffolds_download__1.1.0": {
+    "params__iuc__data_manager_plant_tribes_scaffolds_downloader__data_manager_plant_tribes_scaffolds_download__1.1.2": {
       "additionalProperties": false,
       "properties": {
         "name": {
@@ -15106,26 +15181,26 @@
       "title": "DynamicModelForTool",
       "type": "object"
     },
-    "params__iuc__data_manager_selection_background__data_manager_selection_background__1.0.3": {
+    "params__iuc__data_manager_selection_background__data_manager_selection_background__1.0.4": {
       "$defs": {
         "ConditionalType": {
           "oneOf": [
             {
-              "$ref": "#/$defs/params__iuc__data_manager_selection_background__data_manager_selection_background__1.0.3/$defs/When_source_selector_uri"
+              "$ref": "#/$defs/params__iuc__data_manager_selection_background__data_manager_selection_background__1.0.4/$defs/When_source_selector_uri"
             },
             {
-              "$ref": "#/$defs/params__iuc__data_manager_selection_background__data_manager_selection_background__1.0.3/$defs/When_source_selector___absent"
+              "$ref": "#/$defs/params__iuc__data_manager_selection_background__data_manager_selection_background__1.0.4/$defs/When_source_selector___absent"
             },
             {
-              "$ref": "#/$defs/params__iuc__data_manager_selection_background__data_manager_selection_background__1.0.3/$defs/When_source_selector_history"
+              "$ref": "#/$defs/params__iuc__data_manager_selection_background__data_manager_selection_background__1.0.4/$defs/When_source_selector_history"
             }
           ],
           "title": "ConditionalType",
           "discriminator": {
             "propertyName": "source_selector",
             "mapping": {
-              "uri": "#/$defs/params__iuc__data_manager_selection_background__data_manager_selection_background__1.0.3/$defs/When_source_selector_uri",
-              "history": "#/$defs/params__iuc__data_manager_selection_background__data_manager_selection_background__1.0.3/$defs/When_source_selector_history"
+              "uri": "#/$defs/params__iuc__data_manager_selection_background__data_manager_selection_background__1.0.4/$defs/When_source_selector_uri",
+              "history": "#/$defs/params__iuc__data_manager_selection_background__data_manager_selection_background__1.0.4/$defs/When_source_selector_history"
             }
           }
         },
@@ -15228,7 +15303,7 @@
           "title": "Label for this entry"
         },
         "data_source": {
-          "$ref": "#/$defs/params__iuc__data_manager_selection_background__data_manager_selection_background__1.0.3/$defs/ConditionalType",
+          "$ref": "#/$defs/params__iuc__data_manager_selection_background__data_manager_selection_background__1.0.4/$defs/ConditionalType",
           "default": null,
           "gx_options": [
             {
@@ -15255,22 +15330,21 @@
       "title": "DynamicModelForTool",
       "type": "object"
     },
-    "params__iuc__data_manager_snpeff__data_manager_snpeff_databases__4.3r": {
+    "params__iuc__data_manager_snpeff__data_manager_snpeff_databases__5.4.0c": {
       "additionalProperties": false,
       "properties": {},
       "title": "DynamicModelForTool",
       "type": "object"
     },
-    "params__iuc__data_manager_snpeff__data_manager_snpeff_download__4.3r": {
+    "params__iuc__data_manager_snpeff__data_manager_snpeff_download__5.4.0c": {
       "additionalProperties": false,
       "properties": {
         "genome_version": {
           "default": null,
-          "description": "https://snpeff-data.galaxyproject.org/databases/",
           "gx_area": false,
           "gx_type": "gx_text",
           "pattern": "^\\S+",
-          "title": "Snpff Genome Version Name (e.g. GRCh38.76)",
+          "title": "SnpEff Genome Version Name (e.g. GRCh38.76)",
           "type": "string"
         }
       },
@@ -15404,7 +15478,7 @@
       "title": "DynamicModelForTool",
       "type": "object"
     },
-    "params__iuc__data_manager_stanza_models__data_manager_stanza_models__1.12.0+galaxy0": {
+    "params__iuc__data_manager_stanza_models__data_manager_stanza_models__1.14.0+galaxy0": {
       "additionalProperties": false,
       "properties": {
         "package": {
@@ -16803,6 +16877,43 @@
       "title": "DynamicModelForTool",
       "type": "object"
     },
+    "params__rplanel__data_manager_defense_finder__defense_finder_models_fetcher_data_manager__2.0.0+galaxy2": {
+      "additionalProperties": false,
+      "properties": {
+        "model_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The available versions can be found at : https://github.com/mdmparis/defense-finder-models/releases",
+          "gx_area": false,
+          "gx_type": "gx_text",
+          "title": "Defense finder models version"
+        },
+        "soft_compatibility_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Enter the list of defenseFinder software versions that are compatible with the current model (e.g., 1.2.0,1.3.0,2.0.0). Separate multiple versions with commas if required.",
+          "gx_area": false,
+          "gx_type": "gx_text",
+          "title": "List of defenseFinder versions compatibility"
+        }
+      },
+      "title": "DynamicModelForTool",
+      "type": "object"
+    },
     "params__scottx611x__data_manager_fetch_gene_annotation__gene_annotation_fetcher_data_manager__1.0.2": {
       "additionalProperties": false,
       "properties": {
@@ -16851,7 +16962,7 @@
       "if": {
         "properties": {
           "tool_id": {
-            "const": "toolshed.g2.bx.psu.edu/repos/bgruening/data_manager_diamond_database_builder/diamond_database_builder/0.0.1"
+            "const": "toolshed.g2.bx.psu.edu/repos/bgruening/data_manager_diamond_database_builder/diamond_database_builder/0.0.5"
           }
         },
         "required": [
@@ -16861,7 +16972,7 @@
       "then": {
         "properties": {
           "params": {
-            "$ref": "#/$defs/params__bgruening__data_manager_diamond_database_builder__diamond_database_builder__0.0.1"
+            "$ref": "#/$defs/params__bgruening__data_manager_diamond_database_builder__diamond_database_builder__0.0.5"
           }
         }
       }
@@ -16927,7 +17038,7 @@
       "if": {
         "properties": {
           "tool_id": {
-            "const": "toolshed.g2.bx.psu.edu/repos/bgruening/kmetashot_build_database/kmetashot_build_database/2.0+galaxy0"
+            "const": "toolshed.g2.bx.psu.edu/repos/bgruening/kmetashot_build_database/kmetashot_build_database/2.0+galaxy2"
           }
         },
         "required": [
@@ -16937,7 +17048,7 @@
       "then": {
         "properties": {
           "params": {
-            "$ref": "#/$defs/params__bgruening__kmetashot_build_database__kmetashot_build_database__2.0+galaxy0"
+            "$ref": "#/$defs/params__bgruening__kmetashot_build_database__kmetashot_build_database__2.0+galaxy2"
           }
         }
       }
@@ -16946,7 +17057,7 @@
       "if": {
         "properties": {
           "tool_id": {
-            "const": "toolshed.g2.bx.psu.edu/repos/bgruening/mirge3_build_database/mirge3_build_database/0.1.4+galaxy0"
+            "const": "toolshed.g2.bx.psu.edu/repos/bgruening/mirge3_build_database/mirge3_build_database/0.1.4+galaxy1"
           }
         },
         "required": [
@@ -16956,7 +17067,7 @@
       "then": {
         "properties": {
           "params": {
-            "$ref": "#/$defs/params__bgruening__mirge3_build_database__mirge3_build_database__0.1.4+galaxy0"
+            "$ref": "#/$defs/params__bgruening__mirge3_build_database__mirge3_build_database__0.1.4+galaxy1"
           }
         }
       }
@@ -16984,7 +17095,7 @@
       "if": {
         "properties": {
           "tool_id": {
-            "const": "toolshed.g2.bx.psu.edu/repos/devteam/data_manager_bowtie2_index_builder/bowtie2_index_builder_data_manager/2.3.4.3"
+            "const": "toolshed.g2.bx.psu.edu/repos/devteam/data_manager_bowtie2_index_builder/bowtie2_index_builder_data_manager/2.5.4+galaxy1"
           }
         },
         "required": [
@@ -16994,7 +17105,7 @@
       "then": {
         "properties": {
           "params": {
-            "$ref": "#/$defs/params__devteam__data_manager_bowtie2_index_builder__bowtie2_index_builder_data_manager__2.3.4.3"
+            "$ref": "#/$defs/params__devteam__data_manager_bowtie2_index_builder__bowtie2_index_builder_data_manager__2.5.4+galaxy1"
           }
         }
       }
@@ -17022,7 +17133,7 @@
       "if": {
         "properties": {
           "tool_id": {
-            "const": "toolshed.g2.bx.psu.edu/repos/devteam/data_manager_bwa_mem_index_builder/bwa_mem_index_builder_data_manager/0.0.3"
+            "const": "toolshed.g2.bx.psu.edu/repos/devteam/data_manager_bwa_mem_index_builder/bwa_mem_index_builder_data_manager/0.7.18+galaxy1"
           }
         },
         "required": [
@@ -17032,7 +17143,7 @@
       "then": {
         "properties": {
           "params": {
-            "$ref": "#/$defs/params__devteam__data_manager_bwa_mem_index_builder__bwa_mem_index_builder_data_manager__0.0.3"
+            "$ref": "#/$defs/params__devteam__data_manager_bwa_mem_index_builder__bwa_mem_index_builder_data_manager__0.7.18+galaxy1"
           }
         }
       }
@@ -17041,7 +17152,7 @@
       "if": {
         "properties": {
           "tool_id": {
-            "const": "toolshed.g2.bx.psu.edu/repos/devteam/data_manager_fetch_genome_dbkeys_all_fasta/data_manager_fetch_genome_all_fasta_dbkey/0.0.3"
+            "const": "toolshed.g2.bx.psu.edu/repos/devteam/data_manager_fetch_genome_dbkeys_all_fasta/data_manager_fetch_genome_all_fasta_dbkey/0.0.6"
           }
         },
         "required": [
@@ -17051,7 +17162,7 @@
       "then": {
         "properties": {
           "params": {
-            "$ref": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.3"
+            "$ref": "#/$defs/params__devteam__data_manager_fetch_genome_dbkeys_all_fasta__data_manager_fetch_genome_all_fasta_dbkey__0.0.6"
           }
         }
       }
@@ -17060,7 +17171,7 @@
       "if": {
         "properties": {
           "tool_id": {
-            "const": "toolshed.g2.bx.psu.edu/repos/devteam/data_manager_fetch_ncbi_taxonomy/ncbi_taxonomy_fetcher/1.0.0"
+            "const": "toolshed.g2.bx.psu.edu/repos/devteam/data_manager_fetch_ncbi_taxonomy/ncbi_taxonomy_fetcher/1.1"
           }
         },
         "required": [
@@ -17070,7 +17181,7 @@
       "then": {
         "properties": {
           "params": {
-            "$ref": "#/$defs/params__devteam__data_manager_fetch_ncbi_taxonomy__ncbi_taxonomy_fetcher__1.0.0"
+            "$ref": "#/$defs/params__devteam__data_manager_fetch_ncbi_taxonomy__ncbi_taxonomy_fetcher__1.1"
           }
         }
       }
@@ -17098,7 +17209,7 @@
       "if": {
         "properties": {
           "tool_id": {
-            "const": "toolshed.g2.bx.psu.edu/repos/devteam/data_manager_picard_index_builder/picard_index_builder_data_manager/2.7.1"
+            "const": "toolshed.g2.bx.psu.edu/repos/devteam/data_manager_picard_index_builder/picard_index_builder_data_manager/2.7.1+galaxy1"
           }
         },
         "required": [
@@ -17108,7 +17219,7 @@
       "then": {
         "properties": {
           "params": {
-            "$ref": "#/$defs/params__devteam__data_manager_picard_index_builder__picard_index_builder_data_manager__2.7.1"
+            "$ref": "#/$defs/params__devteam__data_manager_picard_index_builder__picard_index_builder_data_manager__2.7.1+galaxy1"
           }
         }
       }
@@ -17136,7 +17247,7 @@
       "if": {
         "properties": {
           "tool_id": {
-            "const": "toolshed.g2.bx.psu.edu/repos/devteam/data_manager_sam_fasta_index_builder/sam_fasta_index_builder/0.0.2"
+            "const": "toolshed.g2.bx.psu.edu/repos/devteam/data_manager_sam_fasta_index_builder/sam_fasta_index_builder/1.21+galaxy0"
           }
         },
         "required": [
@@ -17146,7 +17257,7 @@
       "then": {
         "properties": {
           "params": {
-            "$ref": "#/$defs/params__devteam__data_manager_sam_fasta_index_builder__sam_fasta_index_builder__0.0.2"
+            "$ref": "#/$defs/params__devteam__data_manager_sam_fasta_index_builder__sam_fasta_index_builder__1.21+galaxy0"
           }
         }
       }
@@ -17155,7 +17266,7 @@
       "if": {
         "properties": {
           "tool_id": {
-            "const": "toolshed.g2.bx.psu.edu/repos/devteam/data_manager_twobit_builder/twobit_builder_data_manager/0.0.2"
+            "const": "toolshed.g2.bx.psu.edu/repos/devteam/data_manager_twobit_builder/twobit_builder_data_manager/0.0.4"
           }
         },
         "required": [
@@ -17165,7 +17276,7 @@
       "then": {
         "properties": {
           "params": {
-            "$ref": "#/$defs/params__devteam__data_manager_twobit_builder__twobit_builder_data_manager__0.0.2"
+            "$ref": "#/$defs/params__devteam__data_manager_twobit_builder__twobit_builder_data_manager__0.0.4"
           }
         }
       }
@@ -17269,7 +17380,7 @@
       "if": {
         "properties": {
           "tool_id": {
-            "const": "toolshed.g2.bx.psu.edu/repos/iuc/data_manager_bakta/bakta_build_database/1.9.3+galaxy1"
+            "const": "toolshed.g2.bx.psu.edu/repos/iuc/data_manager_bakta/bakta_build_database/1.12.1+galaxy0"
           }
         },
         "required": [
@@ -17279,7 +17390,7 @@
       "then": {
         "properties": {
           "params": {
-            "$ref": "#/$defs/params__iuc__data_manager_bakta__bakta_build_database__1.9.3+galaxy1"
+            "$ref": "#/$defs/params__iuc__data_manager_bakta__bakta_build_database__1.12.1+galaxy0"
           }
         }
       }
@@ -17478,7 +17589,7 @@
       "if": {
         "properties": {
           "tool_id": {
-            "const": "toolshed.g2.bx.psu.edu/repos/iuc/data_manager_dada2/dada2_fetcher/0.0.8"
+            "const": "toolshed.g2.bx.psu.edu/repos/iuc/data_manager_dada2/dada2_fetcher/0.1.4"
           }
         },
         "required": [
@@ -17488,7 +17599,7 @@
       "then": {
         "properties": {
           "params": {
-            "$ref": "#/$defs/params__iuc__data_manager_dada2__dada2_fetcher__0.0.8"
+            "$ref": "#/$defs/params__iuc__data_manager_dada2__dada2_fetcher__0.1.4"
           }
         }
       }
@@ -17744,7 +17855,7 @@
       "if": {
         "properties": {
           "tool_id": {
-            "const": "toolshed.g2.bx.psu.edu/repos/iuc/data_manager_hisat2_index_builder/hisat2_index_builder_data_manager/2.0.5"
+            "const": "toolshed.g2.bx.psu.edu/repos/iuc/data_manager_hisat2_index_builder/hisat2_index_builder_data_manager/2.2.1+galaxy2"
           }
         },
         "required": [
@@ -17754,7 +17865,7 @@
       "then": {
         "properties": {
           "params": {
-            "$ref": "#/$defs/params__iuc__data_manager_hisat2_index_builder__hisat2_index_builder_data_manager__2.0.5"
+            "$ref": "#/$defs/params__iuc__data_manager_hisat2_index_builder__hisat2_index_builder_data_manager__2.2.1+galaxy2"
           }
         }
       }
@@ -18162,7 +18273,7 @@
       "if": {
         "properties": {
           "tool_id": {
-            "const": "toolshed.g2.bx.psu.edu/repos/iuc/data_manager_pangolearn/data_manager_pangolearn/0.0.3+galaxy1"
+            "const": "toolshed.g2.bx.psu.edu/repos/iuc/data_manager_pangolearn/data_manager_pangolearn/0.0.3+galaxy2"
           }
         },
         "required": [
@@ -18172,7 +18283,7 @@
       "then": {
         "properties": {
           "params": {
-            "$ref": "#/$defs/params__iuc__data_manager_pangolearn__data_manager_pangolearn__0.0.3+galaxy1"
+            "$ref": "#/$defs/params__iuc__data_manager_pangolearn__data_manager_pangolearn__0.0.3+galaxy2"
           }
         }
       }
@@ -18219,7 +18330,7 @@
       "if": {
         "properties": {
           "tool_id": {
-            "const": "toolshed.g2.bx.psu.edu/repos/iuc/data_manager_plant_tribes_scaffolds_downloader/data_manager_plant_tribes_scaffolds_download/1.1.0"
+            "const": "toolshed.g2.bx.psu.edu/repos/iuc/data_manager_plant_tribes_scaffolds_downloader/data_manager_plant_tribes_scaffolds_download/1.1.2"
           }
         },
         "required": [
@@ -18229,7 +18340,7 @@
       "then": {
         "properties": {
           "params": {
-            "$ref": "#/$defs/params__iuc__data_manager_plant_tribes_scaffolds_downloader__data_manager_plant_tribes_scaffolds_download__1.1.0"
+            "$ref": "#/$defs/params__iuc__data_manager_plant_tribes_scaffolds_downloader__data_manager_plant_tribes_scaffolds_download__1.1.2"
           }
         }
       }
@@ -18371,7 +18482,7 @@
       "if": {
         "properties": {
           "tool_id": {
-            "const": "toolshed.g2.bx.psu.edu/repos/iuc/data_manager_selection_background/data_manager_selection_background/1.0.3"
+            "const": "toolshed.g2.bx.psu.edu/repos/iuc/data_manager_selection_background/data_manager_selection_background/1.0.4"
           }
         },
         "required": [
@@ -18381,7 +18492,7 @@
       "then": {
         "properties": {
           "params": {
-            "$ref": "#/$defs/params__iuc__data_manager_selection_background__data_manager_selection_background__1.0.3"
+            "$ref": "#/$defs/params__iuc__data_manager_selection_background__data_manager_selection_background__1.0.4"
           }
         }
       }
@@ -18409,7 +18520,7 @@
       "if": {
         "properties": {
           "tool_id": {
-            "const": "toolshed.g2.bx.psu.edu/repos/iuc/data_manager_snpeff/data_manager_snpeff_databases/4.3r"
+            "const": "toolshed.g2.bx.psu.edu/repos/iuc/data_manager_snpeff/data_manager_snpeff_databases/5.4.0c"
           }
         },
         "required": [
@@ -18419,7 +18530,7 @@
       "then": {
         "properties": {
           "params": {
-            "$ref": "#/$defs/params__iuc__data_manager_snpeff__data_manager_snpeff_databases__4.3r"
+            "$ref": "#/$defs/params__iuc__data_manager_snpeff__data_manager_snpeff_databases__5.4.0c"
           }
         }
       }
@@ -18428,7 +18539,7 @@
       "if": {
         "properties": {
           "tool_id": {
-            "const": "toolshed.g2.bx.psu.edu/repos/iuc/data_manager_snpeff/data_manager_snpeff_download/4.3r"
+            "const": "toolshed.g2.bx.psu.edu/repos/iuc/data_manager_snpeff/data_manager_snpeff_download/5.4.0c"
           }
         },
         "required": [
@@ -18438,7 +18549,7 @@
       "then": {
         "properties": {
           "params": {
-            "$ref": "#/$defs/params__iuc__data_manager_snpeff__data_manager_snpeff_download__4.3r"
+            "$ref": "#/$defs/params__iuc__data_manager_snpeff__data_manager_snpeff_download__5.4.0c"
           }
         }
       }
@@ -18466,7 +18577,7 @@
       "if": {
         "properties": {
           "tool_id": {
-            "const": "toolshed.g2.bx.psu.edu/repos/iuc/data_manager_stanza_models/data_manager_stanza_models/1.12.0+galaxy0"
+            "const": "toolshed.g2.bx.psu.edu/repos/iuc/data_manager_stanza_models/data_manager_stanza_models/1.14.0+galaxy0"
           }
         },
         "required": [
@@ -18476,7 +18587,7 @@
       "then": {
         "properties": {
           "params": {
-            "$ref": "#/$defs/params__iuc__data_manager_stanza_models__data_manager_stanza_models__1.12.0+galaxy0"
+            "$ref": "#/$defs/params__iuc__data_manager_stanza_models__data_manager_stanza_models__1.14.0+galaxy0"
           }
         }
       }
@@ -18629,6 +18740,25 @@
         "properties": {
           "params": {
             "$ref": "#/$defs/params__rnateam__data_manager_sortmerna_database_downloader__data_manager_sortmerna_download__2.1b.1"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "tool_id": {
+            "const": "toolshed.g2.bx.psu.edu/repos/rplanel/data_manager_defense_finder/defense_finder_models_fetcher_data_manager/2.0.0+galaxy2"
+          }
+        },
+        "required": [
+          "tool_id"
+        ]
+      },
+      "then": {
+        "properties": {
+          "params": {
+            "$ref": "#/$defs/params__rplanel__data_manager_defense_finder__defense_finder_models_fetcher_data_manager__2.0.0+galaxy2"
           }
         }
       }
