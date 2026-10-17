@@ -99,4 +99,8 @@
         <columns>value, version, name, path</columns>
         <file path="/cvmfs/idc.galaxyproject.org/config/motus_db_versioned.loc"/>
     </table>
+    <table name="defense-finder-2" comment_char="#" allow_duplicate_entries="False">
+        <columns>value, dbkey, name, version, soft_compatibility_version, description, path</columns>
+        <file path="/cvmfs/idc.galaxyproject.org/config/defense-finder-2.loc"/>
+    </table>
 </tables>
