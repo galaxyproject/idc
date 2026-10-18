@@ -1,0 +1,108 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "release": {
+      "anyOf": [
+        {
+          "const": "4.0",
+          "type": "string"
+        },
+        {
+          "const": "3.9",
+          "type": "string"
+        },
+        {
+          "const": "3.8",
+          "type": "string"
+        }
+      ],
+      "default": null,
+      "gx_multiple": false,
+      "gx_options": [
+        {
+          "label": "Dfam 4.0",
+          "selected": true,
+          "value": "4.0"
+        },
+        {
+          "label": "Dfam 3.9",
+          "selected": false,
+          "value": "3.9"
+        },
+        {
+          "label": "Dfam 3.8",
+          "selected": false,
+          "value": "3.8"
+        }
+      ],
+      "gx_type": "gx_select",
+      "title": "Dfam release"
+    },
+    "components": {
+      "anyOf": [
+        {
+          "items": {
+            "anyOf": [
+              {
+                "const": "curated_consensus",
+                "type": "string"
+              },
+              {
+                "const": "uncurated_consensus",
+                "type": "string"
+              },
+              {
+                "const": "curated_hmm",
+                "type": "string"
+              },
+              {
+                "const": "uncurated_hmm",
+                "type": "string"
+              }
+            ]
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "At least one component is required: the root partition on its own contains almost no families. The curated consensus component is recommended for the default rmblast search engine. HMM components are only needed for the nhmmer engine. Uncurated components are very large.",
+      "gx_multiple": true,
+      "gx_options": [
+        {
+          "label": "Curated consensus sequences (rmblast; recommended)",
+          "selected": true,
+          "value": "curated_consensus"
+        },
+        {
+          "label": "Uncurated consensus sequences (rmblast; very large)",
+          "selected": false,
+          "value": "uncurated_consensus"
+        },
+        {
+          "label": "Curated profile HMMs (nhmmer)",
+          "selected": false,
+          "value": "curated_hmm"
+        },
+        {
+          "label": "Uncurated profile HMMs (nhmmer; very large)",
+          "selected": false,
+          "value": "uncurated_hmm"
+        }
+      ],
+      "gx_type": "gx_select",
+      "title": "Components to install in addition to the (always downloaded) root partition"
+    },
+    "test_data_manager": {
+      "default": null,
+      "gx_type": "gx_hidden",
+      "title": "Test Data Manager",
+      "type": "string"
+    }
+  },
+  "title": "DynamicModelForTool",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

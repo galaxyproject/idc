@@ -99,4 +99,8 @@
         <columns>value, version, name, path</columns>
         <file path="/cvmfs/idc.galaxyproject.org/config/motus_db_versioned.loc"/>
     </table>
+    <table name="repeatmasker_famdb" comment_char="#" allow_duplicate_entries="False">
+        <columns>value, name, version, components, engines, path</columns>
+        <file path="/cvmfs/idc.galaxyproject.org/config/repeatmasker_famdb.loc"/>
+    </table>
 </tables>
