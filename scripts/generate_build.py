@@ -84,6 +84,14 @@ def deep_merge(base: dict, overlay: dict) -> dict:
     return out
 
 
+def _set_path(state: dict, param_path: str, value) -> None:
+    """Set ``value`` at an ``a|b`` parameter path inside a nested tool_state dict."""
+    *parents, leaf = param_path.split("|")
+    for key in parents:
+        state = state.setdefault(key, {})
+    state[leaf] = value
+
+
 def load_request(path: Path) -> tuple[Request, str, str]:
     doc = yaml.safe_load(path.read_text())
     return Request(**doc), data_manager_name(path), version_id(path)
@@ -117,11 +125,15 @@ class WorkflowBuilder:
         in_map: dict = {}
         # Each other build parameter -> a workflow input (string), connected
         # to the tool parameter and given its value in the job file. A list
-        # value (a multiple select) needs a multiple-text input, ``[string]``:
-        # Galaxy rejects a list for a single ``string`` parameter input.
+        # value (a multiple select) is baked into tool_state instead: planemo
+        # stages every list in a job file as a dataset collection, which
+        # Galaxy rejects for a parameter input.
         for param_path, value in connectable.items():
+            if isinstance(value, list):
+                _set_path(tool_state, param_path, value)
+                continue
             input_name = (input_prefix + param_path).replace("|", "_")
-            self.inputs[input_name] = {"type": ["string"] if isinstance(value, list) else "string"}
+            self.inputs[input_name] = {"type": "string"}
             self.job[input_name] = value
             in_map[param_path] = {"source": input_name}
         # Upstream-bundle connections (chained builds).
