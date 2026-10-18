@@ -116,10 +116,12 @@ class WorkflowBuilder:
 
         in_map: dict = {}
         # Each other build parameter -> a workflow input (string), connected
-        # to the tool parameter and given its value in the job file.
+        # to the tool parameter and given its value in the job file. A list
+        # value (a multiple select) needs a multiple-text input, ``[string]``:
+        # Galaxy rejects a list for a single ``string`` parameter input.
         for param_path, value in connectable.items():
             input_name = (input_prefix + param_path).replace("|", "_")
-            self.inputs[input_name] = {"type": "string"}
+            self.inputs[input_name] = {"type": ["string"] if isinstance(value, list) else "string"}
             self.job[input_name] = value
             in_map[param_path] = {"source": input_name}
         # Upstream-bundle connections (chained builds).
