@@ -286,13 +286,17 @@ def test_standalone_build_single_bundle_step():
     gb.validate_workflow(workflow)  # gxformat2 strict + native + lint
 
 
-def test_build_multiple_select_param_is_a_multiple_text_input():
+def test_build_bakes_multiple_select_param_into_tool_state():
     path = REPO_ROOT / "data-managers/repeatmasker_famdb/dfam_4.0_curated_consensus.yaml"
     request, dm, version = gb.load_request(path)
     workflow, job = gb.build(request, dm, version, tool_schemas=fixture_schema)
-    # components is a multiple select: a list needs a [string] input, not string
-    assert workflow["inputs"] == {"release": {"type": "string"}, "components": {"type": ["string"]}}
-    assert job == {"release": "4.0", "components": ["curated_consensus"]}
+    # planemo stages a job-file list as a dataset collection, which Galaxy
+    # rejects for a parameter input, so the multiple select goes in tool_state
+    step = workflow["steps"]["repeatmasker_famdb"]
+    assert step["tool_state"]["components"] == ["curated_consensus"]
+    assert "components" not in step["in"]
+    assert workflow["inputs"] == {"release": {"type": "string"}}
+    assert job == {"release": "4.0"}
     gb.validate_workflow(workflow)
 
 
