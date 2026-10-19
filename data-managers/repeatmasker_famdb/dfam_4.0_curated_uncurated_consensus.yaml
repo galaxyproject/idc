@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/galaxyproject/idc/main/schemas/request.schema.json
+# Dfam 4.0 FamDB library for RepeatMasker >= 4.2.4 (root partition + curated and uncurated
+# consensus sequences). The uncurated (DR) families cover many non-model genomes that the
+# curated-only library has no families for; the download is about 4.2 GB compressed.
+# Standalone build: the data manager downloads the partitions from dfam.org by release.
+tool_id: toolshed.g2.bx.psu.edu/repos/iuc/data_manager_repeatmasker/repeatmasker_download/4.0+galaxy0
+data_tables:
+  - repeatmasker_famdb
+params:
+  release: "4.0"   # the tool's "Dfam release" select param
+  # "Components to install in addition to the root partition": the curated and uncurated
+  # consensus sequences, both used by RepeatMasker's default rmblast engine.
+  components:
+    - curated_consensus
+    - uncurated_consensus
+description: Dfam 4.0 repeat library in FamDB format (root partition, curated and uncurated consensus sequences) for RepeatMasker
