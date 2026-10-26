@@ -9,7 +9,8 @@ page covers what is specific to them.
 
 A genome is fetched by the `data_manager_fetch_genome_dbkeys_all_fasta` data
 manager, which writes the `all_fasta` and `__dbkeys__` tables. The request goes
-in `data-managers/all_fasta/`, named after the dbkey:
+in `data-managers/all_fasta/`, named after the sequence identifier (`value` in
+`all_fasta`). This can differ from the assembly's `dbkey`:
 
 ```yaml
 # data-managers/all_fasta/GCF_000001405.40.yaml
@@ -34,7 +35,7 @@ description: Human reference genome GRCh38.p14 (RefSeq)
 `python scripts/tool_schemas.py <tool_id>` lists the other sources and options,
 such as fetching from UCSC by its dbkey or from a URL. Many genomes are already
 served, so check
-`https://test.galaxyproject.org/api/tool_data/all_fasta` for your dbkey first.
+`https://test.galaxyproject.org/api/tool_data/all_fasta` for your sequence identifier first.
 
 A genome that is already served from outside the IDC still gets a request: the
 recipe that reproduces it, with the checksum of the FASTA the data manager
@@ -46,7 +47,9 @@ cut down to the canonical chromosomes in karyotypic order by the custom sort.
 ## Indexes
 
 An index is built from a genome in `all_fasta`, so its request names the genome
-with `depends_on` and goes in the index's table, again named after the dbkey:
+with `depends_on` and goes in the index's table. Use the upstream request's
+file stem in `depends_on`; choose the index's file stem to match the identifier
+the indexer writes:
 
 ```yaml
 # data-managers/bowtie2_indexes/GCF_000001405.40.yaml
@@ -57,6 +60,25 @@ depends_on:
   all_fasta: GCF_000001405.40
 params: {}
 ```
+
+Check the pinned indexer's wrapper to see how it fills the output table's
+`value`; a valid parameter schema does not establish that identity. In
+particular, `hg38canon` has `all_fasta.value = hg38canon` but `dbkey = hg38`.
+The SAM FASTA index builder at `1.21+galaxy0` defaults its output `value` to
+the input's **dbkey**, so its request needs an explicit ID:
+
+```yaml
+# In data-managers/fasta_indexes/hg38canon.yaml
+depends_on:
+  all_fasta: hg38canon
+params:
+  sequence_id: hg38canon
+```
+
+Without this override it writes `hg38`, and the existence check cannot
+recognise the result as `hg38canon`. `depends_on` wires the input; it does not
+set the downstream output identifier. Check each indexer's behavior rather
+than assuming all indexers use the same default.
 
 If the genome is already served (and matches its `sha256`, if pinned), the
 build indexes that copy; otherwise it's fetched first, in the same workflow. A

@@ -1,6 +1,6 @@
 ---
 name: request-reference-data
-description: Request a new versioned reference-data build from the Galaxy IDC (a data manager database such as a new MetaPhlAn, mOTUs or SameStr version) - check it is not already served, find the data manager's version-pinned tool_id and params, choose the version identity, write data-managers/<table>/<version>.yaml, run the repo's lint and draft the pull request. Use when someone needs a reference database or version on Galaxy servers, or asks to add or fix an IDC request file.
+description: Request a new versioned reference-data build from the Galaxy IDC (a data manager database such as a new MetaPhlAn, mOTUs or SameStr version) - check it is not already served, find the data manager's version-pinned tool_id and params, choose the version identity, write the request YAML, run the repo's lint and draft the pull request. Use when someone needs a reference database or version on Galaxy servers, or asks to add or fix an IDC request file.
 ---
 
 # Request reference data from the IDC
@@ -146,16 +146,22 @@ are in the JSON. Rules:
   out parameters whose default is right.
 - **A chained request's upstream branch is not a param.** Don't set the
   conditional that picks the upstream database (SameStr's `db_source`); step 5's
-  `depends_on` does that. Such requests usually have `params: {}`.
+  `depends_on` does that. Other parameters, including output identifiers, may
+  still need to be set.
 - **Identifier pinning.** Check what `value` other servers use for the same data:
   `curl -s https://usegalaxy.eu/api/tool_data/<table>` (and usegalaxy.org). If
   the data manager has a parameter that sets the table `value` explicitly
   (mOTUs' `db_value`), set it to that server's identifier so workflows move
   between servers unchanged. If it has none and would write a different
   `value`, mention it in the PR for the reviewers. If no other server has the
-  data, leave such an override unset unless its help text says the default is
-  not reproducible (e.g. it stamps today's date); say which `value` you expect
-  in the PR.
+  data, inspect the pinned wrapper's output-row construction before deciding
+  whether to leave the override unset; pin defaults that vary by build date.
+  A schema-valid default can still write
+  the wrong identity: the SAM FASTA index builder uses the upstream `dbkey`
+  when `sequence_id` is empty, so `hg38canon` needs
+  `params: {sequence_id: hg38canon}` to avoid writing `hg38`. `depends_on`
+  does not set the output identifier. Say which `value` you expect in the PR
+  and check that it identifies the requested data under step 4's matching rules.
 
 ## 4. Choose the version identity (file name)
 
@@ -216,9 +222,10 @@ ls data-managers/<upstream_table>/                                        # upst
   the upstream is large, mention the extra build time in the PR.
 
 Genomes and indexes are chains too: a genome is a request in `all_fasta` for
-the `data_manager_fetch_genome_dbkeys_all_fasta` data manager, named after the
-dbkey, and each index is a request in the index's table with
-`depends_on: {all_fasta: <dbkey>}`. Every indexer needs a `CHAIN_WIRING` entry
+the `data_manager_fetch_genome_dbkeys_all_fasta` data manager, named after its
+sequence identifier (`all_fasta.value`, which may differ from `dbkey`), and
+each index is a request in the index's table with
+`depends_on: {all_fasta: <upstream request stem>}`. Every indexer needs a `CHAIN_WIRING` entry
 the first time (for STAR, just `connect_param: all_fasta_source`); `docs/genome-indexing.md` has the example
 files.
 
@@ -246,6 +253,16 @@ Only these fields exist: `tool_id`, `data_tables`, `params`, `depends_on`,
 (`"3.1.0"`) so YAML keeps them strings.
 
 ## 7. Lint
+
+For every tool GUID newly used by a request, check for
+`tests/fixtures/tool_schemas/<owner>~<repo>~<tool>~<version>.json`. This is
+required even if the GUID is already in the editor schema. If missing, follow
+"Schema fixtures for a tool's first request" in
+`docs/requesting-reference-data.md`: use `tool_schemas.trs_id_and_version`
+to derive the filename and `fetch_request_schema` to save the raw response.
+Commit the fixture with the request. An offline test error ending in
+`no fixture for ...` means this file is missing, not that the Tool Shed lacks
+the tool's schema.
 
 Run all of these; fix and re-run until they pass. Every script takes several
 files, so pass all the request files you added (e.g. an upstream and its

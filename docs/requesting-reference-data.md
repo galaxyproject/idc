@@ -159,6 +159,13 @@ parameter. If a data manager has no such parameter and would write a different
 [stable data table identifiers](https://galaxy-iuc-standards.readthedocs.io/en/latest/best_practices/data_managers.html#stable-data-table-identifiers)
 describes what new data managers should write.
 
+Even when no other server has the data, inspect the pinned tool's wrapper to
+determine the `value` it will write, including what an empty identifier
+parameter means. The schema checks parameter names and types, not the output
+row's identity. For a chain, `depends_on` selects the upstream input but does
+not set the downstream identifier. Genome variants can share a `dbkey` while
+having different sequence identifiers; see [Indexes](genome-indexing.md#indexes).
+
 ## 4. Databases built from other databases
 
 Some data managers take another database as input: SameStr builds its marker
@@ -255,6 +262,7 @@ python scripts/request_models.py <files>
 python scripts/generate_schema.py --check
 python scripts/generate_build.py <files> --outdir build
 python scripts/check_data_exists.py <files>
+python -m pytest tests/ -q
 ```
 
 `request_models.py` validates the request itself, including `params` against
@@ -265,6 +273,41 @@ it from asking the Tool Shed and `--no-tool-schemas` skips the `params` check.
 request uses a `tool_id` it doesn't know. Run `python scripts/generate_schema.py`
 and commit the updated `schemas/request.schema.json` with the request.
 
+### Schema fixtures for a tool's first request
+
+Every tool GUID used by a request also needs an offline test fixture under
+`tests/fixtures/tool_schemas/`, even if it already appears in the editor
+schema. The tests deliberately do not fetch missing schemas from the Tool
+Shed. For a GUID with no fixture yet, save the raw response using the existing
+schema helpers, from the repository root:
+
+```bash
+python - '<tool_id>' <<'PY'
+import json
+import sys
+from pathlib import Path
+
+sys.path.insert(0, "scripts")
+from tool_schemas import fetch_request_schema, trs_id_and_version
+
+guid = sys.argv[1]
+trs_id, version = trs_id_and_version(guid)
+schema = fetch_request_schema(guid)
+path = Path("tests/fixtures/tool_schemas") / f"{trs_id}~{version}.json"
+path.write_text(json.dumps(schema, indent=2) + "\n")
+print(path)
+PY
+```
+
+The filename is `<owner>~<repo>~<tool>~<version>.json`, derived from that
+GUID, not from its upstream dependency. For the SAM FASTA index builder it is
+`devteam~data_manager_sam_fasta_index_builder~sam_fasta_index_builder~1.21+galaxy0.json`.
+Commit the fixture with the request and run `python -m pytest tests/ -q`.
+`scripts/tool_schemas.py` prints a filtered contributor schema; the helpers
+above preserve the raw Tool Shed response used by the fixtures.
+
+### Generated workflows and existence checks
+
 `generate_build.py` writes `build/<table>/<version>/workflow.gxwf.yml` and
 `job.yml`, the workflow and inputs the build will run after the merge, and
 validates the workflow with gxformat2.
@@ -274,7 +317,7 @@ validates the workflow with gxformat2.
 answer (`cannot tell whether this already exists`), in which case try again
 later.
 
-CI additionally runs `generate_schema.py --check --refresh`, the unit tests and
+CI additionally runs `generate_schema.py --check --refresh` and
 `generate_build.py --all`.
 
 ## 7. Open the pull request
@@ -357,6 +400,11 @@ first, or you have an older tool version pinned.
 
 The Tool Shed has no schema for that GUID, usually because the tool id or
 version is wrong. `python scripts/tool_schemas.py <GUID>` shows the same error.
+
+If the error ends with **`no fixture for ...`** in the unit tests, the offline
+fixture is missing instead. Follow [Schema fixtures for a tool's first
+request](#schema-fixtures-for-a-tools-first-request); regenerating the editor
+schema alone does not fix it.
 
 **`Extra inputs are not permitted`**
 
