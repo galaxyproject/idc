@@ -1,0 +1,42 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "all_fasta_source": {
+      "default": null,
+      "gx_multiple": false,
+      "gx_type": "gx_select",
+      "title": "Source FASTA Sequence",
+      "type": "string"
+    },
+    "sequence_name": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "gx_area": false,
+      "gx_type": "gx_text",
+      "title": "Name of sequence"
+    },
+    "sequence_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "gx_area": false,
+      "gx_type": "gx_text",
+      "title": "ID for sequence"
+    }
+  },
+  "title": "DynamicModelForTool",
+  "type": "object"
+}
