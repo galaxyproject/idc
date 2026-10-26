@@ -64,6 +64,9 @@ CHAIN_WIRING = {
     ("rnastar_index2x_versioned", "all_fasta"): {
         "connect_param": "all_fasta_source",
     },
+    ("fasta_indexes", "all_fasta"): {
+        "connect_param": "all_fasta_source",
+    },
 }
 
 OUT_FILE = "out_file"  # every data manager tool's bundle output
