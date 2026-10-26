@@ -278,33 +278,18 @@ and commit the updated `schemas/request.schema.json` with the request.
 Every tool GUID used by a request also needs an offline test fixture under
 `tests/fixtures/tool_schemas/`, even if it already appears in the editor
 schema. The tests deliberately do not fetch missing schemas from the Tool
-Shed. For a GUID with no fixture yet, save the raw response using the existing
-schema helpers, from the repository root:
+Shed. Save its fixture with:
 
 ```bash
-python - '<tool_id>' <<'PY'
-import json
-import sys
-from pathlib import Path
-
-sys.path.insert(0, "scripts")
-from tool_schemas import fetch_request_schema, trs_id_and_version
-
-guid = sys.argv[1]
-trs_id, version = trs_id_and_version(guid)
-schema = fetch_request_schema(guid)
-path = Path("tests/fixtures/tool_schemas") / f"{trs_id}~{version}.json"
-path.write_text(json.dumps(schema, indent=2) + "\n")
-print(path)
-PY
+python scripts/tool_schemas.py --save-fixture <tool_id>
 ```
 
-The filename is `<owner>~<repo>~<tool>~<version>.json`, derived from that
-GUID, not from its upstream dependency. For the SAM FASTA index builder it is
+The script saves the raw Tool Shed response and derives the filename
+`<owner>~<repo>~<tool>~<version>.json` from that GUID, not from its upstream
+dependency. For the SAM FASTA index builder it is
 `devteam~data_manager_sam_fasta_index_builder~sam_fasta_index_builder~1.21+galaxy0.json`.
 Commit the fixture with the request and run `python -m pytest tests/ -q`.
-`scripts/tool_schemas.py` prints a filtered contributor schema; the helpers
-above preserve the raw Tool Shed response used by the fixtures.
+Without `--save-fixture`, the script prints the filtered contributor schema.
 
 ### Generated workflows and existence checks
 

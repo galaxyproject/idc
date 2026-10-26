@@ -17,7 +17,11 @@ This module turns a GUID into that URL, strips the parameters a contributor
 cannot set (hidden ones), validates ``params``, and embeds the schemas into
 ``schemas/request.schema.json`` (see ``generate_schema.py``) so editors get
 completion and the lint can run without the network for GUIDs already in use.
+
+Run ``python scripts/tool_schemas.py --save-fixture <GUID>`` to save the raw
+schema under ``tests/fixtures/tool_schemas/`` for offline tests.
 """
+import argparse
 import json
 import re
 import sys
@@ -477,14 +481,25 @@ class SchemaSource:
 
 
 def main(argv: Optional[list[str]] = None) -> int:
-    """Print the contributor params schema for a GUID (what the lint checks ``params`` against)."""
-    argv = sys.argv[1:] if argv is None else argv
-    if len(argv) != 1:
-        print("usage: tool_schemas.py <tool GUID>", file=sys.stderr)
-        return 2
+    parser = argparse.ArgumentParser(description="Fetch a data manager's parameter schema from the Tool Shed.")
+    parser.add_argument("guid", help="Version-pinned Tool Shed GUID")
+    parser.add_argument(
+        "--save-fixture",
+        action="store_true",
+        help="Save the raw schema to tests/fixtures/tool_schemas/<owner>~<repo>~<tool>~<version>.json",
+    )
+    args = parser.parse_args(argv)
     try:
-        print(json.dumps(contributor_schema(fetch_request_schema(argv[0])), indent=2))
-    except (SchemaUnavailable, ValueError) as exc:
+        schema = fetch_request_schema(args.guid)
+        if args.save_fixture:
+            trs_id, version = trs_id_and_version(args.guid)
+            path = REPO_ROOT / "tests/fixtures/tool_schemas" / f"{trs_id}~{version}.json"
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(json.dumps(schema, indent=2) + "\n")
+            print(path)
+        else:
+            print(json.dumps(contributor_schema(schema), indent=2))
+    except (SchemaUnavailable, ValueError, OSError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 1
     return 0

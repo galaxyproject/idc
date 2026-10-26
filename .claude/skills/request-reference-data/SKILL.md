@@ -256,10 +256,9 @@ Only these fields exist: `tool_id`, `data_tables`, `params`, `depends_on`,
 
 For every tool GUID newly used by a request, check for
 `tests/fixtures/tool_schemas/<owner>~<repo>~<tool>~<version>.json`. This is
-required even if the GUID is already in the editor schema. If missing, follow
-"Schema fixtures for a tool's first request" in
-`docs/requesting-reference-data.md`: use `tool_schemas.trs_id_and_version`
-to derive the filename and `fetch_request_schema` to save the raw response.
+required even if the GUID is already in the editor schema. If missing, run
+`python scripts/tool_schemas.py --save-fixture <tool_id>`; it derives the
+filename and saves the raw Tool Shed response.
 Commit the fixture with the request. An offline test error ending in
 `no fixture for ...` means this file is missing, not that the Tool Shed lacks
 the tool's schema.

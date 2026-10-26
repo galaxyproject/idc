@@ -113,6 +113,44 @@ def test_guid_maps_to_tool_shed_schema_url():
     assert "~" not in tsch.def_name(MOTUS_GUID) and "/" not in tsch.def_name(MOTUS_GUID)
 
 
+def test_schema_cli_saves_raw_fixture_with_guid_filename(tmp_path, monkeypatch, capsys):
+    filename = "bgruening~data_manager_motus~motus_db_fetcher~3.1.0+galaxy2.json"
+    raw = json.loads((FIXTURE_SCHEMAS / filename).read_text())
+    monkeypatch.setattr(tsch, "REPO_ROOT", tmp_path)
+    monkeypatch.setattr(tsch, "fetch_request_schema", lambda guid: raw)
+
+    assert tsch.main(["--save-fixture", MOTUS_GUID]) == 0
+    saved = tmp_path / "tests/fixtures/tool_schemas" / filename
+    assert json.loads(saved.read_text()) == raw
+    assert capsys.readouterr().out.strip() == str(saved)
+    monkeypatch.setattr(sys.modules[__name__], "FIXTURE_SCHEMAS", saved.parent)
+    assert fixture_schema(MOTUS_GUID) == tsch.contributor_schema(raw)
+
+
+def test_schema_cli_still_prints_contributor_schema(monkeypatch, capsys):
+    raw = json.loads((FIXTURE_SCHEMAS / "bgruening~data_manager_motus~motus_db_fetcher~3.1.0+galaxy2.json").read_text())
+    monkeypatch.setattr(tsch, "fetch_request_schema", lambda guid: raw)
+    assert tsch.main([MOTUS_GUID]) == 0
+    printed = json.loads(capsys.readouterr().out)
+    assert "test_data_manager" not in printed["properties"]
+    assert printed == tsch.contributor_schema(raw)
+
+
+def test_schema_cli_fetch_failure_preserves_fixture(tmp_path, monkeypatch, capsys):
+    saved = tmp_path / "tests/fixtures/tool_schemas/bgruening~data_manager_motus~motus_db_fetcher~3.1.0+galaxy2.json"
+    saved.parent.mkdir(parents=True)
+    saved.write_text('{"existing": true}\n')
+    monkeypatch.setattr(tsch, "REPO_ROOT", tmp_path)
+
+    def unavailable(guid):
+        raise tsch.SchemaUnavailable("Tool Shed unavailable")
+
+    monkeypatch.setattr(tsch, "fetch_request_schema", unavailable)
+    assert tsch.main(["--save-fixture", MOTUS_GUID]) == 1
+    assert saved.read_text() == '{"existing": true}\n'
+    assert "Tool Shed unavailable" in capsys.readouterr().err
+
+
 def test_contributor_schema_drops_unsettable_params_at_every_level():
     raw = json.loads((FIXTURE_SCHEMAS / "bgruening~data_manager_motus~motus_db_fetcher~3.1.0+galaxy2.json").read_text())
     assert raw["properties"]["test_data_manager"]["gx_type"] == "gx_hidden"
