@@ -18,8 +18,9 @@ cannot set (hidden ones), validates ``params``, and embeds the schemas into
 ``schemas/request.schema.json`` (see ``generate_schema.py``) so editors get
 completion and the lint can run without the network for GUIDs already in use.
 
-Run ``python scripts/tool_schemas.py --save-fixture <GUID>`` to save the raw
-schema under ``tests/fixtures/tool_schemas/`` for offline tests.
+Run ``python scripts/tool_schemas.py --save-fixture <tool_id>`` to save the raw
+schema under ``tests/fixtures/tool_schemas/`` for offline tests. The CLI accepts
+a full GUID or a compact ``owner~repo~tool~version`` identifier.
 """
 import argparse
 import json
@@ -52,6 +53,20 @@ def _guid_parts(guid: str) -> re.Match:
     if not m:
         raise ValueError(f"not a Tool Shed GUID: {guid!r}")
     return m
+
+
+def normalize_tool_id(tool_id: str) -> str:
+    """Normalize a CLI GUID or versioned compact ID to a Tool Shed GUID."""
+    if GUID_RE.fullmatch(tool_id):
+        return tool_id
+    parts = tool_id.split("~")
+    if len(parts) == 4 and all(part and "/" not in part for part in parts):
+        host = urllib.parse.urlparse(TOOL_SHED).netloc
+        return f"{host}/repos/" + "/".join(parts)
+    raise ValueError(
+        "expected a version-pinned Tool Shed GUID (host/repos/owner/repo/tool/version) "
+        f"or compact ID (owner~repo~tool~version), got {tool_id!r}"
+    )
 
 
 def trs_id_and_version(guid: str) -> tuple[str, str]:
@@ -482,7 +497,10 @@ class SchemaSource:
 
 def main(argv: Optional[list[str]] = None) -> int:
     parser = argparse.ArgumentParser(description="Fetch a data manager's parameter schema from the Tool Shed.")
-    parser.add_argument("guid", help="Version-pinned Tool Shed GUID")
+    parser.add_argument(
+        "tool_id",
+        help="Version-pinned GUID (host/repos/owner/repo/tool/version) or compact ID (owner~repo~tool~version)",
+    )
     parser.add_argument(
         "--save-fixture",
         action="store_true",
@@ -490,9 +508,10 @@ def main(argv: Optional[list[str]] = None) -> int:
     )
     args = parser.parse_args(argv)
     try:
-        schema = fetch_request_schema(args.guid)
+        guid = normalize_tool_id(args.tool_id)
+        schema = fetch_request_schema(guid)
         if args.save_fixture:
-            trs_id, version = trs_id_and_version(args.guid)
+            trs_id, version = trs_id_and_version(guid)
             path = REPO_ROOT / "tests/fixtures/tool_schemas" / f"{trs_id}~{version}.json"
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text(json.dumps(schema, indent=2) + "\n")

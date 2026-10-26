@@ -284,12 +284,24 @@ Shed. Save its fixture with:
 python scripts/tool_schemas.py --save-fixture <tool_id>
 ```
 
+The command accepts either the full GUID from a request's `tool_id` or a
+compact `owner~repo~tool~version` ID. Both must include the version. These
+commands save the same fixture:
+
+```bash
+python scripts/tool_schemas.py --save-fixture toolshed.g2.bx.psu.edu/repos/devteam/data_manager_sam_fasta_index_builder/sam_fasta_index_builder/1.21+galaxy0
+python scripts/tool_schemas.py --save-fixture devteam~data_manager_sam_fasta_index_builder~sam_fasta_index_builder~1.21+galaxy0
+```
+
+The compact form uses the production Tool Shed. Request YAML files still
+require the full GUID.
+
 The script saves the raw Tool Shed response and derives the filename
 `<owner>~<repo>~<tool>~<version>.json` from that GUID, not from its upstream
 dependency. For the SAM FASTA index builder it is
 `devteam~data_manager_sam_fasta_index_builder~sam_fasta_index_builder~1.21+galaxy0.json`.
 Commit the fixture with the request and run `python -m pytest tests/ -q`.
-Without `--save-fixture`, the script prints the filtered contributor schema.
+Without `--save-fixture`, both forms print the filtered contributor schema.
 
 ### Generated workflows and existence checks
 

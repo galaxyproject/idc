@@ -89,6 +89,7 @@ def test_lint_rejects_dir_table_mismatch(isolated_requests):
 # tool_schemas / generate_schema: params are checked against the data manager
 # --------------------------------------------------------------------------- #
 MOTUS_GUID = "toolshed.g2.bx.psu.edu/repos/bgruening/data_manager_motus/motus_db_fetcher/3.1.0+galaxy2"
+MOTUS_COMPACT_ID = "bgruening~data_manager_motus~motus_db_fetcher~3.1.0+galaxy2"
 SAMESTR_GUID = "toolshed.g2.bx.psu.edu/repos/iuc/data_manager_samestr/samestr_db/1.2025.111+galaxy4"
 
 
@@ -113,13 +114,18 @@ def test_guid_maps_to_tool_shed_schema_url():
     assert "~" not in tsch.def_name(MOTUS_GUID) and "/" not in tsch.def_name(MOTUS_GUID)
 
 
-def test_schema_cli_saves_raw_fixture_with_guid_filename(tmp_path, monkeypatch, capsys):
+@pytest.mark.parametrize("tool_id", [MOTUS_GUID, MOTUS_COMPACT_ID])
+def test_schema_cli_saves_raw_fixture_with_guid_filename(tool_id, tmp_path, monkeypatch, capsys):
     filename = "bgruening~data_manager_motus~motus_db_fetcher~3.1.0+galaxy2.json"
     raw = json.loads((FIXTURE_SCHEMAS / filename).read_text())
     monkeypatch.setattr(tsch, "REPO_ROOT", tmp_path)
-    monkeypatch.setattr(tsch, "fetch_request_schema", lambda guid: raw)
 
-    assert tsch.main(["--save-fixture", MOTUS_GUID]) == 0
+    def fetch(guid):
+        assert guid == MOTUS_GUID
+        return raw
+
+    monkeypatch.setattr(tsch, "fetch_request_schema", fetch)
+    assert tsch.main(["--save-fixture", tool_id]) == 0
     saved = tmp_path / "tests/fixtures/tool_schemas" / filename
     assert json.loads(saved.read_text()) == raw
     assert capsys.readouterr().out.strip() == str(saved)
@@ -127,13 +133,34 @@ def test_schema_cli_saves_raw_fixture_with_guid_filename(tmp_path, monkeypatch, 
     assert fixture_schema(MOTUS_GUID) == tsch.contributor_schema(raw)
 
 
-def test_schema_cli_still_prints_contributor_schema(monkeypatch, capsys):
+@pytest.mark.parametrize("tool_id", [MOTUS_GUID, MOTUS_COMPACT_ID])
+def test_schema_cli_still_prints_contributor_schema(tool_id, monkeypatch, capsys):
     raw = json.loads((FIXTURE_SCHEMAS / "bgruening~data_manager_motus~motus_db_fetcher~3.1.0+galaxy2.json").read_text())
-    monkeypatch.setattr(tsch, "fetch_request_schema", lambda guid: raw)
-    assert tsch.main([MOTUS_GUID]) == 0
+
+    def fetch(guid):
+        assert guid == MOTUS_GUID
+        return raw
+
+    monkeypatch.setattr(tsch, "fetch_request_schema", fetch)
+    assert tsch.main([tool_id]) == 0
     printed = json.loads(capsys.readouterr().out)
     assert "test_data_manager" not in printed["properties"]
     assert printed == tsch.contributor_schema(raw)
+
+
+@pytest.mark.parametrize("tool_id", [
+    "toolshed.g2.bx.psu.edu/repos/bgruening/data_manager_motus/motus_db_fetcher",
+    "bgruening~data_manager_motus~motus_db_fetcher",
+    "bgruening~data_manager_motus~motus_db_fetcher~",
+    "bgruening~data_manager_motus~motus_db_fetcher~3.1.0+galaxy2~extra",
+])
+def test_schema_cli_rejects_invalid_ids_before_fetching(tool_id, monkeypatch, capsys):
+    def unexpected_fetch(guid):
+        pytest.fail("invalid IDs must not reach the Tool Shed")
+
+    monkeypatch.setattr(tsch, "fetch_request_schema", unexpected_fetch)
+    assert tsch.main(["--save-fixture", tool_id]) == 1
+    assert "expected a version-pinned" in capsys.readouterr().err
 
 
 def test_schema_cli_fetch_failure_preserves_fixture(tmp_path, monkeypatch, capsys):
