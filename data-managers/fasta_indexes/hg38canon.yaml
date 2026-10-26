@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/galaxyproject/idc/main/schemas/request.schema.json
+# Fasta index of hg38canon.
+tool_id: toolshed.g2.bx.psu.edu/repos/devteam/data_manager_sam_fasta_index_builder/sam_fasta_index_builder/1.21+galaxy0
+data_tables:
+  - fasta_indexes
+params:
+  sequence_id: hg38canon
+depends_on:
+  all_fasta: "hg38canon"
+description: Fasta index of human hg38, canonical chromosomes only (hg38canon)
