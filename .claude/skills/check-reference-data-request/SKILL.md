@@ -1,6 +1,6 @@
 ---
 name: check-reference-data-request
-description: Find out where a Galaxy IDC reference-data request is in the pipeline - PR lint status, whether the merge started a build on test.galaxyproject.org (history idc-<table>-<version>), whether the bundle looks right, whether it has been published to CVMFS and is visible in the data table API. Use when someone asks about the status of an IDC request, PR or reference database version, or why a requested database isn't showing up in Galaxy.
+description: Find out where a Galaxy IDC reference-data request is in the pipeline - PR lint status, whether the merge started a build on test.galaxyproject.org, the shared invocation's job status and bundle, whether it has been published to CVMFS and is visible in the data table API. Use when someone asks about the status of an IDC request, PR or reference database version, or why a requested database isn't showing up in Galaxy.
 ---
 
 # Check an IDC reference-data request
@@ -83,11 +83,21 @@ gh run view <run id> --repo galaxyproject/idc --log | grep -E "Requests to build
   (SameStr from MetaPhlAn took about 5.5 hours).
 - A red run: report the failing step and its error.
 
-## 4. Build history and bundle (maintainers, needs the build account's key)
+## 4. Build history and bundle
 
-The history `idc-<table>-<version>` belongs to the build account and isn't
-public, so a requester can't see its state; tell them to ask on the PR, and
-skip to step 5. With the key in the environment (`$TEST_GALAXY_KEY` here):
+Follow the invocation link in the build bot's PR comment or the Actions run
+summary. The build enables link access for its workflow and history, so the
+invocation's job status and outputs can be inspected without the build
+account's key. The `idc-build` artifact also contains `shared-invocation.json`
+with the link and IDs, plus an `invocation.json` snapshot taken at submission.
+Check the live invocation for completion; the snapshot and green Actions run
+only establish submission. A manual rebuild can use `pull_request` to post
+its links back to the original request PR.
+
+Older builds may have no shared link. Their history `idc-<table>-<version>`
+is private; report that completion is unverified if no build account key is
+available. Maintainers with the key in the environment (`$TEST_GALAXY_KEY`
+here) can inspect those histories:
 
 ```bash
 curl -s -H "x-api-key: $TEST_GALAXY_KEY" \

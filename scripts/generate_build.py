@@ -349,7 +349,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"planemo run {wf_path} {job_path} \\")
         print(f"  --galaxy_url {args.galaxy_url} --galaxy_user_key $TEST_GALAXY_KEY \\")
         print(f'  --history_name "{history}" --tags idc --no_wait --no_use_cache \\')
-        print(f"  --output_json {wf_path.parent / 'invocation.json'}")
+        print(f"  --test_output_json {wf_path.parent / 'run-report.json'}")
         print()
     return 0
 

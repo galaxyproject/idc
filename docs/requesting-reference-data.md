@@ -311,8 +311,15 @@ None of this needs a Galaxy API key.
 |---|---|
 | lint | the PR's checks, or `gh pr checks <number> --repo galaxyproject/idc` |
 | build started | the *Build reference-data bundles* run for the merge (`gh run list --repo galaxyproject/idc --workflow build.yml`). Its "Select requests to build" step lists what it built and what it skipped. |
-| build finished | ask on the PR |
+| build finished | follow the Galaxy invocation link posted on the PR or in the Actions run summary; it shows current job status and outputs |
 | published | `curl -s https://test.galaxyproject.org/api/tool_data/<table>` shows the row, or `python scripts/check_data_exists.py --expect-exists <file>` prints `ok: <table>/<version> is present` |
+
+The build makes its workflow and history accessible by link and posts the
+invocation to the merged request PR. A green Actions run confirms submission,
+not completion of the Galaxy jobs. For a manual rebuild, set the workflow's
+optional `pull_request` input to the original request PR number; otherwise
+links go to a merged PR associated with the selected commit, if any. Links
+are always written to the Actions summary after sharing succeeds.
 
 ## Adding a new data manager
 

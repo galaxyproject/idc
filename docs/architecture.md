@@ -152,6 +152,16 @@ step's bundle goes straight into the downstream data manager. planemo returns
 once the workflow is scheduled, and the build carries on in the history
 `idc-<table>-<version>`.
 
+The build saves Planemo's structured run report (`--test_output_json`), which
+contains the invocation ID even with `--no_wait`. `share_build_invocation.py`
+uses that exact ID to enable link access for the workflow and history, then
+saves `invocation.json` and `shared-invocation.json` alongside the report in
+the `idc-build` artifact. It also writes the link to the Actions summary.
+`post_build_links.py` comments on associated merged PRs, matching each build
+to the request files in the PR. Rerunning an Actions run updates its existing
+bot comment. Direct pushes without an associated PR still get summary links;
+manual rebuilds can specify a request PR using the `pull_request` input.
+
 ### Publish
 
 `deploy.yml` is started by a maintainer once the builds are green, since they
