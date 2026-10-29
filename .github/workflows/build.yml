@@ -25,6 +25,14 @@ on:
         type: boolean
         required: false
         default: false
+      pull_request:
+        description: "Request PR to receive invocation links for a manual rebuild (optional)"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+  pull-requests: write
 
 concurrency:
   group: idc-build
@@ -88,14 +96,33 @@ jobs:
             # --no_use_cache: a rebuild must actually re-run the data manager;
             # planemo defaults to Galaxy's job cache, which would hand back a
             # copy of an earlier (possibly stale/broken) bundle instead.
+            run_status=0
             planemo run "$b/workflow.gxwf.yml" "$b/job.yml" \
               --galaxy_url https://test.galaxyproject.org \
               --galaxy_user_key "$TEST_API_KEY" \
               --history_name "idc-${dm}-${version}" \
               --tags idc --no_wait --no_use_cache \
-              --output_json "$b/invocation.json"
+              --test_output_json "$b/run-report.json" || run_status=$?
+            if [ -f "$b/run-report.json" ]; then
+              python scripts/share_build_invocation.py \
+                --report "$b/run-report.json" --request "$req" --outdir "$b"
+            else
+              echo "::error::Planemo did not write a run report."
+              exit 1
+            fi
+            if [ "$run_status" -ne 0 ]; then exit "$run_status"; fi
             echo "::endgroup::"
           done < requests.txt
+
+      - name: Link Galaxy invocations from request PRs
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REQUEST_PR: ${{ inputs.pull_request }}
+        run: |
+          args=()
+          if [ -n "$REQUEST_PR" ]; then args+=(--pull-request "$REQUEST_PR"); fi
+          python scripts/post_build_links.py --build-dir build "${args[@]}"
 
       - uses: actions/upload-artifact@v4
         if: always()
