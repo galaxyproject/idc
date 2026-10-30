@@ -1067,7 +1067,7 @@
       "title": "DynamicModelForTool",
       "type": "object"
     },
-    "params__bgruening__kmetashot_build_database__kmetashot_build_database__2.0+galaxy2": {
+    "params__bgruening__kmetashot_build_database__kmetashot_build_database__2.0+galaxy3": {
       "additionalProperties": false,
       "properties": {
         "release": {
@@ -2170,7 +2170,7 @@
       "title": "DynamicModelForTool",
       "type": "object"
     },
-    "params__devteam__data_manager_sam_fasta_index_builder__sam_fasta_index_builder__1.21+galaxy0": {
+    "params__devteam__data_manager_sam_fasta_index_builder__sam_fasta_index_builder__1.21+galaxy1": {
       "additionalProperties": false,
       "properties": {
         "all_fasta_source": {
@@ -4356,7 +4356,7 @@
       "title": "DynamicModelForTool",
       "type": "object"
     },
-    "params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1": {
+    "params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0": {
       "$defs": {
         "When_database_type___absent": {
           "additionalProperties": false,
@@ -4416,7 +4416,7 @@
               "type": "string"
             },
             "prebuilt": {
-              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/galaxy__tool_util_models__parameters__ConditionalParameterModel__pydantic_template___locals___ConditionalType__3",
+              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/galaxy__tool_util_models__parameters__ConditionalParameterModel__pydantic_template___locals___ConditionalType__3",
               "default": null,
               "gx_options": [
                 {
@@ -4679,7 +4679,7 @@
               "type": "string"
             },
             "prebuilt": {
-              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/galaxy__tool_util_models__parameters__ConditionalParameterModel__pydantic_template___locals___ConditionalType__2",
+              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/galaxy__tool_util_models__parameters__ConditionalParameterModel__pydantic_template___locals___ConditionalType__2",
               "default": null,
               "gx_options": [
                 {
@@ -4799,9 +4799,14 @@
               "type": "string"
             },
             "prebuilt": {
-              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/galaxy__tool_util_models__parameters__ConditionalParameterModel__pydantic_template___locals___ConditionalType__1",
+              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/galaxy__tool_util_models__parameters__ConditionalParameterModel__pydantic_template___locals___ConditionalType__1",
               "default": null,
               "gx_options": [
+                {
+                  "label": "June 26, 2026",
+                  "selected": false,
+                  "value": "2026-06-26"
+                },
                 {
                   "label": "February 26, 2026",
                   "selected": false,
@@ -6475,6 +6480,130 @@
             "prebuilt_date"
           ]
         },
+        "When_prebuilt_date_2026-06-26": {
+          "additionalProperties": false,
+          "properties": {
+            "prebuilt_date": {
+              "const": "2026-06-26",
+              "title": "Prebuilt Date",
+              "type": "string"
+            },
+            "prebuilt_db": {
+              "anyOf": [
+                {
+                  "const": "viral",
+                  "type": "string"
+                },
+                {
+                  "const": "minusb",
+                  "type": "string"
+                },
+                {
+                  "const": "standard",
+                  "type": "string"
+                },
+                {
+                  "const": "standard_08gb",
+                  "type": "string"
+                },
+                {
+                  "const": "standard_16gb",
+                  "type": "string"
+                },
+                {
+                  "const": "pluspf",
+                  "type": "string"
+                },
+                {
+                  "const": "pluspf_08gb",
+                  "type": "string"
+                },
+                {
+                  "const": "pluspf_16gb",
+                  "type": "string"
+                },
+                {
+                  "const": "pluspfp",
+                  "type": "string"
+                },
+                {
+                  "const": "pluspfp_08gb",
+                  "type": "string"
+                },
+                {
+                  "const": "pluspfp_16gb",
+                  "type": "string"
+                }
+              ],
+              "default": null,
+              "gx_multiple": false,
+              "gx_options": [
+                {
+                  "label": "Viral (viral; ~0.5 GB)",
+                  "selected": false,
+                  "value": "viral"
+                },
+                {
+                  "label": "MinusB (archaea, viral, plasmid, human, UniVec_Core; ~8 GB)",
+                  "selected": false,
+                  "value": "minusb"
+                },
+                {
+                  "label": "Standard-Full (archaea, bacteria, viral, plasmid, human, UniVec_Core; ~50 GB)",
+                  "selected": false,
+                  "value": "standard"
+                },
+                {
+                  "label": "Standard-8 (Standard with DB capped at 8 GB)",
+                  "selected": false,
+                  "value": "standard_08gb"
+                },
+                {
+                  "label": "Standard-16 (Standard with DB capped at 16 GB)",
+                  "selected": false,
+                  "value": "standard_16gb"
+                },
+                {
+                  "label": "PlusPF (Standard plus protozoa and fungi; ~50 GB)",
+                  "selected": false,
+                  "value": "pluspf"
+                },
+                {
+                  "label": "PlusPF-8 (PlusPF with DB capped at 8 GB; ~7.5 GB)",
+                  "selected": false,
+                  "value": "pluspf_08gb"
+                },
+                {
+                  "label": "PlusPF-16 (PlusPF with DB capped at 16 GB; ~15 GB)",
+                  "selected": false,
+                  "value": "pluspf_16gb"
+                },
+                {
+                  "label": "PlusPFP (Standard plus protozoa, fungi and plant; ~129 GB)",
+                  "selected": false,
+                  "value": "pluspfp"
+                },
+                {
+                  "label": "PlusPFP-8 (PlusPFP with DB capped at 8 GB; ~7.5 GB)",
+                  "selected": false,
+                  "value": "pluspfp_08gb"
+                },
+                {
+                  "label": "PlusPFP-16 (PlusPFP with DB capped at 16 GB; ~15 GB)",
+                  "selected": false,
+                  "value": "pluspfp_16gb"
+                }
+              ],
+              "gx_type": "gx_select",
+              "title": "Select a prebuilt Refseq index to download"
+            }
+          },
+          "title": "When prebuilt_date = 2026-06-26",
+          "type": "object",
+          "required": [
+            "prebuilt_date"
+          ]
+        },
         "When_prebuilt_date___absent": {
           "additionalProperties": false,
           "properties": {
@@ -6750,182 +6879,186 @@
         "galaxy__tool_util_models__parameters__ConditionalParameterModel__pydantic_template___locals___ConditionalType__1": {
           "oneOf": [
             {
-              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_prebuilt_date_2026-02-26"
+              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_prebuilt_date_2026-06-26"
             },
             {
-              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_prebuilt_date___absent"
+              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_prebuilt_date___absent"
             },
             {
-              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_prebuilt_date_2025-10-15"
+              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_prebuilt_date_2026-02-26"
             },
             {
-              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_prebuilt_date_2025-07-14"
+              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_prebuilt_date_2025-10-15"
             },
             {
-              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_prebuilt_date_2025-04-02"
+              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_prebuilt_date_2025-07-14"
             },
             {
-              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_prebuilt_date_2024-12-28"
+              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_prebuilt_date_2025-04-02"
             },
             {
-              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_prebuilt_date_2024-09-04"
+              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_prebuilt_date_2024-12-28"
             },
             {
-              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_prebuilt_date_2024-06-05"
+              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_prebuilt_date_2024-09-04"
             },
             {
-              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_prebuilt_date_2024-01-12"
+              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_prebuilt_date_2024-06-05"
             },
             {
-              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_prebuilt_date_2023-06-05"
+              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_prebuilt_date_2024-01-12"
             },
             {
-              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_prebuilt_date_2022-06-07"
+              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_prebuilt_date_2023-06-05"
             },
             {
-              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_prebuilt_date_2021-05-17"
+              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_prebuilt_date_2022-06-07"
             },
             {
-              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_prebuilt_date_2021-01-27"
+              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_prebuilt_date_2021-05-17"
             },
             {
-              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_prebuilt_date_2020-12-02"
+              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_prebuilt_date_2021-01-27"
             },
             {
-              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_prebuilt_date_2020-09-19"
+              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_prebuilt_date_2020-12-02"
+            },
+            {
+              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_prebuilt_date_2020-09-19"
             }
           ],
           "title": "ConditionalType",
           "discriminator": {
             "propertyName": "prebuilt_date",
             "mapping": {
-              "2026-02-26": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_prebuilt_date_2026-02-26",
-              "2025-10-15": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_prebuilt_date_2025-10-15",
-              "2025-07-14": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_prebuilt_date_2025-07-14",
-              "2025-04-02": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_prebuilt_date_2025-04-02",
-              "2024-12-28": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_prebuilt_date_2024-12-28",
-              "2024-09-04": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_prebuilt_date_2024-09-04",
-              "2024-06-05": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_prebuilt_date_2024-06-05",
-              "2024-01-12": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_prebuilt_date_2024-01-12",
-              "2023-06-05": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_prebuilt_date_2023-06-05",
-              "2022-06-07": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_prebuilt_date_2022-06-07",
-              "2021-05-17": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_prebuilt_date_2021-05-17",
-              "2021-01-27": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_prebuilt_date_2021-01-27",
-              "2020-12-02": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_prebuilt_date_2020-12-02",
-              "2020-09-19": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_prebuilt_date_2020-09-19"
+              "2026-06-26": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_prebuilt_date_2026-06-26",
+              "2026-02-26": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_prebuilt_date_2026-02-26",
+              "2025-10-15": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_prebuilt_date_2025-10-15",
+              "2025-07-14": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_prebuilt_date_2025-07-14",
+              "2025-04-02": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_prebuilt_date_2025-04-02",
+              "2024-12-28": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_prebuilt_date_2024-12-28",
+              "2024-09-04": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_prebuilt_date_2024-09-04",
+              "2024-06-05": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_prebuilt_date_2024-06-05",
+              "2024-01-12": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_prebuilt_date_2024-01-12",
+              "2023-06-05": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_prebuilt_date_2023-06-05",
+              "2022-06-07": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_prebuilt_date_2022-06-07",
+              "2021-05-17": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_prebuilt_date_2021-05-17",
+              "2021-01-27": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_prebuilt_date_2021-01-27",
+              "2020-12-02": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_prebuilt_date_2020-12-02",
+              "2020-09-19": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_prebuilt_date_2020-09-19"
             }
           }
         },
         "galaxy__tool_util_models__parameters__ConditionalParameterModel__pydantic_template___locals___ConditionalType__2": {
           "oneOf": [
             {
-              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_xyz_core_nt_20251015"
+              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_xyz_core_nt_20251015"
             },
             {
-              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_xyz___absent"
+              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_xyz___absent"
             },
             {
-              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_xyz_core_nt_20250609"
+              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_xyz_core_nt_20250609"
             },
             {
-              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_xyz_core_nt_20241228"
+              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_xyz_core_nt_20241228"
             },
             {
-              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_xyz_core_nt_20240904"
+              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_xyz_core_nt_20240904"
             },
             {
-              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_xyz_gtdb_genome_reps_20250609"
+              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_xyz_gtdb_genome_reps_20250609"
             },
             {
-              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_xyz_gtdb_genome_reps_20241109"
+              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_xyz_gtdb_genome_reps_20241109"
             },
             {
-              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_xyz_eupathdb48_20230407"
+              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_xyz_eupathdb48_20230407"
             },
             {
-              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_xyz_eupathdb48_20201113"
+              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_xyz_eupathdb48_20201113"
             }
           ],
           "title": "ConditionalType",
           "discriminator": {
             "propertyName": "xyz",
             "mapping": {
-              "core_nt_20251015": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_xyz_core_nt_20251015",
-              "core_nt_20250609": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_xyz_core_nt_20250609",
-              "core_nt_20241228": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_xyz_core_nt_20241228",
-              "core_nt_20240904": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_xyz_core_nt_20240904",
-              "gtdb_genome_reps_20250609": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_xyz_gtdb_genome_reps_20250609",
-              "gtdb_genome_reps_20241109": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_xyz_gtdb_genome_reps_20241109",
-              "eupathdb48_20230407": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_xyz_eupathdb48_20230407",
-              "eupathdb48_20201113": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_xyz_eupathdb48_20201113"
+              "core_nt_20251015": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_xyz_core_nt_20251015",
+              "core_nt_20250609": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_xyz_core_nt_20250609",
+              "core_nt_20241228": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_xyz_core_nt_20241228",
+              "core_nt_20240904": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_xyz_core_nt_20240904",
+              "gtdb_genome_reps_20250609": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_xyz_gtdb_genome_reps_20250609",
+              "gtdb_genome_reps_20241109": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_xyz_gtdb_genome_reps_20241109",
+              "eupathdb48_20230407": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_xyz_eupathdb48_20230407",
+              "eupathdb48_20201113": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_xyz_eupathdb48_20201113"
             }
           }
         },
         "galaxy__tool_util_models__parameters__ConditionalParameterModel__pydantic_template___locals___ConditionalType__3": {
           "oneOf": [
             {
-              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/galaxy__tool_util_models__parameters__When_xyz_16S_Greengenes13__5_20200326"
+              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/galaxy__tool_util_models__parameters__When_xyz_16S_Greengenes13__5_20200326"
             },
             {
-              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_xyz___absent"
+              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_xyz___absent"
             },
             {
-              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/galaxy__tool_util_models__parameters__When_xyz_16S_RDP11__5_20200326"
+              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/galaxy__tool_util_models__parameters__When_xyz_16S_RDP11__5_20200326"
             },
             {
-              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_xyz_16S_Silva132_20200326"
+              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_xyz_16S_Silva132_20200326"
             },
             {
-              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_xyz_16S_Silva138_20200326"
+              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_xyz_16S_Silva138_20200326"
             }
           ],
           "title": "ConditionalType",
           "discriminator": {
             "propertyName": "xyz",
             "mapping": {
-              "16S_Silva132_20200326": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_xyz_16S_Silva132_20200326",
-              "16S_Silva138_20200326": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_xyz_16S_Silva138_20200326"
+              "16S_Silva132_20200326": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_xyz_16S_Silva132_20200326",
+              "16S_Silva138_20200326": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_xyz_16S_Silva138_20200326"
             }
           }
         },
         "galaxy__tool_util_models__parameters__ConditionalParameterModel__pydantic_template___locals___ConditionalType__4": {
           "oneOf": [
             {
-              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_database_type_standard_local_build"
+              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_database_type_standard_local_build"
             },
             {
-              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_database_type___absent"
+              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_database_type___absent"
             },
             {
-              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_database_type_standard_prebuilt"
+              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_database_type_standard_prebuilt"
             },
             {
-              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_database_type_special_prebuilt"
+              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_database_type_special_prebuilt"
             },
             {
-              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_database_type_amplicon_prebuilt"
+              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_database_type_amplicon_prebuilt"
             },
             {
-              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_database_type_minikraken"
+              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_database_type_minikraken"
             },
             {
-              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_database_type_special"
+              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_database_type_special"
             },
             {
-              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_database_type_custom"
+              "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_database_type_custom"
             }
           ],
           "title": "ConditionalType",
           "discriminator": {
             "propertyName": "database_type",
             "mapping": {
-              "standard_local_build": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_database_type_standard_local_build",
-              "standard_prebuilt": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_database_type_standard_prebuilt",
-              "special_prebuilt": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_database_type_special_prebuilt",
-              "amplicon_prebuilt": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_database_type_amplicon_prebuilt",
-              "minikraken": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_database_type_minikraken",
-              "special": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_database_type_special",
-              "custom": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/When_database_type_custom"
+              "standard_local_build": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_database_type_standard_local_build",
+              "standard_prebuilt": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_database_type_standard_prebuilt",
+              "special_prebuilt": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_database_type_special_prebuilt",
+              "amplicon_prebuilt": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_database_type_amplicon_prebuilt",
+              "minikraken": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_database_type_minikraken",
+              "special": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_database_type_special",
+              "custom": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/When_database_type_custom"
             }
           }
         },
@@ -6959,7 +7092,7 @@
       "additionalProperties": false,
       "properties": {
         "database_type": {
-          "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1/$defs/galaxy__tool_util_models__parameters__ConditionalParameterModel__pydantic_template___locals___ConditionalType__4",
+          "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0/$defs/galaxy__tool_util_models__parameters__ConditionalParameterModel__pydantic_template___locals___ConditionalType__4",
           "default": null,
           "gx_options": [
             {
@@ -15478,7 +15611,7 @@
       "title": "DynamicModelForTool",
       "type": "object"
     },
-    "params__iuc__data_manager_stanza_models__data_manager_stanza_models__1.14.0+galaxy0": {
+    "params__iuc__data_manager_stanza_models__data_manager_stanza_models__1.14.0+galaxy1": {
       "additionalProperties": false,
       "properties": {
         "package": {
@@ -16877,38 +17010,37 @@
       "title": "DynamicModelForTool",
       "type": "object"
     },
-    "params__rplanel__data_manager_defense_finder__defense_finder_models_fetcher_data_manager__2.0.0+galaxy2": {
+    "params__rplanel__data_manager_defense_finder__defense_finder_models_fetcher_data_manager__2.0.0+galaxy4": {
       "additionalProperties": false,
       "properties": {
         "model_version": {
           "anyOf": [
             {
+              "const": "3.1.0",
               "type": "string"
             },
             {
-              "type": "null"
+              "const": "2.0.2",
+              "type": "string"
             }
           ],
           "default": null,
-          "description": "The available versions can be found at : https://github.com/mdmparis/defense-finder-models/releases",
-          "gx_area": false,
-          "gx_type": "gx_text",
-          "title": "Defense finder models version"
-        },
-        "soft_compatibility_version": {
-          "anyOf": [
+          "description": "Models release from https://github.com/mdmparis/defense-finder-models/releases",
+          "gx_multiple": false,
+          "gx_options": [
             {
-              "type": "string"
+              "label": "3.1.0",
+              "selected": false,
+              "value": "3.1.0"
             },
             {
-              "type": "null"
+              "label": "2.0.2",
+              "selected": false,
+              "value": "2.0.2"
             }
           ],
-          "default": null,
-          "description": "Enter the list of defenseFinder software versions that are compatible with the current model (e.g., 1.2.0,1.3.0,2.0.0). Separate multiple versions with commas if required.",
-          "gx_area": false,
-          "gx_type": "gx_text",
-          "title": "List of defenseFinder versions compatibility"
+          "gx_type": "gx_select",
+          "title": "Models release"
         }
       },
       "title": "DynamicModelForTool",
@@ -17038,7 +17170,7 @@
       "if": {
         "properties": {
           "tool_id": {
-            "const": "toolshed.g2.bx.psu.edu/repos/bgruening/kmetashot_build_database/kmetashot_build_database/2.0+galaxy2"
+            "const": "toolshed.g2.bx.psu.edu/repos/bgruening/kmetashot_build_database/kmetashot_build_database/2.0+galaxy3"
           }
         },
         "required": [
@@ -17048,7 +17180,7 @@
       "then": {
         "properties": {
           "params": {
-            "$ref": "#/$defs/params__bgruening__kmetashot_build_database__kmetashot_build_database__2.0+galaxy2"
+            "$ref": "#/$defs/params__bgruening__kmetashot_build_database__kmetashot_build_database__2.0+galaxy3"
           }
         }
       }
@@ -17247,7 +17379,7 @@
       "if": {
         "properties": {
           "tool_id": {
-            "const": "toolshed.g2.bx.psu.edu/repos/devteam/data_manager_sam_fasta_index_builder/sam_fasta_index_builder/1.21+galaxy0"
+            "const": "toolshed.g2.bx.psu.edu/repos/devteam/data_manager_sam_fasta_index_builder/sam_fasta_index_builder/1.21+galaxy1"
           }
         },
         "required": [
@@ -17257,7 +17389,7 @@
       "then": {
         "properties": {
           "params": {
-            "$ref": "#/$defs/params__devteam__data_manager_sam_fasta_index_builder__sam_fasta_index_builder__1.21+galaxy0"
+            "$ref": "#/$defs/params__devteam__data_manager_sam_fasta_index_builder__sam_fasta_index_builder__1.21+galaxy1"
           }
         }
       }
@@ -17456,7 +17588,7 @@
       "if": {
         "properties": {
           "tool_id": {
-            "const": "toolshed.g2.bx.psu.edu/repos/iuc/data_manager_build_kraken2_database/kraken2_build_database/2.17.1+galaxy1"
+            "const": "toolshed.g2.bx.psu.edu/repos/iuc/data_manager_build_kraken2_database/kraken2_build_database/2.17.2+galaxy0"
           }
         },
         "required": [
@@ -17466,7 +17598,7 @@
       "then": {
         "properties": {
           "params": {
-            "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.1+galaxy1"
+            "$ref": "#/$defs/params__iuc__data_manager_build_kraken2_database__kraken2_build_database__2.17.2+galaxy0"
           }
         }
       }
@@ -18577,7 +18709,7 @@
       "if": {
         "properties": {
           "tool_id": {
-            "const": "toolshed.g2.bx.psu.edu/repos/iuc/data_manager_stanza_models/data_manager_stanza_models/1.14.0+galaxy0"
+            "const": "toolshed.g2.bx.psu.edu/repos/iuc/data_manager_stanza_models/data_manager_stanza_models/1.14.0+galaxy1"
           }
         },
         "required": [
@@ -18587,7 +18719,7 @@
       "then": {
         "properties": {
           "params": {
-            "$ref": "#/$defs/params__iuc__data_manager_stanza_models__data_manager_stanza_models__1.14.0+galaxy0"
+            "$ref": "#/$defs/params__iuc__data_manager_stanza_models__data_manager_stanza_models__1.14.0+galaxy1"
           }
         }
       }
@@ -18748,7 +18880,7 @@
       "if": {
         "properties": {
           "tool_id": {
-            "const": "toolshed.g2.bx.psu.edu/repos/rplanel/data_manager_defense_finder/defense_finder_models_fetcher_data_manager/2.0.0+galaxy2"
+            "const": "toolshed.g2.bx.psu.edu/repos/rplanel/data_manager_defense_finder/defense_finder_models_fetcher_data_manager/2.0.0+galaxy4"
           }
         },
         "required": [
@@ -18758,7 +18890,7 @@
       "then": {
         "properties": {
           "params": {
-            "$ref": "#/$defs/params__rplanel__data_manager_defense_finder__defense_finder_models_fetcher_data_manager__2.0.0+galaxy2"
+            "$ref": "#/$defs/params__rplanel__data_manager_defense_finder__defense_finder_models_fetcher_data_manager__2.0.0+galaxy4"
           }
         }
       }
