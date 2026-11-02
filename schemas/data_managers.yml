@@ -3,7 +3,7 @@
 #   python scripts/generate_schema.py --from-lock <data_managers.yml.lock>
 # Their parameter schemas are baked into request.schema.json so editors can
 # complete params for any of them. Do not edit by hand.
-source: https://raw.githubusercontent.com/galaxyproject/usegalaxy-tools/330fb8f07ef71817d5c5a2d46fd9777673477e15/test.galaxyproject.org/data_managers.yml.lock
+source: https://raw.githubusercontent.com/galaxyproject/usegalaxy-tools/7a1336b159e0995b9fd8547b766e034440ed3d1e/test.galaxyproject.org/data_managers.yml.lock
 repositories:
 - owner: bgruening
   name: data_manager_diamond_database_builder
@@ -117,9 +117,9 @@ repositories:
   - toolshed.g2.bx.psu.edu/repos/iuc/checkm2_build_database/checkm2_build_database/1.1.0+galaxy1
 - owner: iuc
   name: data_manager_bakta
-  revision: f9189d4d22b8
+  revision: 24a7f2bd7ef5
   tool_ids:
-  - toolshed.g2.bx.psu.edu/repos/iuc/data_manager_bakta/bakta_build_database/1.12.1+galaxy0
+  - toolshed.g2.bx.psu.edu/repos/iuc/data_manager_bakta/bakta_build_database/1.12.1+galaxy1
 - owner: iuc
   name: data_manager_bowtie_index_builder
   revision: b3f54bd230de

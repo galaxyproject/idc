@@ -2637,7 +2637,7 @@
       "title": "DynamicModelForTool",
       "type": "object"
     },
-    "params__iuc__data_manager_bakta__bakta_build_database__1.12.1+galaxy0": {
+    "params__iuc__data_manager_bakta__bakta_build_database__1.12.1+galaxy1": {
       "additionalProperties": false,
       "properties": {
         "database_select": {
@@ -17512,7 +17512,7 @@
       "if": {
         "properties": {
           "tool_id": {
-            "const": "toolshed.g2.bx.psu.edu/repos/iuc/data_manager_bakta/bakta_build_database/1.12.1+galaxy0"
+            "const": "toolshed.g2.bx.psu.edu/repos/iuc/data_manager_bakta/bakta_build_database/1.12.1+galaxy1"
           }
         },
         "required": [
@@ -17522,7 +17522,7 @@
       "then": {
         "properties": {
           "params": {
-            "$ref": "#/$defs/params__iuc__data_manager_bakta__bakta_build_database__1.12.1+galaxy0"
+            "$ref": "#/$defs/params__iuc__data_manager_bakta__bakta_build_database__1.12.1+galaxy1"
           }
         }
       }

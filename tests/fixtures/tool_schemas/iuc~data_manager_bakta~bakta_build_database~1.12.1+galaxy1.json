@@ -1,0 +1,133 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "database_select": {
+      "anyOf": [
+        {
+          "const": "6.0",
+          "type": "string"
+        },
+        {
+          "const": "6.0_light",
+          "type": "string"
+        },
+        {
+          "const": "5.1",
+          "type": "string"
+        },
+        {
+          "const": "5.1_light",
+          "type": "string"
+        },
+        {
+          "const": "5.0",
+          "type": "string"
+        },
+        {
+          "const": "5.0_light",
+          "type": "string"
+        },
+        {
+          "const": "4.0",
+          "type": "string"
+        },
+        {
+          "const": "3.1",
+          "type": "string"
+        },
+        {
+          "const": "3.0",
+          "type": "string"
+        },
+        {
+          "const": "2.0",
+          "type": "string"
+        },
+        {
+          "const": "1.1",
+          "type": "string"
+        },
+        {
+          "const": "1.0",
+          "type": "string"
+        }
+      ],
+      "default": null,
+      "description": "Choose a database version to download (default latest version)",
+      "gx_multiple": false,
+      "gx_options": [
+        {
+          "label": "V6.0 (2025-02-24)",
+          "selected": true,
+          "value": "6.0"
+        },
+        {
+          "label": "V6.0 light (2025-02-24)",
+          "selected": false,
+          "value": "6.0_light"
+        },
+        {
+          "label": "V5.1 (2024-01-19)",
+          "selected": false,
+          "value": "5.1"
+        },
+        {
+          "label": "V5.1 light (2024-01-19)",
+          "selected": false,
+          "value": "5.1_light"
+        },
+        {
+          "label": "V5.0 (2023-02-20)",
+          "selected": false,
+          "value": "5.0"
+        },
+        {
+          "label": "V5.0 light (2023-02-20)",
+          "selected": false,
+          "value": "5.0_light"
+        },
+        {
+          "label": "V4.0 (2022-08-29)",
+          "selected": false,
+          "value": "4.0"
+        },
+        {
+          "label": "V3.1 (2022-02-03)",
+          "selected": false,
+          "value": "3.1"
+        },
+        {
+          "label": "V3.0 (2021-08-05)",
+          "selected": false,
+          "value": "3.0"
+        },
+        {
+          "label": "V2.0 (2021-04-05)",
+          "selected": false,
+          "value": "2.0"
+        },
+        {
+          "label": "V1.1 (2020-12-18)",
+          "selected": false,
+          "value": "1.1"
+        },
+        {
+          "label": "V1.0 (2020-11-20)",
+          "selected": false,
+          "value": "1.0"
+        }
+      ],
+      "gx_type": "gx_select",
+      "title": "Database version"
+    },
+    "test_data_manager": {
+      "default": null,
+      "gx_type": "gx_hidden",
+      "title": "Test Data Manager",
+      "type": "string"
+    }
+  },
+  "title": "DynamicModelForTool",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

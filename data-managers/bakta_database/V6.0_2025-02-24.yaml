@@ -3,7 +3,7 @@
 # Standalone build: the data manager downloads the DB by version. It writes
 # value V6.0_2025-02-24, dbkey 14916843 and bakta_version 1.11 (the DB's
 # minimum Bakta version), the row the bakta 1.12.x wrapper filters for.
-tool_id: toolshed.g2.bx.psu.edu/repos/iuc/data_manager_bakta/bakta_build_database/1.12.1+galaxy0
+tool_id: toolshed.g2.bx.psu.edu/repos/iuc/data_manager_bakta/bakta_build_database/1.12.1+galaxy1
 data_tables:
   - bakta_database
 params:
