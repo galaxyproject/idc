@@ -1,0 +1,37 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "model_version": {
+      "anyOf": [
+        {
+          "const": "3.1.0",
+          "type": "string"
+        },
+        {
+          "const": "2.0.2",
+          "type": "string"
+        }
+      ],
+      "default": null,
+      "description": "Models release from https://github.com/mdmparis/defense-finder-models/releases",
+      "gx_multiple": false,
+      "gx_options": [
+        {
+          "label": "3.1.0",
+          "selected": false,
+          "value": "3.1.0"
+        },
+        {
+          "label": "2.0.2",
+          "selected": false,
+          "value": "2.0.2"
+        }
+      ],
+      "gx_type": "gx_select",
+      "title": "Models release"
+    }
+  },
+  "title": "DynamicModelForTool",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}
