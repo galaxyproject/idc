@@ -16,10 +16,14 @@ values live in the generated ``job.yml``. What can't be connected is baked into
 conditional (requested, or the tool's default) and repeats.
 
 Chained builds (a request with ``depends_on``) become multi-step workflows: the
-upstream data manager runs first (also in bundle mode) and its ``out_file``
-bundle is wired into the downstream tool's data-table-backed input - the pattern
+upstream data manager runs first (also in bundle mode) and its bundle output is
+wired into the downstream tool's data-table-backed input - the pattern
 Galaxy's ``test_data_manager_workflow_bundle`` integration test uses to feed a
 fetched genome into an indexer.
+
+A data manager's bundle output is the tool's one ``data_manager_json`` output,
+whose name differs between tools (``out_file``, ``output_file``, ...); it is
+read from the tool's outputs on the Tool Shed.
 
 Usage::
 
@@ -33,6 +37,7 @@ import argparse
 import copy
 import os
 import sys
+from collections.abc import Callable
 from pathlib import Path
 
 import yaml
@@ -45,7 +50,13 @@ from request_models import (  # noqa: E402
     iter_request_files,
     version_id,
 )
-from tool_schemas import SchemaResolver, SchemaSource, split_params  # noqa: E402
+from tool_schemas import (  # noqa: E402
+    SchemaResolver,
+    SchemaSource,
+    SchemaUnavailable,
+    bundle_output,
+    split_params,
+)
 
 # How to wire an upstream bundle into a downstream (chained) data manager. Keyed
 # on (downstream data manager, upstream data table). ``tool_state`` (optional)
@@ -68,8 +79,6 @@ CHAIN_WIRING = {
         "connect_param": "all_fasta_source",
     },
 }
-
-OUT_FILE = "out_file"  # every data manager tool's bundle output
 
 
 def tool_version_of(tool_id: str) -> str:
@@ -103,8 +112,9 @@ def load_request(path: Path) -> tuple[Request, str, str]:
 class WorkflowBuilder:
     """Accumulates gxformat2 steps, workflow inputs, and the planemo job."""
 
-    def __init__(self, tool_schemas: SchemaResolver) -> None:
+    def __init__(self, tool_schemas: SchemaResolver, bundle_outputs: Callable[[str], str]) -> None:
         self.tool_schemas = tool_schemas
+        self.bundle_outputs = bundle_outputs
         self.steps: dict = {}
         self.inputs: dict = {}
         self.outputs: dict = {}
@@ -119,7 +129,8 @@ class WorkflowBuilder:
         baked_state: dict | None = None,
         connections: dict | None = None,
         input_prefix: str = "",
-    ) -> None:
+    ) -> str:
+        """Add a data manager step; return its bundle's ``<step>/<output>`` source."""
         tool_state, connectable = split_params(
             self.tool_schemas(tool_id), deep_merge(params, baked_state or {})
         )
@@ -153,7 +164,9 @@ class WorkflowBuilder:
         self.steps[step_key] = step
         # Expose this data manager's bundle as a named workflow output, so the
         # invocation surfaces the bundle dataset directly (consumed in Stage 3).
-        self.outputs[f"{step_key}_bundle"] = {"outputSource": f"{step_key}/{OUT_FILE}"}
+        bundle = f"{step_key}/{self.bundle_outputs(tool_id)}"
+        self.outputs[f"{step_key}_bundle"] = {"outputSource": bundle}
+        return bundle
 
     def workflow(self, label: str) -> dict:
         return {
@@ -182,6 +195,7 @@ def build(
     version: str,
     reference_galaxy: str | None = None,
     tool_schemas: SchemaResolver | None = None,
+    bundle_outputs: Callable[[str], str] | None = None,
 ) -> tuple[dict, dict]:
     """Return (gxformat2 workflow dict, planemo job dict) for one request.
 
@@ -193,11 +207,12 @@ def build(
     step and rebuilt.
 
     ``tool_schemas`` resolves a tool GUID to its parameter schema (default: the
-    committed schemas, then the Tool Shed).
+    committed schemas, then the Tool Shed) and ``bundle_outputs`` to the name
+    of its bundle output (default: the Tool Shed).
     """
     from check_data_exists import resolve_existing_value
 
-    wb = WorkflowBuilder(tool_schemas or SchemaSource())
+    wb = WorkflowBuilder(tool_schemas or SchemaSource(), bundle_outputs or bundle_output)
 
     connections: dict = {}
     baked_state: dict = {}
@@ -230,8 +245,9 @@ def build(
             connections[wiring["connect_param"]] = input_name
         else:
             # Rebuild the upstream data manager as a step and wire its bundle.
-            wb.add_step(up_dm, up_request.tool_id, up_request.params, input_prefix=f"{up_dm}_")
-            connections[wiring["connect_param"]] = f"{up_dm}/{OUT_FILE}"
+            connections[wiring["connect_param"]] = wb.add_step(
+                up_dm, up_request.tool_id, up_request.params, input_prefix=f"{up_dm}_"
+            )
 
     wb.add_step(
         dm,
@@ -340,9 +356,13 @@ def main(argv: list[str] | None = None) -> int:
     outdir = Path(args.outdir)
     for path in request_paths:
         request, dm, version = load_request(path)
-        wf_path = write_build(
-            request, dm, version, outdir, validate=args.validate, reference_galaxy=args.reference_galaxy
-        )
+        try:
+            wf_path = write_build(
+                request, dm, version, outdir, validate=args.validate, reference_galaxy=args.reference_galaxy
+            )
+        except SchemaUnavailable as exc:
+            print(f"error: {dm} {version}: {exc}", file=sys.stderr)
+            return 1
         job_path = wf_path.parent / "job.yml"
         history = f"idc-{dm}-{version}"
         print(f"# {dm} {version}")
