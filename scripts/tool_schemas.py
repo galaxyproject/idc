@@ -19,10 +19,12 @@ cannot set (hidden ones), validates ``params``, and embeds the schemas into
 completion and the lint can run without the network for GUIDs already in use.
 
 Run ``python scripts/tool_schemas.py --save-fixture <tool_id>`` to save the raw
-schema under ``tests/fixtures/tool_schemas/`` for offline tests. The CLI accepts
-a full GUID or a compact ``owner~repo~tool~version`` identifier.
+schema under ``tests/fixtures/tool_schemas/`` and the tool's outputs under
+``tests/fixtures/tool_outputs/`` for offline tests. The CLI accepts a full GUID
+or a compact ``owner~repo~tool~version`` identifier.
 """
 import argparse
+import functools
 import json
 import re
 import sys
@@ -75,12 +77,17 @@ def trs_id_and_version(guid: str) -> tuple[str, str]:
     return f"{m['owner']}~{m['repo']}~{m['tool']}", m["version"]
 
 
-def schema_url(guid: str, tool_shed: str = TOOL_SHED) -> str:
+def tool_url(guid: str, tool_shed: str = TOOL_SHED) -> str:
+    """The Tool Shed's parsed-tool endpoint for a GUID (inputs, outputs, requirements, ...)."""
     trs_id, version = trs_id_and_version(guid)
     return (
         f"{tool_shed.rstrip('/')}/api/tools/{urllib.parse.quote(trs_id, safe='~')}"
-        f"/versions/{urllib.parse.quote(version, safe='+')}/parameter_request_schema"
+        f"/versions/{urllib.parse.quote(version, safe='+')}"
     )
+
+
+def schema_url(guid: str, tool_shed: str = TOOL_SHED) -> str:
+    return f"{tool_url(guid, tool_shed)}/parameter_request_schema"
 
 
 def def_name(guid: str) -> str:
@@ -96,7 +103,36 @@ def def_name(guid: str) -> str:
 
 def fetch_request_schema(guid: str, tool_shed: str = TOOL_SHED) -> dict:
     """The raw ``parameter_request_schema`` for a GUID (hidden params included)."""
-    url = schema_url(guid, tool_shed)
+    return _fetch_tool_json(guid, schema_url(guid, tool_shed))
+
+
+def fetch_tool(guid: str, tool_shed: str = TOOL_SHED) -> dict:
+    """The Tool Shed's parsed tool for a GUID; ``outputs`` lists the tool's outputs."""
+    return _fetch_tool_json(guid, tool_url(guid, tool_shed))
+
+
+def bundle_output_name(tool: dict, guid: str) -> str:
+    """The output a data manager run in bundle mode turns into its bundle.
+
+    Galaxy writes the bundle into the tool's ``data_manager_json`` output and
+    insists there is exactly one. Its name is up to the tool (``out_file``,
+    ``output_file``, ``output``, ...), so it is read from the tool, never assumed.
+    """
+    names = [o["name"] for o in tool.get("outputs") or [] if o.get("format") == "data_manager_json"]
+    if len(names) != 1:
+        raise SchemaUnavailable(
+            f"{guid} has {len(names)} data_manager_json outputs {names}; a data manager needs exactly one"
+        )
+    return names[0]
+
+
+@functools.cache
+def bundle_output(guid: str) -> str:
+    """Name of the bundle output of the data manager ``guid``, asked of the Tool Shed once per process."""
+    return bundle_output_name(fetch_tool(guid), guid)
+
+
+def _fetch_tool_json(guid: str, url: str) -> Any:
     req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT, "Accept": "application/json"})
     try:
         with urllib.request.urlopen(req, timeout=60) as resp:  # noqa: S310 (fixed https host)
@@ -504,7 +540,10 @@ def main(argv: Optional[list[str]] = None) -> int:
     parser.add_argument(
         "--save-fixture",
         action="store_true",
-        help="Save the raw schema to tests/fixtures/tool_schemas/<owner>~<repo>~<tool>~<version>.json",
+        help=(
+            "Save the raw schema and the tool's outputs to "
+            "tests/fixtures/{tool_schemas,tool_outputs}/<owner>~<repo>~<tool>~<version>.json"
+        ),
     )
     args = parser.parse_args(argv)
     try:
@@ -512,10 +551,13 @@ def main(argv: Optional[list[str]] = None) -> int:
         schema = fetch_request_schema(guid)
         if args.save_fixture:
             trs_id, version = trs_id_and_version(guid)
-            path = REPO_ROOT / "tests/fixtures/tool_schemas" / f"{trs_id}~{version}.json"
-            path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(json.dumps(schema, indent=2) + "\n")
-            print(path)
+            outputs = {"outputs": fetch_tool(guid)["outputs"]}
+            bundle_output_name(outputs, guid)  # refuse to save a tool with no single bundle output
+            for kind, doc in (("tool_schemas", schema), ("tool_outputs", outputs)):
+                path = REPO_ROOT / "tests/fixtures" / kind / f"{trs_id}~{version}.json"
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(json.dumps(doc, indent=2) + "\n")
+                print(path)
         else:
             print(json.dumps(contributor_schema(schema), indent=2))
     except (SchemaUnavailable, ValueError, OSError) as exc:

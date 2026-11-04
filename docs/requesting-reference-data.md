@@ -275,10 +275,10 @@ and commit the updated `schemas/request.schema.json` with the request.
 
 ### Schema fixtures for a tool's first request
 
-Every tool GUID used by a request also needs an offline test fixture under
-`tests/fixtures/tool_schemas/`, even if it already appears in the editor
-schema. The tests deliberately do not fetch missing schemas from the Tool
-Shed. Save its fixture with:
+Every tool GUID used by a request also needs offline test fixtures under
+`tests/fixtures/tool_schemas/` and `tests/fixtures/tool_outputs/`, even if it
+already appears in the editor schema. The tests deliberately don't ask the
+Tool Shed for missing ones. Save both with:
 
 ```bash
 python scripts/tool_schemas.py --save-fixture <tool_id>
@@ -286,7 +286,7 @@ python scripts/tool_schemas.py --save-fixture <tool_id>
 
 The command accepts either the full GUID from a request's `tool_id` or a
 compact `owner~repo~tool~version` ID. Both must include the version. These
-commands save the same fixture:
+commands save the same fixtures:
 
 ```bash
 python scripts/tool_schemas.py --save-fixture toolshed.g2.bx.psu.edu/repos/devteam/data_manager_sam_fasta_index_builder/sam_fasta_index_builder/1.21+galaxy0
@@ -296,11 +296,13 @@ python scripts/tool_schemas.py --save-fixture devteam~data_manager_sam_fasta_ind
 The compact form uses the production Tool Shed. Request YAML files still
 require the full GUID.
 
-The script saves the raw Tool Shed response and derives the filename
+The script saves the raw Tool Shed parameter schema, and the tool's outputs,
+which the build uses to find the data manager's bundle output (the tool's one
+`data_manager_json` output). It derives the filename
 `<owner>~<repo>~<tool>~<version>.json` from that GUID, not from its upstream
 dependency. For the SAM FASTA index builder it is
 `devteam~data_manager_sam_fasta_index_builder~sam_fasta_index_builder~1.21+galaxy0.json`.
-Commit the fixture with the request and run `python -m pytest tests/ -q`.
+Commit both fixtures with the request and run `python -m pytest tests/ -q`.
 Without `--save-fixture`, both forms print the filtered contributor schema.
 
 ### Generated workflows and existence checks
@@ -405,8 +407,8 @@ first, or you have an older tool version pinned.
 The Tool Shed has no schema for that GUID, usually because the tool id or
 version is wrong. `python scripts/tool_schemas.py <GUID>` shows the same error.
 
-If the error ends with **`no fixture for ...`** in the unit tests, the offline
-fixture is missing instead. Follow [Schema fixtures for a tool's first
+If the error ends with **`no fixture for ...`** or **`no outputs fixture for
+...`** in the unit tests, an offline fixture is missing instead. Follow [Schema fixtures for a tool's first
 request](#schema-fixtures-for-a-tools-first-request); regenerating the editor
 schema alone does not fix it.
 

@@ -255,15 +255,16 @@ Only these fields exist: `tool_id`, `data_tables`, `params`, `depends_on`,
 ## 7. Lint
 
 For every tool GUID newly used by a request, check for
-`tests/fixtures/tool_schemas/<owner>~<repo>~<tool>~<version>.json`. This is
-required even if the GUID is already in the editor schema. If missing, run
+`tests/fixtures/tool_schemas/<owner>~<repo>~<tool>~<version>.json` and the
+same name under `tests/fixtures/tool_outputs/`. Both are required even if the
+GUID is already in the editor schema. If either is missing, run
 `python scripts/tool_schemas.py --save-fixture <tool_id>`; it derives the
-filename and saves the raw Tool Shed response. The CLI accepts a full GUID
+filename and saves the Tool Shed's parameter schema and the tool's outputs. The CLI accepts a full GUID
 or `owner~repo~tool~version`; both need the version. Keep the full GUID in the
 request YAML.
-Commit the fixture with the request. An offline test error ending in
-`no fixture for ...` means this file is missing, not that the Tool Shed lacks
-the tool's schema.
+Commit both fixtures with the request. An offline test error ending in
+`no fixture for ...` or `no outputs fixture for ...` means a file is missing,
+not that the Tool Shed lacks the tool.
 
 Run all of these; fix and re-run until they pass. Every script takes several
 files, so pass all the request files you added (e.g. an upstream and its

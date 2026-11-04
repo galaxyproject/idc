@@ -36,6 +36,27 @@ def fixture_schema(guid: str) -> dict:
         raise tsch.SchemaUnavailable(f"no fixture for {guid}")
     return tsch.contributor_schema(json.loads(path.read_text()))
 
+
+# The tool's ``outputs`` from the Tool Shed's parsed tool, saved for the same
+# GUIDs (tests/fixtures/tool_outputs/<owner>~<repo>~<tool>~<version>.json).
+FIXTURE_OUTPUTS = REPO_ROOT / "tests/fixtures/tool_outputs"
+
+
+def fixture_bundle_output(guid: str) -> str:
+    """The bundle output name from the saved tool outputs - no network."""
+    trs_id, version = tsch.trs_id_and_version(guid)
+    path = FIXTURE_OUTPUTS / f"{trs_id}~{version}.json"
+    if not path.is_file():
+        raise tsch.SchemaUnavailable(f"no outputs fixture for {guid}")
+    return tsch.bundle_output_name(json.loads(path.read_text()), guid)
+
+
+@pytest.fixture(autouse=True)
+def offline_bundle_outputs(monkeypatch):
+    """Builds read bundle output names from the fixtures, never the Tool Shed."""
+    monkeypatch.setattr(gb, "bundle_output", fixture_bundle_output)
+
+
 SEEDS = {
     "metaphlan": REPO_ROOT / "data-managers/metaphlan_database_versioned/mpa_vJan21_CHOCOPhlAnSGB_202103.yaml",
     "motus": REPO_ROOT / "data-managers/motus_db_versioned/3.1.0.yaml",
@@ -124,13 +145,24 @@ def test_schema_cli_saves_raw_fixture_with_guid_filename(tool_id, tmp_path, monk
         assert guid == MOTUS_GUID
         return raw
 
+    outputs = json.loads((FIXTURE_OUTPUTS / filename).read_text())
+
+    def fetch_tool(guid):
+        assert guid == MOTUS_GUID
+        return {"id": "motus_db_fetcher", "help": "...", **outputs}
+
     monkeypatch.setattr(tsch, "fetch_request_schema", fetch)
+    monkeypatch.setattr(tsch, "fetch_tool", fetch_tool)
     assert tsch.main(["--save-fixture", tool_id]) == 0
     saved = tmp_path / "tests/fixtures/tool_schemas" / filename
+    saved_outputs = tmp_path / "tests/fixtures/tool_outputs" / filename
     assert json.loads(saved.read_text()) == raw
-    assert capsys.readouterr().out.strip() == str(saved)
+    assert json.loads(saved_outputs.read_text()) == outputs  # only the outputs are kept
+    assert capsys.readouterr().out.split() == [str(saved), str(saved_outputs)]
     monkeypatch.setattr(sys.modules[__name__], "FIXTURE_SCHEMAS", saved.parent)
+    monkeypatch.setattr(sys.modules[__name__], "FIXTURE_OUTPUTS", saved_outputs.parent)
     assert fixture_schema(MOTUS_GUID) == tsch.contributor_schema(raw)
+    assert fixture_bundle_output(MOTUS_GUID) == "out_file"
 
 
 @pytest.mark.parametrize("tool_id", [MOTUS_GUID, MOTUS_COMPACT_ID])
@@ -319,6 +351,19 @@ def test_committed_request_schema_is_current():
     assert set(gs.tool_ids_in_use()) <= set(gs.all_tool_ids())
 
 
+def test_bundle_output_name_is_the_one_data_manager_json_output():
+    tool = {"outputs": [{"name": "log", "format": "txt"}, {"name": "output_file", "format": "data_manager_json"}]}
+    assert tsch.bundle_output_name(tool, MOTUS_GUID) == "output_file"
+    for outputs in ([], [{"name": "a", "format": "data_manager_json"}, {"name": "b", "format": "data_manager_json"}]):
+        with pytest.raises(tsch.SchemaUnavailable, match="exactly one"):
+            tsch.bundle_output_name({"outputs": outputs}, MOTUS_GUID)
+
+
+def test_every_request_tool_has_an_outputs_fixture():
+    for guid in gs.tool_ids_in_use():
+        fixture_bundle_output(guid)
+
+
 def test_committed_request_schema_validates_the_request_files_as_editors_would():
     import jsonschema
 
@@ -349,6 +394,17 @@ def test_standalone_build_single_bundle_step():
     assert workflow["outputs"] == {"motus_db_versioned_bundle": {"outputSource": "motus_db_versioned/out_file"}}
     assert job == {"version": "3.1.0", "db_value": "db_from_2026-04-27T094930Z"}
     gb.validate_workflow(workflow)  # gxformat2 strict + native + lint
+
+
+def test_bundle_output_is_the_tools_own_output_name():
+    # Bakta's data manager names its data_manager_json output ``output_file``;
+    # a workflow output pointing at ``out_file`` binds to nothing and the
+    # invocation then has no bundle to publish.
+    path = REPO_ROOT / "data-managers/bakta_database/V6.0_2025-02-24.yaml"
+    request, dm, version = gb.load_request(path)
+    workflow, _ = gb.build(request, dm, version)
+    assert workflow["outputs"] == {"bakta_database_bundle": {"outputSource": "bakta_database/output_file"}}
+    gb.validate_workflow(workflow)
 
 
 def test_build_bakes_multiple_select_param_into_tool_state():
@@ -425,6 +481,20 @@ def test_genome_index_chain_fetches_the_genome_first():
         "__data_manager_mode": "bundle",
     }
     assert star["in"]["all_fasta_source"]["source"] == "all_fasta/out_file"
+    gb.validate_workflow(workflow)
+
+
+def test_chained_build_wires_the_upstream_tools_own_bundle_output():
+    request, dm, version = gb.load_request(SEEDS["samestr"])
+    upstream = gb.load_request(SEEDS["metaphlan"])[0].tool_id
+    names = {upstream: "upstream_bundle_json", request.tool_id: "output_file"}
+    workflow, _ = gb.build(request, dm, version, tool_schemas=fixture_schema, bundle_outputs=names.__getitem__)
+    source = "metaphlan_database_versioned/upstream_bundle_json"
+    assert workflow["steps"]["samestr_db"]["in"]["db_source|database"]["source"] == source
+    assert workflow["outputs"] == {
+        "metaphlan_database_versioned_bundle": {"outputSource": source},
+        "samestr_db_bundle": {"outputSource": "samestr_db/output_file"},
+    }
     gb.validate_workflow(workflow)
 
 
