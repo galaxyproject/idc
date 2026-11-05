@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/galaxyproject/idc/main/schemas/request.schema.json
+# GTDB-Tk reference database, GTDB release 232.0 (full package, gtdbtk_r232_data.tar.gz
+# from data.gtdb.aau.ecogenomic.org). Standalone build: the data manager downloads
+# the archive selected by the release, no upstream database.
+# The data manager verifies the download against GTDB's published MD5 sums and writes
+# the entry `full_database_release_232.0` (value) / release 232 (version column).
+tool_id: toolshed.g2.bx.psu.edu/repos/iuc/data_manager_gtdbtk_database_installer/gtdbtk_database_installer/232+galaxy1
+data_tables:
+  - gtdbtk_database_versioned
+params:
+  release: "232.0"   # the tool's "GTDB Release" select param (232+galaxy1 renamed it from 232)
+description: GTDB-Tk reference data, GTDB release 232.0 (full database package)
+doi: 10.1038/s41587-020-0501-8

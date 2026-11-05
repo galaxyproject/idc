@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/galaxyproject/idc/main/schemas/request.schema.json
+# GTDB-Tk metadata tables for GTDB release 232.0 (ar53_metadata_r232.tsv.gz and
+# bac120_metadata_r232.tsv.gz from data.gtdb.aau.ecogenomic.org), written to the
+# dedicated metadata table used by tools such as gtdb_to_taxdump. Standalone
+# build: the data manager downloads the archives selected by the release.
+tool_id: toolshed.g2.bx.psu.edu/repos/iuc/data_manager_gtdbtk_database_installer/gtdbtk_database_installer/232+galaxy1
+data_tables:
+  - gtdbtk_database_metadata_versioned
+params:
+  release: "232.0"   # the tool's "GTDB Release" select param (232+galaxy1 renamed it from 232)
+  meta: true         # the tool's "Only store GTDBTK metadata in a dedicated data table."
+description: GTDB-Tk taxonomy metadata tables, GTDB release 232.0
+doi: 10.1038/s41587-020-0501-8

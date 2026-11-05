@@ -9372,6 +9372,92 @@
       "title": "DynamicModelForTool",
       "type": "object"
     },
+    "params__iuc__data_manager_gtdbtk_database_installer__gtdbtk_database_installer__232+galaxy1": {
+      "additionalProperties": false,
+      "properties": {
+        "meta": {
+          "default": null,
+          "gx_type": "gx_boolean",
+          "title": "Only store GTDBTK metadata in a dedicated data table.",
+          "type": "boolean"
+        },
+        "release": {
+          "anyOf": [
+            {
+              "const": "202",
+              "type": "string"
+            },
+            {
+              "const": "207",
+              "type": "string"
+            },
+            {
+              "const": "214",
+              "type": "string"
+            },
+            {
+              "const": "220",
+              "type": "string"
+            },
+            {
+              "const": "226",
+              "type": "string"
+            },
+            {
+              "const": "232.0",
+              "type": "string"
+            },
+            {
+              "const": "mocked_232",
+              "type": "string"
+            }
+          ],
+          "default": null,
+          "gx_multiple": false,
+          "gx_options": [
+            {
+              "label": "202",
+              "selected": false,
+              "value": "202"
+            },
+            {
+              "label": "207",
+              "selected": false,
+              "value": "207"
+            },
+            {
+              "label": "214",
+              "selected": false,
+              "value": "214"
+            },
+            {
+              "label": "220",
+              "selected": false,
+              "value": "220"
+            },
+            {
+              "label": "226",
+              "selected": false,
+              "value": "226"
+            },
+            {
+              "label": "232.0",
+              "selected": true,
+              "value": "232.0"
+            },
+            {
+              "label": "mocked DB (232)",
+              "selected": false,
+              "value": "mocked_232"
+            }
+          ],
+          "gx_type": "gx_select",
+          "title": "GTDB Release"
+        }
+      },
+      "title": "DynamicModelForTool",
+      "type": "object"
+    },
     "params__iuc__data_manager_hisat2_index_builder__hisat2_index_builder_data_manager__2.2.1+galaxy2": {
       "$defs": {
         "ConditionalType": {
@@ -17979,6 +18065,25 @@
         "properties": {
           "params": {
             "$ref": "#/$defs/params__iuc__data_manager_gtdbtk_database_installer__gtdbtk_database_installer__232+galaxy0"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "tool_id": {
+            "const": "toolshed.g2.bx.psu.edu/repos/iuc/data_manager_gtdbtk_database_installer/gtdbtk_database_installer/232+galaxy1"
+          }
+        },
+        "required": [
+          "tool_id"
+        ]
+      },
+      "then": {
+        "properties": {
+          "params": {
+            "$ref": "#/$defs/params__iuc__data_manager_gtdbtk_database_installer__gtdbtk_database_installer__232+galaxy1"
           }
         }
       }

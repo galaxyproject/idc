@@ -111,4 +111,12 @@
         <columns>value, dbkey, name, version, soft_compatibility_version, description, path</columns>
         <file path="/cvmfs/idc.galaxyproject.org/config/defense-finder-2.loc"/>
     </table>
+    <table name="gtdbtk_database_versioned" comment_char="#" allow_duplicate_entries="False">
+        <columns>value, name, version, path</columns>
+        <file path="/cvmfs/idc.galaxyproject.org/config/gtdbtk_database_versioned.loc"/>
+    </table>
+    <table name="gtdbtk_database_metadata_versioned" comment_char="#" allow_duplicate_entries="False">
+        <columns>value, name, version, path</columns>
+        <file path="/cvmfs/idc.galaxyproject.org/config/gtdbtk_database_metadata_versioned.loc"/>
+    </table>
 </tables>
