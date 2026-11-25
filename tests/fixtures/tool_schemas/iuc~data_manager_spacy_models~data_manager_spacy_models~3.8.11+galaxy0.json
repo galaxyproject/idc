@@ -1,0 +1,673 @@
+{
+  "$defs": {
+    "Section_standard": {
+      "additionalProperties": false,
+      "properties": {
+        "models": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "const": "en_core_web_sm",
+                    "type": "string"
+                  },
+                  {
+                    "const": "en_core_web_md",
+                    "type": "string"
+                  },
+                  {
+                    "const": "en_core_web_lg",
+                    "type": "string"
+                  },
+                  {
+                    "const": "en_core_web_trf",
+                    "type": "string"
+                  },
+                  {
+                    "const": "es_core_news_sm",
+                    "type": "string"
+                  },
+                  {
+                    "const": "es_core_news_md",
+                    "type": "string"
+                  },
+                  {
+                    "const": "es_core_news_lg",
+                    "type": "string"
+                  },
+                  {
+                    "const": "de_core_news_sm",
+                    "type": "string"
+                  },
+                  {
+                    "const": "de_core_news_md",
+                    "type": "string"
+                  },
+                  {
+                    "const": "de_core_news_lg",
+                    "type": "string"
+                  },
+                  {
+                    "const": "fr_core_news_sm",
+                    "type": "string"
+                  },
+                  {
+                    "const": "fr_core_news_md",
+                    "type": "string"
+                  },
+                  {
+                    "const": "fr_core_news_lg",
+                    "type": "string"
+                  },
+                  {
+                    "const": "zh_core_web_sm",
+                    "type": "string"
+                  },
+                  {
+                    "const": "zh_core_web_md",
+                    "type": "string"
+                  },
+                  {
+                    "const": "zh_core_web_lg",
+                    "type": "string"
+                  },
+                  {
+                    "const": "ja_core_news_sm",
+                    "type": "string"
+                  },
+                  {
+                    "const": "ja_core_news_md",
+                    "type": "string"
+                  },
+                  {
+                    "const": "ja_core_news_lg",
+                    "type": "string"
+                  },
+                  {
+                    "const": "pt_core_news_sm",
+                    "type": "string"
+                  },
+                  {
+                    "const": "pt_core_news_md",
+                    "type": "string"
+                  },
+                  {
+                    "const": "pt_core_news_lg",
+                    "type": "string"
+                  },
+                  {
+                    "const": "it_core_news_sm",
+                    "type": "string"
+                  },
+                  {
+                    "const": "it_core_news_md",
+                    "type": "string"
+                  },
+                  {
+                    "const": "it_core_news_lg",
+                    "type": "string"
+                  },
+                  {
+                    "const": "nl_core_news_sm",
+                    "type": "string"
+                  },
+                  {
+                    "const": "nl_core_news_md",
+                    "type": "string"
+                  },
+                  {
+                    "const": "nl_core_news_lg",
+                    "type": "string"
+                  },
+                  {
+                    "const": "el_core_news_sm",
+                    "type": "string"
+                  },
+                  {
+                    "const": "el_core_news_md",
+                    "type": "string"
+                  },
+                  {
+                    "const": "el_core_news_lg",
+                    "type": "string"
+                  },
+                  {
+                    "const": "pl_core_news_sm",
+                    "type": "string"
+                  },
+                  {
+                    "const": "pl_core_news_md",
+                    "type": "string"
+                  },
+                  {
+                    "const": "pl_core_news_lg",
+                    "type": "string"
+                  },
+                  {
+                    "const": "nb_core_news_sm",
+                    "type": "string"
+                  },
+                  {
+                    "const": "nb_core_news_md",
+                    "type": "string"
+                  },
+                  {
+                    "const": "nb_core_news_lg",
+                    "type": "string"
+                  },
+                  {
+                    "const": "lt_core_news_sm",
+                    "type": "string"
+                  },
+                  {
+                    "const": "lt_core_news_md",
+                    "type": "string"
+                  },
+                  {
+                    "const": "lt_core_news_lg",
+                    "type": "string"
+                  },
+                  {
+                    "const": "da_core_news_sm",
+                    "type": "string"
+                  },
+                  {
+                    "const": "da_core_news_md",
+                    "type": "string"
+                  },
+                  {
+                    "const": "da_core_news_lg",
+                    "type": "string"
+                  },
+                  {
+                    "const": "sv_core_news_sm",
+                    "type": "string"
+                  },
+                  {
+                    "const": "sv_core_news_md",
+                    "type": "string"
+                  },
+                  {
+                    "const": "sv_core_news_lg",
+                    "type": "string"
+                  },
+                  {
+                    "const": "ro_core_news_sm",
+                    "type": "string"
+                  },
+                  {
+                    "const": "ro_core_news_md",
+                    "type": "string"
+                  },
+                  {
+                    "const": "ro_core_news_lg",
+                    "type": "string"
+                  },
+                  {
+                    "const": "ca_core_news_sm",
+                    "type": "string"
+                  },
+                  {
+                    "const": "ca_core_news_md",
+                    "type": "string"
+                  },
+                  {
+                    "const": "ca_core_news_lg",
+                    "type": "string"
+                  },
+                  {
+                    "const": "fi_core_news_sm",
+                    "type": "string"
+                  },
+                  {
+                    "const": "fi_core_news_md",
+                    "type": "string"
+                  },
+                  {
+                    "const": "fi_core_news_lg",
+                    "type": "string"
+                  },
+                  {
+                    "const": "hr_core_news_sm",
+                    "type": "string"
+                  },
+                  {
+                    "const": "hr_core_news_md",
+                    "type": "string"
+                  },
+                  {
+                    "const": "hr_core_news_lg",
+                    "type": "string"
+                  },
+                  {
+                    "const": "ko_core_news_sm",
+                    "type": "string"
+                  },
+                  {
+                    "const": "ko_core_news_md",
+                    "type": "string"
+                  },
+                  {
+                    "const": "ko_core_news_lg",
+                    "type": "string"
+                  },
+                  {
+                    "const": "mk_core_news_sm",
+                    "type": "string"
+                  },
+                  {
+                    "const": "mk_core_news_md",
+                    "type": "string"
+                  },
+                  {
+                    "const": "mk_core_news_lg",
+                    "type": "string"
+                  },
+                  {
+                    "const": "ru_core_news_sm",
+                    "type": "string"
+                  },
+                  {
+                    "const": "ru_core_news_md",
+                    "type": "string"
+                  },
+                  {
+                    "const": "ru_core_news_lg",
+                    "type": "string"
+                  },
+                  {
+                    "const": "uk_core_news_sm",
+                    "type": "string"
+                  },
+                  {
+                    "const": "uk_core_news_md",
+                    "type": "string"
+                  },
+                  {
+                    "const": "uk_core_news_lg",
+                    "type": "string"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Select one or more models to install. Each is downloaded as a model wheel, extracted, and registered in the spacy_models data table. Large (lg) and transformer (trf) models are several hundred MB and can take a few minutes each.",
+          "gx_multiple": true,
+          "gx_options": [
+            {
+              "label": "English (small) - en_core_web_sm",
+              "selected": false,
+              "value": "en_core_web_sm"
+            },
+            {
+              "label": "English (medium) - en_core_web_md",
+              "selected": false,
+              "value": "en_core_web_md"
+            },
+            {
+              "label": "English (large) - en_core_web_lg",
+              "selected": false,
+              "value": "en_core_web_lg"
+            },
+            {
+              "label": "English (transformer) - en_core_web_trf",
+              "selected": false,
+              "value": "en_core_web_trf"
+            },
+            {
+              "label": "Spanish (small) - es_core_news_sm",
+              "selected": false,
+              "value": "es_core_news_sm"
+            },
+            {
+              "label": "Spanish (medium) - es_core_news_md",
+              "selected": false,
+              "value": "es_core_news_md"
+            },
+            {
+              "label": "Spanish (large) - es_core_news_lg",
+              "selected": false,
+              "value": "es_core_news_lg"
+            },
+            {
+              "label": "German (small) - de_core_news_sm",
+              "selected": false,
+              "value": "de_core_news_sm"
+            },
+            {
+              "label": "German (medium) - de_core_news_md",
+              "selected": false,
+              "value": "de_core_news_md"
+            },
+            {
+              "label": "German (large) - de_core_news_lg",
+              "selected": false,
+              "value": "de_core_news_lg"
+            },
+            {
+              "label": "French (small) - fr_core_news_sm",
+              "selected": false,
+              "value": "fr_core_news_sm"
+            },
+            {
+              "label": "French (medium) - fr_core_news_md",
+              "selected": false,
+              "value": "fr_core_news_md"
+            },
+            {
+              "label": "French (large) - fr_core_news_lg",
+              "selected": false,
+              "value": "fr_core_news_lg"
+            },
+            {
+              "label": "Chinese (small) - zh_core_web_sm",
+              "selected": false,
+              "value": "zh_core_web_sm"
+            },
+            {
+              "label": "Chinese (medium) - zh_core_web_md",
+              "selected": false,
+              "value": "zh_core_web_md"
+            },
+            {
+              "label": "Chinese (large) - zh_core_web_lg",
+              "selected": false,
+              "value": "zh_core_web_lg"
+            },
+            {
+              "label": "Japanese (small) - ja_core_news_sm",
+              "selected": false,
+              "value": "ja_core_news_sm"
+            },
+            {
+              "label": "Japanese (medium) - ja_core_news_md",
+              "selected": false,
+              "value": "ja_core_news_md"
+            },
+            {
+              "label": "Japanese (large) - ja_core_news_lg",
+              "selected": false,
+              "value": "ja_core_news_lg"
+            },
+            {
+              "label": "Portuguese (small) - pt_core_news_sm",
+              "selected": false,
+              "value": "pt_core_news_sm"
+            },
+            {
+              "label": "Portuguese (medium) - pt_core_news_md",
+              "selected": false,
+              "value": "pt_core_news_md"
+            },
+            {
+              "label": "Portuguese (large) - pt_core_news_lg",
+              "selected": false,
+              "value": "pt_core_news_lg"
+            },
+            {
+              "label": "Italian (small) - it_core_news_sm",
+              "selected": false,
+              "value": "it_core_news_sm"
+            },
+            {
+              "label": "Italian (medium) - it_core_news_md",
+              "selected": false,
+              "value": "it_core_news_md"
+            },
+            {
+              "label": "Italian (large) - it_core_news_lg",
+              "selected": false,
+              "value": "it_core_news_lg"
+            },
+            {
+              "label": "Dutch (small) - nl_core_news_sm",
+              "selected": false,
+              "value": "nl_core_news_sm"
+            },
+            {
+              "label": "Dutch (medium) - nl_core_news_md",
+              "selected": false,
+              "value": "nl_core_news_md"
+            },
+            {
+              "label": "Dutch (large) - nl_core_news_lg",
+              "selected": false,
+              "value": "nl_core_news_lg"
+            },
+            {
+              "label": "Greek (small) - el_core_news_sm",
+              "selected": false,
+              "value": "el_core_news_sm"
+            },
+            {
+              "label": "Greek (medium) - el_core_news_md",
+              "selected": false,
+              "value": "el_core_news_md"
+            },
+            {
+              "label": "Greek (large) - el_core_news_lg",
+              "selected": false,
+              "value": "el_core_news_lg"
+            },
+            {
+              "label": "Polish (small) - pl_core_news_sm",
+              "selected": false,
+              "value": "pl_core_news_sm"
+            },
+            {
+              "label": "Polish (medium) - pl_core_news_md",
+              "selected": false,
+              "value": "pl_core_news_md"
+            },
+            {
+              "label": "Polish (large) - pl_core_news_lg",
+              "selected": false,
+              "value": "pl_core_news_lg"
+            },
+            {
+              "label": "Norwegian Bokm\u00e5l (small) - nb_core_news_sm",
+              "selected": false,
+              "value": "nb_core_news_sm"
+            },
+            {
+              "label": "Norwegian Bokm\u00e5l (medium) - nb_core_news_md",
+              "selected": false,
+              "value": "nb_core_news_md"
+            },
+            {
+              "label": "Norwegian Bokm\u00e5l (large) - nb_core_news_lg",
+              "selected": false,
+              "value": "nb_core_news_lg"
+            },
+            {
+              "label": "Lithuanian (small) - lt_core_news_sm",
+              "selected": false,
+              "value": "lt_core_news_sm"
+            },
+            {
+              "label": "Lithuanian (medium) - lt_core_news_md",
+              "selected": false,
+              "value": "lt_core_news_md"
+            },
+            {
+              "label": "Lithuanian (large) - lt_core_news_lg",
+              "selected": false,
+              "value": "lt_core_news_lg"
+            },
+            {
+              "label": "Danish (small) - da_core_news_sm",
+              "selected": false,
+              "value": "da_core_news_sm"
+            },
+            {
+              "label": "Danish (medium) - da_core_news_md",
+              "selected": false,
+              "value": "da_core_news_md"
+            },
+            {
+              "label": "Danish (large) - da_core_news_lg",
+              "selected": false,
+              "value": "da_core_news_lg"
+            },
+            {
+              "label": "Swedish (small) - sv_core_news_sm",
+              "selected": false,
+              "value": "sv_core_news_sm"
+            },
+            {
+              "label": "Swedish (medium) - sv_core_news_md",
+              "selected": false,
+              "value": "sv_core_news_md"
+            },
+            {
+              "label": "Swedish (large) - sv_core_news_lg",
+              "selected": false,
+              "value": "sv_core_news_lg"
+            },
+            {
+              "label": "Romanian (small) - ro_core_news_sm",
+              "selected": false,
+              "value": "ro_core_news_sm"
+            },
+            {
+              "label": "Romanian (medium) - ro_core_news_md",
+              "selected": false,
+              "value": "ro_core_news_md"
+            },
+            {
+              "label": "Romanian (large) - ro_core_news_lg",
+              "selected": false,
+              "value": "ro_core_news_lg"
+            },
+            {
+              "label": "Catalan (small) - ca_core_news_sm",
+              "selected": false,
+              "value": "ca_core_news_sm"
+            },
+            {
+              "label": "Catalan (medium) - ca_core_news_md",
+              "selected": false,
+              "value": "ca_core_news_md"
+            },
+            {
+              "label": "Catalan (large) - ca_core_news_lg",
+              "selected": false,
+              "value": "ca_core_news_lg"
+            },
+            {
+              "label": "Finnish (small) - fi_core_news_sm",
+              "selected": false,
+              "value": "fi_core_news_sm"
+            },
+            {
+              "label": "Finnish (medium) - fi_core_news_md",
+              "selected": false,
+              "value": "fi_core_news_md"
+            },
+            {
+              "label": "Finnish (large) - fi_core_news_lg",
+              "selected": false,
+              "value": "fi_core_news_lg"
+            },
+            {
+              "label": "Croatian (small) - hr_core_news_sm",
+              "selected": false,
+              "value": "hr_core_news_sm"
+            },
+            {
+              "label": "Croatian (medium) - hr_core_news_md",
+              "selected": false,
+              "value": "hr_core_news_md"
+            },
+            {
+              "label": "Croatian (large) - hr_core_news_lg",
+              "selected": false,
+              "value": "hr_core_news_lg"
+            },
+            {
+              "label": "Korean (small) - ko_core_news_sm",
+              "selected": false,
+              "value": "ko_core_news_sm"
+            },
+            {
+              "label": "Korean (medium) - ko_core_news_md",
+              "selected": false,
+              "value": "ko_core_news_md"
+            },
+            {
+              "label": "Korean (large) - ko_core_news_lg",
+              "selected": false,
+              "value": "ko_core_news_lg"
+            },
+            {
+              "label": "Macedonian (small) - mk_core_news_sm",
+              "selected": false,
+              "value": "mk_core_news_sm"
+            },
+            {
+              "label": "Macedonian (medium) - mk_core_news_md",
+              "selected": false,
+              "value": "mk_core_news_md"
+            },
+            {
+              "label": "Macedonian (large) - mk_core_news_lg",
+              "selected": false,
+              "value": "mk_core_news_lg"
+            },
+            {
+              "label": "Russian (small) - ru_core_news_sm",
+              "selected": false,
+              "value": "ru_core_news_sm"
+            },
+            {
+              "label": "Russian (medium) - ru_core_news_md",
+              "selected": false,
+              "value": "ru_core_news_md"
+            },
+            {
+              "label": "Russian (large) - ru_core_news_lg",
+              "selected": false,
+              "value": "ru_core_news_lg"
+            },
+            {
+              "label": "Ukrainian (small) - uk_core_news_sm",
+              "selected": false,
+              "value": "uk_core_news_sm"
+            },
+            {
+              "label": "Ukrainian (medium) - uk_core_news_md",
+              "selected": false,
+              "value": "uk_core_news_md"
+            },
+            {
+              "label": "Ukrainian (large) - uk_core_news_lg",
+              "selected": false,
+              "value": "uk_core_news_lg"
+            }
+          ],
+          "gx_type": "gx_select",
+          "title": "spaCy Models"
+        }
+      },
+      "title": "Section_standard",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "standard": {
+      "$ref": "#/$defs/Section_standard",
+      "default": null,
+      "gx_type": "gx_section"
+    }
+  },
+  "title": "DynamicModelForTool",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}
