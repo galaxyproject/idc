@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/galaxyproject/idc/main/schemas/request.schema.json
+# Savont EMU 16S rRNA reference database (emu-1) from the Emu project
+# (Curry et al. 2022, Nature Methods): curated full-length 16S for species-level
+# classification of long-read amplicon data.
+# Standalone build: the data manager runs `savont download` and writes one
+# savont_dbs row per selected database (value = the database keyword `emu-1`).
+tool_id: toolshed.g2.bx.psu.edu/repos/iuc/data_manager_savont_dbs/data_manager_savont_dbs/0.9.0+galaxy0
+data_tables:
+  - savont_dbs
+params:
+  dbs: ["emu-1"]   # the tool's "Reference databases to download" multi-select param
+description: Savont EMU 16S rRNA reference database (emu-1)
+doi: 10.1038/s41592-022-01571-4
