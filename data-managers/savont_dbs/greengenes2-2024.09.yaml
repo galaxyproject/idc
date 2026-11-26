@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/galaxyproject/idc/main/schemas/request.schema.json
+# Savont GreenGenes2 16S rRNA reference database, 2024.09 species-level trainset
+# (DADA2 format; McDonald et al. 2024, Nature Biotechnology).
+# Standalone build: the data manager runs `savont download` and writes one
+# savont_dbs row per selected database (value = the database keyword `greengenes2-2024.09`).
+tool_id: toolshed.g2.bx.psu.edu/repos/iuc/data_manager_savont_dbs/data_manager_savont_dbs/0.9.0+galaxy0
+data_tables:
+  - savont_dbs
+params:
+  dbs: ["greengenes2-2024.09"]   # the tool's "Reference databases to download" multi-select param
+description: Savont GreenGenes2 16S rRNA reference database, 2024.09
+doi: 10.1038/s41587-024-02415-y
