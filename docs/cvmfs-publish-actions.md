@@ -54,9 +54,8 @@ usegalaxy-tools' `docs/self-hosted-runner.md`). It needs:
 - **Allowed workflows**: add
   `galaxyproject/idc/.github/workflows/deploy.yml@refs/heads/main`.
 
-The runner itself holds no credential (keys live in each repository's
-environment), so sharing the host does not share access: an idc job can only use
-the `idc` Stratum 0 key from idc's environment. What is shared is the queue: the
+The runner receives credentials from each workflow. An IDC job gets the
+`idc` Stratum 0 key from IDC's protected environment. What is shared is the queue: the
 group has one runner that takes one job per boot, so publishes wait behind tool
 deploys and vice versa.
 
@@ -65,13 +64,13 @@ The runner image's `known_hosts` must contain `cvmfs0-psu0.galaxyproject.org`
 
 ### Repository - idc admin
 
+- Repository secret `TEST_API_KEY` holds the test.galaxyproject.org API key
+  for the account that owns the `idc-<dm>-<version>` build histories. Both
+  `build.yml` and `deploy.yml` use it. The publisher uses it to resolve
+  histories and invocations. Bundle downloads are unauthenticated.
 - **Settings → Environments → `cvmfs-publish`**
   - Secret `STRATUM0_SSH_KEY`: private key authorized for
     `idc@cvmfs0-psu0.galaxyproject.org` (the same access the Jenkins job has).
-  - Secret `REFERENCE_DATA_API_KEY`: a test.galaxyproject.org API key belonging
-    to the user who owns the `idc-<dm>-<version>` build histories (the
-    `TEST_API_KEY` used by `build.yml`). Bundle downloads are unauthenticated;
-    the key only resolves histories and invocations.
   - No required reviewers: running the workflow from `main` is the
     authorization step. Deployment branch policy: `main` only.
 - **Settings → Actions → General**: allow the workflow to run on the

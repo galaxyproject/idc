@@ -55,7 +55,7 @@ jobs:
       - name: Import reference-data bundles and publish
         env:
           PUBLISH: ${{ inputs.publish && 'true' || 'false' }}
-          REFERENCE_DATA_API_KEY: ${{ secrets.REFERENCE_DATA_API_KEY }}
+          REFERENCE_DATA_API_KEY: ${{ secrets.TEST_API_KEY }}
         run: .ci/github-actions.sh
 
       - name: Summarize
