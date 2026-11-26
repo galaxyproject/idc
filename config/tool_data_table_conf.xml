@@ -123,4 +123,8 @@
         <columns>value, name, virsorter_version, path</columns>
         <file path="/cvmfs/idc.galaxyproject.org/config/virsorter.loc"/>
     </table>
+    <table name="savont_dbs" comment_char="#" allow_duplicate_entries="False">
+        <columns>value, name, tool_version, path</columns>
+        <file path="/cvmfs/idc.galaxyproject.org/config/savont_dbs.loc"/>
+    </table>
 </tables>

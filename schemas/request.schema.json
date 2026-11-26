@@ -15400,6 +15400,70 @@
       "title": "DynamicModelForTool",
       "type": "object"
     },
+    "params__iuc__data_manager_savont_dbs__data_manager_savont_dbs__0.9.0+galaxy0": {
+      "additionalProperties": false,
+      "properties": {
+        "dbs": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "const": "emu-1",
+                    "type": "string"
+                  },
+                  {
+                    "const": "silva-138.2",
+                    "type": "string"
+                  },
+                  {
+                    "const": "greengenes2-2024.09",
+                    "type": "string"
+                  },
+                  {
+                    "const": "unite-10.0",
+                    "type": "string"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Select one or more Savont reference databases. Each database is downloaded to its own directory and can be used with the Savont classify and Savont SINTAX tools.",
+          "gx_multiple": true,
+          "gx_options": [
+            {
+              "label": "EMU 16S rRNA reference database (emu-1)",
+              "selected": true,
+              "value": "emu-1"
+            },
+            {
+              "label": "SILVA 16S rRNA reference database (v138.2)",
+              "selected": false,
+              "value": "silva-138.2"
+            },
+            {
+              "label": "GreenGenes2 16S rRNA reference database (2024.09)",
+              "selected": false,
+              "value": "greengenes2-2024.09"
+            },
+            {
+              "label": "UNITE ITS reference database (v10.0)",
+              "selected": false,
+              "value": "unite-10.0"
+            }
+          ],
+          "gx_type": "gx_select",
+          "title": "Reference databases to download"
+        }
+      },
+      "title": "DynamicModelForTool",
+      "type": "object"
+    },
     "params__iuc__data_manager_selection_background__data_manager_selection_background__1.0.4": {
       "$defs": {
         "ConditionalType": {
@@ -18711,6 +18775,25 @@
         "properties": {
           "params": {
             "$ref": "#/$defs/params__iuc__data_manager_samestr__samestr_db__1.2025.111+galaxy5"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "tool_id": {
+            "const": "toolshed.g2.bx.psu.edu/repos/iuc/data_manager_savont_dbs/data_manager_savont_dbs/0.9.0+galaxy0"
+          }
+        },
+        "required": [
+          "tool_id"
+        ]
+      },
+      "then": {
+        "properties": {
+          "params": {
+            "$ref": "#/$defs/params__iuc__data_manager_savont_dbs__data_manager_savont_dbs__0.9.0+galaxy0"
           }
         }
       }

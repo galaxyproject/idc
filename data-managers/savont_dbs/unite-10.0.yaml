@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/galaxyproject/idc/main/schemas/request.schema.json
+# Savont UNITE ITS reference database, v10.0 general release (February 2025;
+# Abarenkov et al. 2025): ITS1/ITS2 across fungi and other eukaryotes, for
+# classifying ITS amplicons rather than 16S/18S rRNA.
+# Standalone build: the data manager runs `savont download` and writes one
+# savont_dbs row per selected database (value = the database keyword `unite-10.0`).
+tool_id: toolshed.g2.bx.psu.edu/repos/iuc/data_manager_savont_dbs/data_manager_savont_dbs/0.9.0+galaxy0
+data_tables:
+  - savont_dbs
+params:
+  dbs: ["unite-10.0"]   # the tool's "Reference databases to download" multi-select param
+description: Savont UNITE ITS reference database, v10.0
+doi: 10.15156/BIO/3301231
