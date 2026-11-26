@@ -55,9 +55,8 @@ usegalaxy-tools' `docs/self-hosted-runner.md`). It needs:
   `galaxyproject/idc/.github/workflows/deploy.yml@refs/heads/main`.
 
 The runner receives credentials from each workflow. An IDC job gets the
-`idc` Stratum 0 key from IDC's protected environment. What is shared is the queue: the
-group has one runner that takes one job per boot, so publishes wait behind tool
-deploys and vice versa.
+`idc` Stratum 0 key from IDC's protected environment. The group has one
+runner that takes one job per boot, so publishes and tool deploys share a queue.
 
 The runner image's `known_hosts` must contain `cvmfs0-psu0.galaxyproject.org`
 (it does, for sandbox); `start_ssh_control` uses `StrictHostKeyChecking=yes`.

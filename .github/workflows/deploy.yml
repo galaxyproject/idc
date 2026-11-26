@@ -34,7 +34,7 @@ jobs:
     runs-on:
       group: cvmfs-publish
       labels: cvmfs
-    # Scopes the Stratum 0 key and the Galaxy key to this job.
+    # Scopes the Stratum 0 key to this job.
     environment: cvmfs-publish
     # A self-hosted job may run up to 5 days; the import itself is minutes to an
     # hour (dominated by installing galaxy-maintenance-scripts on the Stratum 0).
