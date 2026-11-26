@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/galaxyproject/idc/main/schemas/request.schema.json
+# Finnish (large) spaCy language model fi_core_news_lg, model version 3.8.0, downloaded from the
+# explosion/spacy-models release by the data_manager_spacy_models data manager.
+tool_id: toolshed.g2.bx.psu.edu/repos/iuc/data_manager_spacy_models/data_manager_spacy_models/3.8.11+galaxy0
+data_tables:
+  - spacy_models
+params:
+  standard:
+    models:
+      - fi_core_news_lg
+description: Finnish (large) spaCy language model fi_core_news_lg, model version 3.8.0 (spaCy 3.8-compatible), from the explosion/spacy-models release
+doi: 10.5281/zenodo.1212303
