@@ -1,0 +1,16 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "test": {
+      "gx_type": "gx_hidden",
+      "title": "Test",
+      "type": "string"
+    }
+  },
+  "required": [
+    "test"
+  ],
+  "title": "DynamicModelForTool",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

@@ -119,4 +119,8 @@
         <columns>value, name, version, path</columns>
         <file path="/cvmfs/idc.galaxyproject.org/config/gtdbtk_database_metadata_versioned.loc"/>
     </table>
+    <table name="virsorter" comment_char="#" allow_duplicate_entries="False">
+        <columns>value, name, virsorter_version, path</columns>
+        <file path="/cvmfs/idc.galaxyproject.org/config/virsorter.loc"/>
+    </table>
 </tables>

@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/galaxyproject/idc/main/schemas/request.schema.json
+# VirSorter2 reference database v0.4 (Zenodo record 4269607).
+# Standalone build: the data manager runs `virsorter setup`, which downloads the
+# database release that VirSorter2 2.2.4 pins and checks its MD5 sums. It writes
+# the entry `0.4` (value) / `Version 0.4` (name) / `2.2.4` (virsorter_version),
+# the same row usegalaxy.eu serves.
+tool_id: toolshed.g2.bx.psu.edu/repos/ufz/virsorter_build_database/virsorter_build_database/2.2.4+galaxy2
+data_tables:
+  - virsorter
+# Empty on purpose: the tool's only parameter is hidden, and the database
+# version is fixed by the tool version.
+params: {}
+description: VirSorter2 reference database v0.4, for VirSorter2 2.2.4
+doi: 10.5281/zenodo.4269607
