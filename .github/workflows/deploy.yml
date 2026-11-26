@@ -1,79 +1,46 @@
-# Stage 3 of the reference-data pipeline: import the bundles that build.yml built
-# on test.galaxyproject.org onto CVMFS and publish (.ci/github-actions.sh).
-#
-# Run manually once the build histories (idc-<dm>-<version>) are green: a
-# build runs asynchronously for hours after its request merges, so publishing
-# on merge would race it. import_bundles.py refuses bundles whose datasets are
-# not in the ok state, so a premature run fails loudly rather than publishing
-# a partial build.
-#
-# Runs on the org's self-hosted cvmfs-publish runner (docs/cvmfs-publish-actions.md):
-# the Stratum 0 only accepts SSH from inside its network, and the runner group
-# is restricted to this workflow on the default branch.
-name: Publish reference data to CVMFS
+name: Reload IDC tables on Galaxy Test
 
 on:
   workflow_dispatch:
     inputs:
-      publish:
-        description: "Publish the CVMFS transaction (false = import, then abort: a rehearsal)"
-        type: boolean
-        default: true
+      section:
+        description: Data tables to reload after CVMFS replication
+        required: true
+        type: choice
+        options:
+          - virsorter
+          - savont-and-spacy
 
-permissions:
-  contents: read
-
-# One publish at a time: a second run waits for the first instead of failing on
-# the Stratum 0's transaction lock.
-concurrency:
-  group: idc-publish
-  cancel-in-progress: false
+permissions: {}
 
 jobs:
-  publish:
-    runs-on:
-      group: cvmfs-publish
-      labels: cvmfs
-    # Scopes the Stratum 0 key to this job.
-    environment: cvmfs-publish
-    # A self-hosted job may run up to 5 days; the import itself is minutes to an
-    # hour (dominated by installing galaxy-maintenance-scripts on the Stratum 0).
-    timeout-minutes: 300
+  reload:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-
-      - name: Start ssh-agent with the Stratum 0 key
+      - name: Reload selected tables on Galaxy Test
         env:
-          STRATUM0_SSH_KEY: ${{ secrets.STRATUM0_SSH_KEY }}
+          GALAXY_API_KEY: ${{ secrets.TEST_API_KEY }}
+          IDC_SECTION: ${{ inputs.section }}
         run: |
-          eval "$(ssh-agent -s)"
-          echo "SSH_AUTH_SOCK=$SSH_AUTH_SOCK" >> "$GITHUB_ENV"
-          echo "SSH_AGENT_PID=$SSH_AGENT_PID" >> "$GITHUB_ENV"
-          printf '%s\n' "$STRATUM0_SSH_KEY" | ssh-add -
+          python3 - <<'PY'
+          import json
+          import os
+          from urllib.request import Request, urlopen
 
-      - name: Import reference-data bundles and publish
-        env:
-          PUBLISH: ${{ inputs.publish && 'true' || 'false' }}
-          REFERENCE_DATA_API_KEY: ${{ secrets.TEST_API_KEY }}
-        run: .ci/github-actions.sh
-
-      - name: Summarize
-        if: always()
-        env:
-          PUBLISHED: ${{ inputs.publish && job.status == 'success' }}
-        run: |
-          {
-            echo "## Reference data → CVMFS: ${{ job.status }}"
-            echo
-            echo "- commit: \`${GITHUB_SHA}\`"
-            echo "- published: ${PUBLISHED}"
-            echo "- requests:"
-            for req in data-managers/*/*.yaml data-managers/*/*.yml; do
-              if [ -e "$req" ]; then echo "  - \`${req}\`"; fi
-            done
-          } >> "$GITHUB_STEP_SUMMARY"
-
-      - name: Stop ssh-agent
-        if: always()
-        run: ssh-agent -k || true
+          tables = {
+              "virsorter": {"virsorter": 1},
+              "savont-and-spacy": {"savont_dbs": 4, "spacy_models": 70},
+          }
+          api_key = os.environ["GALAXY_API_KEY"]
+          assert api_key, "Galaxy API key is unavailable"
+          for table, expected in tables[os.environ["IDC_SECTION"]].items():
+              request = Request(
+                  f"https://test.galaxyproject.org/api/tool_data/{table}/reload",
+                  headers={"x-api-key": api_key, "Accept": "application/json"},
+              )
+              with urlopen(request, timeout=30) as response:
+                  rows = json.load(response)["fields"]
+              print(f"{table} has {len(rows)} entries after reload")
+              assert len(rows) >= expected, f"Expected at least {expected} entries in {table}"
+          PY
