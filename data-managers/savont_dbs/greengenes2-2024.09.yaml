@@ -9,4 +9,4 @@ data_tables:
 params:
   dbs: ["greengenes2-2024.09"]   # the tool's "Reference databases to download" multi-select param
 description: Savont GreenGenes2 16S rRNA reference database, 2024.09
-doi: 10.1038/s41587-024-02415-y
+doi: 10.5281/zenodo.14169078

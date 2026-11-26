@@ -10,4 +10,4 @@ data_tables:
 params:
   dbs: ["emu-1"]   # the tool's "Reference databases to download" multi-select param
 description: Savont EMU 16S rRNA reference database (emu-1)
-doi: 10.1038/s41592-022-01571-4
+doi: 10.1038/s41592-022-01520-4
