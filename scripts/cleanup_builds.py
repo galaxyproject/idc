@@ -38,6 +38,7 @@ import argparse
 import os
 import subprocess
 import sys
+import time
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
 from pathlib import Path, PurePosixPath
@@ -60,6 +61,10 @@ HISTORY_PREFIX = "idc-"
 BUILD_TAG = "idc"
 HISTORY_KEYS = ["id", "name", "tags", "create_time", "update_time"]
 REQUEST_SUFFIXES = (".yaml", ".yml")
+# test.galaxyproject.org rate-limits (HTTP 429) a run's few hundred requests.
+GET_ATTEMPTS = 6
+GET_RETRY_DELAY = 30.0
+DELETE_PAUSE = 1.0
 
 
 @dataclass
@@ -204,6 +209,8 @@ def main(argv: Optional[list[str]] = None) -> int:
         # A stale ref would make a request merged since look like an orphan.
         subprocess.run(["git", "fetch", "--quiet", "origin"], cwd=REPO_ROOT, check=True)
     gi = GalaxyInstance(url=args.galaxy_url, key=api_key)
+    gi.max_get_attempts = GET_ATTEMPTS
+    gi.get_retry_delay = GET_RETRY_DELAY
 
     requests = requests_on(args.ref)
 
@@ -231,6 +238,7 @@ def main(argv: Optional[list[str]] = None) -> int:
     # Workflows first: a run that stops early leaves no workflow whose histories are gone.
     for workflow_id in sorted(workflows):
         try:
+            time.sleep(DELETE_PAUSE)
             gi.workflows.delete_workflow(workflow_id)
             print(f"deleted stored workflow {workflow_id}")
         except GalaxyError as exc:
@@ -239,6 +247,7 @@ def main(argv: Optional[list[str]] = None) -> int:
     for decision in to_purge:
         history = decision.history
         try:
+            time.sleep(DELETE_PAUSE)
             gi.histories.delete_history(history["id"], purge=True)
             print(f"purged history {history['name']} {history['id']}")
         except GalaxyError as exc:

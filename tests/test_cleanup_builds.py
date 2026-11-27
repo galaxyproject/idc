@@ -148,6 +148,7 @@ def test_main_purges_only_with_apply(tmp_path, monkeypatch, apply):
     gi = FakeGi()
     gi.add("orphan", "idc-gone-1", state="ok")
     monkeypatch.setattr(cb, "GalaxyInstance", lambda url, key: gi)
+    monkeypatch.setattr(cb, "DELETE_PAUSE", 0)
     argv = ["--galaxy-api-key", "k", "--cvmfs-root", str(tmp_path), "--ref", "HEAD"] + (["--apply"] if apply else [])
     assert cb.main(argv) == 0
     assert gi.purged == (["orphan"] if apply else [])
