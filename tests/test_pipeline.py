@@ -473,7 +473,7 @@ def test_genome_index_chain_fetches_the_genome_first():
     ]
     assert job["all_fasta_sequence_id"] == "hg38canon"
 
-    # STAR's request sets no params, so its conditionals take the tool's defaults.
+    # STAR uses the default conditional branches and disables automatic bin sizing.
     star = workflow["steps"]["rnastar_index2x_versioned"]
     assert star["tool_state"] == {
         "GTFconditional": {"GTFselect": "withoutGTF"},
@@ -481,6 +481,7 @@ def test_genome_index_chain_fetches_the_genome_first():
         "__data_manager_mode": "bundle",
     }
     assert star["in"]["all_fasta_source"]["source"] == "all_fasta/out_file"
+    assert job["auto_chr_bin_nbits"] is False
     gb.validate_workflow(workflow)
 
 
@@ -515,7 +516,7 @@ def test_served_upstream_is_referenced_only_if_its_files_match_the_pin(monkeypat
     monkeypatch.setattr(cde, "entry_sha256", lambda url, table, value, key: dict(pinned))
     workflow, job = gb.build(request, dm, version, reference_galaxy="http://g")
     assert list(workflow["steps"]) == ["rnastar_index2x_versioned"]
-    assert job == {"all_fasta_source": "hg38canon"}
+    assert job == {"all_fasta_source": "hg38canon", "auto_chr_bin_nbits": False}
 
     monkeypatch.setattr(cde, "entry_sha256", lambda url, table, value, key: {"hg38canon.fa": "0" * 64})
     with pytest.raises(cde.ChecksumMismatch, match="same name but different files"):
