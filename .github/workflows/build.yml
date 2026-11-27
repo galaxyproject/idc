@@ -40,7 +40,7 @@ permissions:
   pull-requests: write
 
 concurrency:
-  group: idc-build
+  group: idc-hg38canon-rebuild
   cancel-in-progress: false
 
 jobs:
