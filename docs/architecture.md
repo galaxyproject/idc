@@ -176,6 +176,35 @@ chain is imported once. `galaxy-import-data-bundle` moves the data under
 marker is written, and the transaction is published, or aborted for a
 rehearsal.
 
+### Cleaning up build histories
+
+Build histories pile up on test.galaxyproject.org. Deleting them never starts a
+rebuild, since builds are triggered only by request changes and the existence
+check reads the data table API. But the publish job imports from them: it
+skips a request only when its record marker exists on CVMFS, whether or not
+test already serves the data. `scripts/cleanup_builds.py` purges only
+histories that publishing no longer needs: the request has a record marker,
+its build failed, or no request file on `origin/main` names the history. It
+also deletes the stored workflows that only those histories ran. Run it where
+the IDC CVMFS repository is mounted, with the build account's key. It's a dry
+run unless given `--apply`:
+
+```bash
+GALAXY_API_KEY=... python scripts/cleanup_builds.py           # print the plan
+GALAXY_API_KEY=... python scripts/cleanup_builds.py --apply   # purge
+```
+
+`.github/workflows/cleanup.yml` runs it every Monday with `--apply`, mounting
+the IDC repository from the Stratum 1s. Started by hand, it's a dry run unless
+`apply` is ticked, and the plan is in the run's summary.
+
+If an unpublished build's history is deleted anyway, the whole publish fails
+on that request instead of skipping it, and the cleanup script warns about
+it. Rebuild it with `build.yml` (workflow_dispatch). If `build.yml` skips it
+because test already serves the data from another source, there is nothing
+to import, and a maintainer decides whether to write its record marker or
+drop the request.
+
 ### Distribution
 
 The Stratum 1 replicas take a snapshot of the Stratum 0 every hour, and CVMFS

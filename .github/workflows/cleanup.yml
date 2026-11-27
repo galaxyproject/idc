@@ -1,0 +1,75 @@
+name: Clean up build histories
+
+# Purges the build histories (idc-<dm>-<version>) and stored workflows on
+# test.galaxyproject.org that publishing no longer needs; see
+# scripts/cleanup_builds.py for the rules. It reads the record markers from the
+# IDC CVMFS repository, mounted read-only from the Stratum 1s. A marker that a
+# Stratum 1 hasn't picked up yet only keeps a history for another week.
+#
+# Scheduled runs purge. A manual run is a dry run unless `apply` is set.
+#
+# Requires the repository secret TEST_API_KEY (the build account's key on
+# test.galaxyproject.org, which owns the histories).
+
+on:
+  schedule:
+    - cron: "17 5 * * 1" # Mondays 05:17 UTC
+  workflow_dispatch:
+    inputs:
+      apply:
+        description: "Purge (false = print what would be purged)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: idc-cleanup
+  cancel-in-progress: false
+
+jobs:
+  cleanup:
+    # The request list comes from the checkout, so only main's is authoritative.
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Outside the runner's home directory, which the cvmfs user can't read.
+      - name: Install the IDC repository key
+        run: |
+          sudo mkdir -p /etc/cvmfs/keys/galaxyproject.org
+          sudo cp .ci/cvmfs-keys/idc.galaxyproject.org.pub /etc/cvmfs/keys/galaxyproject.org/
+
+      - name: Mount idc.galaxyproject.org
+        uses: cvmfs-contrib/github-action-cvmfs@v5.6
+        with:
+          cvmfs_repositories: idc.galaxyproject.org
+          cvmfs_server_url: "http://cvmfs1-psu0.galaxyproject.org/cvmfs/@fqrn@;http://cvmfs1-iu0.galaxyproject.org/cvmfs/@fqrn@;http://cvmfs1-tacc0.galaxyproject.org/cvmfs/@fqrn@"
+          cvmfs_keys_dir: /etc/cvmfs/keys/galaxyproject.org
+          cvmfs_use_cdn: "no"
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install bioblend "pydantic>=2" pyyaml
+
+      - name: Purge build histories
+        env:
+          GALAXY_API_KEY: ${{ secrets.TEST_API_KEY }}
+          APPLY: ${{ github.event_name == 'schedule' || inputs.apply }}
+        run: |
+          set -euo pipefail
+          args=(--ref HEAD)
+          if [ "$APPLY" = "true" ]; then args+=(--apply); fi
+          python scripts/cleanup_builds.py "${args[@]}" | tee cleanup.txt
+          {
+            echo "## Build history cleanup (apply: ${APPLY})"
+            echo
+            echo '```'
+            cat cleanup.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"

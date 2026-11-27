@@ -736,8 +736,12 @@ class _FakeGi:
         outer = self
 
         class _Histories:
-            def get_histories(self, name, deleted=False):
-                return [{"id": h["id"], "name": name} for h in outer._histories]
+            def get_histories(self, name, deleted=False, **kwargs):
+                return [
+                    {"id": h["id"], "name": name}
+                    for h in outer._histories
+                    if h.get("deleted", False) == deleted
+                ]
 
             def show_history(self, history_id):
                 return next(h for h in outer._histories if h["id"] == history_id)
@@ -894,10 +898,26 @@ def test_history_resolution_returns_empty_when_history_missing():
     class _NoHistory:
         class histories:
             @staticmethod
-            def get_histories(name, deleted=False):
+            def get_histories(name, deleted=False, **kwargs):
                 return []
 
     assert gburls.bundles_from_history(_NoHistory(), "idc-missing-1") == {}
+
+
+def test_import_fails_when_the_build_history_was_deleted(tmp_path, monkeypatch, capsys):
+    """A build cleaned up before it was published must fail the publish, not
+    pass as "nothing to import"."""
+    deleted = _build("gone", "2026-01-01T00:00:00")
+    deleted["deleted"] = True
+    gi = _FakeGi([], {}, histories=[deleted])
+    monkeypatch.setattr(imp, "_galaxy_connection", lambda args: gi)
+    rc = imp.main([
+        "--history-name", "idc-motus_db_versioned-3.1.0",
+        "--dm", "motus_db_versioned", "--version", "3.1.0",
+        "--cvmfs-root", str(tmp_path), "--dry-run",
+    ])
+    assert rc == 1
+    assert "has been deleted" in capsys.readouterr().err
 
 
 def test_import_skips_gracefully_when_no_bundles(tmp_path, capsys):
