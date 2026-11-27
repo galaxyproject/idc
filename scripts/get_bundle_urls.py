@@ -97,10 +97,16 @@ def build_invocation(gi, history_name: str, suffix: str = DEFAULT_BUNDLE_SUFFIX)
     until they are ``ok``. Returns None if no history of that name exists (the
     build was skipped because the data already exists) and raises
     BuildUnavailable if there are histories but none holds a build that has not
-    failed.
+    failed, or if every history of that name was deleted: callers treat None as
+    "nothing to import", which would silently drop a build that was cleaned up
+    before it was published.
     """
     histories = gi.histories.get_histories(name=history_name, deleted=False)
     if not histories:
+        if gi.histories.get_histories(name=history_name, deleted=True, view="summary", keys=["id", "name"]):
+            raise BuildUnavailable(
+                f"every history named {history_name!r} has been deleted; rebuild it before importing"
+            )
         return None
     details = [gi.histories.show_history(h["id"]) for h in histories]
     for history in sorted(details, key=lambda h: h.get("create_time", ""), reverse=True):
