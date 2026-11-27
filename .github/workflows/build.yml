@@ -31,7 +31,7 @@ on:
         required: false
         default: false
       pull_request:
-        description: "Request PR to receive invocation links for a manual rebuild (optional)"
+        description: "Merged request PR to receive invocation links for a manual rebuild (optional)"
         required: false
         default: ""
 
