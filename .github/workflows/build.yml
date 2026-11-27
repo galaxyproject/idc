@@ -56,6 +56,41 @@ jobs:
       - name: Install dependencies
         run: pip install planemo "pydantic>=2" pyyaml jsonschema gxformat2
 
+      - name: Wait for the fixed STAR wrapper on Test
+        if: inputs.rebuild_request
+        timeout-minutes: 70
+        env:
+          GALAXY_API_KEY: ${{ secrets.TEST_API_KEY }}
+        run: |
+          python -u - <<'WAIT_FOR_TOOL'
+          import json
+          import os
+          import time
+          from urllib.error import HTTPError, URLError
+          from urllib.parse import quote
+          from urllib.request import Request, urlopen
+
+          tool_id = "toolshed.g2.bx.psu.edu/repos/iuc/data_manager_star_index_builder/rna_star_index_builder_data_manager/2.7.4a+galaxy4"
+          url = f"https://test.galaxyproject.org/api/tools/{quote(tool_id, safe='')}"
+          request = Request(url, headers={"x-api-key": os.environ["GALAXY_API_KEY"]})
+          deadline = time.monotonic() + 4000
+          while time.monotonic() < deadline:
+              try:
+                  with urlopen(request, timeout=20) as response:
+                      if json.load(response).get("id") == tool_id:
+                          print("Test has loaded the requested STAR wrapper.")
+                          break
+              except HTTPError as error:
+                  if error.code not in {404, 429, 500, 502, 503, 504}:
+                      raise SystemExit(f"Test tools API returned HTTP {error.code}.")
+              except (URLError, TimeoutError):
+                  pass
+              print("Waiting for Test to load STAR data manager 2.7.4a+galaxy4.")
+              time.sleep(45)
+          else:
+              raise SystemExit("Test did not load the requested STAR wrapper before the timeout.")
+          WAIT_FOR_TOOL
+
       - name: Select requests to build
         env:
           # Admin key: reading a served entry's files to check pinned sha256s.
