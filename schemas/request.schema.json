@@ -9286,92 +9286,6 @@
       "title": "DynamicModelForTool",
       "type": "object"
     },
-    "params__iuc__data_manager_gtdbtk_database_installer__gtdbtk_database_installer__232+galaxy0": {
-      "additionalProperties": false,
-      "properties": {
-        "meta": {
-          "default": null,
-          "gx_type": "gx_boolean",
-          "title": "Only store GTDBTK metadata in a dedicated data table.",
-          "type": "boolean"
-        },
-        "release": {
-          "anyOf": [
-            {
-              "const": "202",
-              "type": "string"
-            },
-            {
-              "const": "207",
-              "type": "string"
-            },
-            {
-              "const": "214",
-              "type": "string"
-            },
-            {
-              "const": "220",
-              "type": "string"
-            },
-            {
-              "const": "226",
-              "type": "string"
-            },
-            {
-              "const": "232",
-              "type": "string"
-            },
-            {
-              "const": "mocked_232",
-              "type": "string"
-            }
-          ],
-          "default": null,
-          "gx_multiple": false,
-          "gx_options": [
-            {
-              "label": "202",
-              "selected": false,
-              "value": "202"
-            },
-            {
-              "label": "207",
-              "selected": false,
-              "value": "207"
-            },
-            {
-              "label": "214",
-              "selected": false,
-              "value": "214"
-            },
-            {
-              "label": "220",
-              "selected": false,
-              "value": "220"
-            },
-            {
-              "label": "226",
-              "selected": false,
-              "value": "226"
-            },
-            {
-              "label": "232",
-              "selected": true,
-              "value": "232"
-            },
-            {
-              "label": "mocked DB (232)",
-              "selected": false,
-              "value": "mocked_232"
-            }
-          ],
-          "gx_type": "gx_select",
-          "title": "GTDB Release"
-        }
-      },
-      "title": "DynamicModelForTool",
-      "type": "object"
-    },
     "params__iuc__data_manager_gtdbtk_database_installer__gtdbtk_database_installer__232+galaxy1": {
       "additionalProperties": false,
       "properties": {
@@ -16939,7 +16853,7 @@
       "title": "DynamicModelForTool",
       "type": "object"
     },
-    "params__iuc__data_manager_star_index_builder__rna_star_index_builder_data_manager__2.7.4a+galaxy3": {
+    "params__iuc__data_manager_star_index_builder__rna_star_index_builder_data_manager__2.7.4a+galaxy4": {
       "$defs": {
         "When_GTFselect___absent": {
           "additionalProperties": false,
@@ -17052,42 +16966,42 @@
         "galaxy__tool_util_models__parameters__ConditionalParameterModel__pydantic_template___locals___ConditionalType__1": {
           "oneOf": [
             {
-              "$ref": "#/$defs/params__iuc__data_manager_star_index_builder__rna_star_index_builder_data_manager__2.7.4a+galaxy3/$defs/When_GTFselect_withGTF"
+              "$ref": "#/$defs/params__iuc__data_manager_star_index_builder__rna_star_index_builder_data_manager__2.7.4a+galaxy4/$defs/When_GTFselect_withGTF"
             },
             {
-              "$ref": "#/$defs/params__iuc__data_manager_star_index_builder__rna_star_index_builder_data_manager__2.7.4a+galaxy3/$defs/When_GTFselect_withoutGTF"
+              "$ref": "#/$defs/params__iuc__data_manager_star_index_builder__rna_star_index_builder_data_manager__2.7.4a+galaxy4/$defs/When_GTFselect_withoutGTF"
             },
             {
-              "$ref": "#/$defs/params__iuc__data_manager_star_index_builder__rna_star_index_builder_data_manager__2.7.4a+galaxy3/$defs/When_GTFselect___absent"
+              "$ref": "#/$defs/params__iuc__data_manager_star_index_builder__rna_star_index_builder_data_manager__2.7.4a+galaxy4/$defs/When_GTFselect___absent"
             }
           ],
           "title": "ConditionalType",
           "discriminator": {
             "propertyName": "GTFselect",
             "mapping": {
-              "withGTF": "#/$defs/params__iuc__data_manager_star_index_builder__rna_star_index_builder_data_manager__2.7.4a+galaxy3/$defs/When_GTFselect_withGTF",
-              "withoutGTF": "#/$defs/params__iuc__data_manager_star_index_builder__rna_star_index_builder_data_manager__2.7.4a+galaxy3/$defs/When_GTFselect_withoutGTF"
+              "withGTF": "#/$defs/params__iuc__data_manager_star_index_builder__rna_star_index_builder_data_manager__2.7.4a+galaxy4/$defs/When_GTFselect_withGTF",
+              "withoutGTF": "#/$defs/params__iuc__data_manager_star_index_builder__rna_star_index_builder_data_manager__2.7.4a+galaxy4/$defs/When_GTFselect_withoutGTF"
             }
           }
         },
         "galaxy__tool_util_models__parameters__ConditionalParameterModel__pydantic_template___locals___ConditionalType__2": {
           "oneOf": [
             {
-              "$ref": "#/$defs/params__iuc__data_manager_star_index_builder__rna_star_index_builder_data_manager__2.7.4a+galaxy3/$defs/When_advanced_options_selector_default"
+              "$ref": "#/$defs/params__iuc__data_manager_star_index_builder__rna_star_index_builder_data_manager__2.7.4a+galaxy4/$defs/When_advanced_options_selector_default"
             },
             {
-              "$ref": "#/$defs/params__iuc__data_manager_star_index_builder__rna_star_index_builder_data_manager__2.7.4a+galaxy3/$defs/When_advanced_options_selector___absent"
+              "$ref": "#/$defs/params__iuc__data_manager_star_index_builder__rna_star_index_builder_data_manager__2.7.4a+galaxy4/$defs/When_advanced_options_selector___absent"
             },
             {
-              "$ref": "#/$defs/params__iuc__data_manager_star_index_builder__rna_star_index_builder_data_manager__2.7.4a+galaxy3/$defs/When_advanced_options_selector_advanced"
+              "$ref": "#/$defs/params__iuc__data_manager_star_index_builder__rna_star_index_builder_data_manager__2.7.4a+galaxy4/$defs/When_advanced_options_selector_advanced"
             }
           ],
           "title": "ConditionalType",
           "discriminator": {
             "propertyName": "advanced_options_selector",
             "mapping": {
-              "default": "#/$defs/params__iuc__data_manager_star_index_builder__rna_star_index_builder_data_manager__2.7.4a+galaxy3/$defs/When_advanced_options_selector_default",
-              "advanced": "#/$defs/params__iuc__data_manager_star_index_builder__rna_star_index_builder_data_manager__2.7.4a+galaxy3/$defs/When_advanced_options_selector_advanced"
+              "default": "#/$defs/params__iuc__data_manager_star_index_builder__rna_star_index_builder_data_manager__2.7.4a+galaxy4/$defs/When_advanced_options_selector_default",
+              "advanced": "#/$defs/params__iuc__data_manager_star_index_builder__rna_star_index_builder_data_manager__2.7.4a+galaxy4/$defs/When_advanced_options_selector_advanced"
             }
           }
         }
@@ -17117,7 +17031,7 @@
           "title": "Informative name for sequence index"
         },
         "GTFconditional": {
-          "$ref": "#/$defs/params__iuc__data_manager_star_index_builder__rna_star_index_builder_data_manager__2.7.4a+galaxy3/$defs/galaxy__tool_util_models__parameters__ConditionalParameterModel__pydantic_template___locals___ConditionalType__1",
+          "$ref": "#/$defs/params__iuc__data_manager_star_index_builder__rna_star_index_builder_data_manager__2.7.4a+galaxy4/$defs/galaxy__tool_util_models__parameters__ConditionalParameterModel__pydantic_template___locals___ConditionalType__1",
           "default": null,
           "gx_options": [
             {
@@ -17150,7 +17064,7 @@
           "type": "boolean"
         },
         "advanced_options": {
-          "$ref": "#/$defs/params__iuc__data_manager_star_index_builder__rna_star_index_builder_data_manager__2.7.4a+galaxy3/$defs/galaxy__tool_util_models__parameters__ConditionalParameterModel__pydantic_template___locals___ConditionalType__2",
+          "$ref": "#/$defs/params__iuc__data_manager_star_index_builder__rna_star_index_builder_data_manager__2.7.4a+galaxy4/$defs/galaxy__tool_util_models__parameters__ConditionalParameterModel__pydantic_template___locals___ConditionalType__2",
           "default": null,
           "gx_options": [
             {
@@ -18790,25 +18704,6 @@
       "if": {
         "properties": {
           "tool_id": {
-            "const": "toolshed.g2.bx.psu.edu/repos/iuc/data_manager_gtdbtk_database_installer/gtdbtk_database_installer/232+galaxy0"
-          }
-        },
-        "required": [
-          "tool_id"
-        ]
-      },
-      "then": {
-        "properties": {
-          "params": {
-            "$ref": "#/$defs/params__iuc__data_manager_gtdbtk_database_installer__gtdbtk_database_installer__232+galaxy0"
-          }
-        }
-      }
-    },
-    {
-      "if": {
-        "properties": {
-          "tool_id": {
             "const": "toolshed.g2.bx.psu.edu/repos/iuc/data_manager_gtdbtk_database_installer/gtdbtk_database_installer/232+galaxy1"
           }
         },
@@ -19607,7 +19502,7 @@
       "if": {
         "properties": {
           "tool_id": {
-            "const": "toolshed.g2.bx.psu.edu/repos/iuc/data_manager_star_index_builder/rna_star_index_builder_data_manager/2.7.4a+galaxy3"
+            "const": "toolshed.g2.bx.psu.edu/repos/iuc/data_manager_star_index_builder/rna_star_index_builder_data_manager/2.7.4a+galaxy4"
           }
         },
         "required": [
@@ -19617,7 +19512,7 @@
       "then": {
         "properties": {
           "params": {
-            "$ref": "#/$defs/params__iuc__data_manager_star_index_builder__rna_star_index_builder_data_manager__2.7.4a+galaxy3"
+            "$ref": "#/$defs/params__iuc__data_manager_star_index_builder__rna_star_index_builder_data_manager__2.7.4a+galaxy4"
           }
         }
       }

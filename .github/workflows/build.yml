@@ -20,13 +20,18 @@ on:
         description: "Specific request file to build (default: all requests changed in the push)"
         required: false
         default: ""
+      rebuild_request:
+        description: "Rebuild the specified request even if it is already served, using a separate history"
+        type: boolean
+        required: false
+        default: false
       rebuild_upstream:
         description: "Chained requests: rebuild the upstream data in the same workflow, even if it is already served"
         type: boolean
         required: false
         default: false
       pull_request:
-        description: "Request PR to receive invocation links for a manual rebuild (optional)"
+        description: "Merged request PR to receive invocation links for a manual rebuild (optional)"
         required: false
         default: ""
 
@@ -55,10 +60,20 @@ jobs:
         env:
           # Admin key: reading a served entry's files to check pinned sha256s.
           GALAXY_API_KEY: ${{ secrets.TEST_API_KEY }}
+          REQUEST: ${{ inputs.request }}
+          REBUILD_REQUEST: ${{ inputs.rebuild_request }}
         run: |
           set -euo pipefail
-          if [ -n "${{ github.event.inputs.request }}" ]; then
-            printf '%s\n' "${{ github.event.inputs.request }}" > candidates.txt
+          if [ "$REBUILD_REQUEST" = "true" ]; then
+            if [[ ! "$REQUEST" =~ ^data-managers/[[:alnum:]_][[:alnum:]_.-]*/[[:alnum:]_][[:alnum:]_.-]*\.ya?ml$ ]] || [ ! -f "$REQUEST" ]; then
+              echo "::error::rebuild_request requires one existing data-managers/<table>/<version>.yaml request."
+              exit 1
+            fi
+            printf '%s\n' "$REQUEST" > requests.txt
+            exit 0
+          fi
+          if [ -n "$REQUEST" ]; then
+            printf '%s\n' "$REQUEST" > candidates.txt
           else
             base="${{ github.event.before }}"
             # branch-creation / unknown base reports an all-zero SHA; use previous commit
@@ -79,6 +94,7 @@ jobs:
         env:
           TEST_API_KEY: ${{ secrets.TEST_API_KEY }}
           GALAXY_API_KEY: ${{ secrets.TEST_API_KEY }}
+          REBUILD_REQUEST: ${{ inputs.rebuild_request }}
         run: |
           set -euo pipefail
           if [ ! -s requests.txt ]; then echo "Nothing to build."; exit 0; fi
@@ -93,6 +109,11 @@ jobs:
             echo "::group::Building ${dm}/${version}"
             python scripts/generate_build.py "$req" --outdir build "${reference[@]}"
             b="build/${dm}/${version}"
+            history_name="idc-${dm}-${version}"
+            if [ "$REBUILD_REQUEST" = "true" ]; then
+              # The default publisher looks up the normal history by name.
+              history_name+="-rebuild-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+            fi
             # --no_use_cache: a rebuild must actually re-run the data manager;
             # planemo defaults to Galaxy's job cache, which would hand back a
             # copy of an earlier (possibly stale/broken) bundle instead.
@@ -100,7 +121,7 @@ jobs:
             planemo run "$b/workflow.gxwf.yml" "$b/job.yml" \
               --galaxy_url https://test.galaxyproject.org \
               --galaxy_user_key "$TEST_API_KEY" \
-              --history_name "idc-${dm}-${version}" \
+              --history_name "$history_name" \
               --tags idc --no_wait --no_use_cache \
               --test_output_json "$b/run-report.json" || run_status=$?
             if [ -f "$b/run-report.json" ]; then

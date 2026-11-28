@@ -3,7 +3,7 @@
 #   python scripts/generate_schema.py --from-lock <data_managers.yml.lock>
 # Their parameter schemas are baked into request.schema.json so editors can
 # complete params for any of them. Do not edit by hand.
-source: https://raw.githubusercontent.com/galaxyproject/usegalaxy-tools/7a1336b159e0995b9fd8547b766e034440ed3d1e/test.galaxyproject.org/data_managers.yml.lock
+source: https://raw.githubusercontent.com/galaxyproject/usegalaxy-tools/af574ffec03b9531d46ba85dc20dcfaf7681e0e7/test.galaxyproject.org/data_managers.yml.lock
 repositories:
 - owner: bgruening
   name: data_manager_diamond_database_builder
@@ -237,9 +237,9 @@ repositories:
   - toolshed.g2.bx.psu.edu/repos/iuc/data_manager_groot_database_downloader/groot_database_downloader/1.1.2+galaxy1
 - owner: iuc
   name: data_manager_gtdbtk_database_installer
-  revision: b2a92f75fda8
+  revision: e83290ce69ad
   tool_ids:
-  - toolshed.g2.bx.psu.edu/repos/iuc/data_manager_gtdbtk_database_installer/gtdbtk_database_installer/232+galaxy0
+  - toolshed.g2.bx.psu.edu/repos/iuc/data_manager_gtdbtk_database_installer/gtdbtk_database_installer/232+galaxy1
 - owner: iuc
   name: data_manager_hisat2_index_builder
   revision: 596dfee9e3bc
@@ -392,6 +392,11 @@ repositories:
   tool_ids:
   - toolshed.g2.bx.psu.edu/repos/iuc/data_manager_samestr/samestr_db/1.2025.111+galaxy5
 - owner: iuc
+  name: data_manager_savont_dbs
+  revision: 579401cd0db3
+  tool_ids:
+  - toolshed.g2.bx.psu.edu/repos/iuc/data_manager_savont_dbs/data_manager_savont_dbs/0.9.0+galaxy0
+- owner: iuc
   name: data_manager_selection_background
   revision: 3f0af6aa8667
   tool_ids:
@@ -413,15 +418,20 @@ repositories:
   tool_ids:
   - toolshed.g2.bx.psu.edu/repos/iuc/data_manager_snpsift_dbnsfp/data_manager_snpsift_dbnsfp/4.1.1
 - owner: iuc
+  name: data_manager_spacy_models
+  revision: 370b0851d1af
+  tool_ids:
+  - toolshed.g2.bx.psu.edu/repos/iuc/data_manager_spacy_models/data_manager_spacy_models/3.8.11+galaxy0
+- owner: iuc
   name: data_manager_stanza_models
   revision: d70e377d6e2b
   tool_ids:
   - toolshed.g2.bx.psu.edu/repos/iuc/data_manager_stanza_models/data_manager_stanza_models/1.14.0+galaxy1
 - owner: iuc
   name: data_manager_star_index_builder
-  revision: 71c994a11f71
+  revision: 7e9d81e30fba
   tool_ids:
-  - toolshed.g2.bx.psu.edu/repos/iuc/data_manager_star_index_builder/rna_star_index_builder_data_manager/2.7.4a+galaxy3
+  - toolshed.g2.bx.psu.edu/repos/iuc/data_manager_star_index_builder/rna_star_index_builder_data_manager/2.7.4a+galaxy4
 - owner: iuc
   name: data_manager_transvar_annotations
   revision: f4e49f7639f9
