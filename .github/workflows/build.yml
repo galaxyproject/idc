@@ -1,153 +1,74 @@
-name: Build reference-data bundles
-
-# Stage 2 of the IDC reference-data pipeline: when a request is merged to main,
-# generate its data-manager-bundle workflow and run it on test.galaxyproject.org
-# (via planemo). The build runs asynchronously (--no_wait); the resulting bundle
-# datasets live in a history named idc-<dm>-<version>, which Stage 3
-# (deploy.yml, run manually once the build is green) later imports onto CVMFS.
-#
-# Requires the repository secret TEST_API_KEY (a test.galaxyproject.org API key).
-
+name: Refresh the hg38canon STAR row on Test
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - "data-managers/**"
   workflow_dispatch:
     inputs:
-      request:
-        description: "Specific request file to build (default: all requests changed in the push)"
-        required: false
-        default: ""
-      rebuild_request:
-        description: "Rebuild the specified request even if it is already served, using a separate history"
-        type: boolean
-        required: false
-        default: false
-      rebuild_upstream:
-        description: "Chained requests: rebuild the upstream data in the same workflow, even if it is already served"
-        type: boolean
-        required: false
-        default: false
-      pull_request:
-        description: "Merged request PR to receive invocation links for a manual rebuild (optional)"
-        required: false
-        default: ""
-
+      revision:
+        description: Published IDC CVMFS revision
+        required: true
+        type: number
 permissions:
   contents: read
-  pull-requests: write
-
-concurrency:
-  group: idc-build
-  cancel-in-progress: false
-
 jobs:
-  build:
+  reload:
     runs-on: ubuntu-latest
+    timeout-minutes: 100
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 2 # need the previous commit to diff changed requests
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-      - name: Install dependencies
-        run: pip install planemo "pydantic>=2" pyyaml jsonschema gxformat2
-
-      - name: Select requests to build
+      - name: Reload the STAR table after CVMFS replication
         env:
-          # Admin key: reading a served entry's files to check pinned sha256s.
           GALAXY_API_KEY: ${{ secrets.TEST_API_KEY }}
-          REQUEST: ${{ inputs.request }}
-          REBUILD_REQUEST: ${{ inputs.rebuild_request }}
+          IDC_REVISION: ${{ inputs.revision }}
         run: |
-          set -euo pipefail
-          if [ "$REBUILD_REQUEST" = "true" ]; then
-            if [[ ! "$REQUEST" =~ ^data-managers/[[:alnum:]_][[:alnum:]_.-]*/[[:alnum:]_][[:alnum:]_.-]*\.ya?ml$ ]] || [ ! -f "$REQUEST" ]; then
-              echo "::error::rebuild_request requires one existing data-managers/<table>/<version>.yaml request."
-              exit 1
-            fi
-            printf '%s\n' "$REQUEST" > requests.txt
-            exit 0
-          fi
-          if [ -n "$REQUEST" ]; then
-            printf '%s\n' "$REQUEST" > candidates.txt
-          else
-            base="${{ github.event.before }}"
-            # branch-creation / unknown base reports an all-zero SHA; use previous commit
-            if [ -z "$base" ] || ! git cat-file -e "${base}^{commit}" 2>/dev/null; then
-              base="HEAD~1"
-            fi
-            git diff --name-only --diff-filter=AM "$base" "${{ github.sha }}" \
-              -- 'data-managers/*/*.yml' 'data-managers/*/*.yaml' > candidates.txt || true
-          fi
-          # Drop requests whose data already exists in a Galaxy data table (the
-          # authoritative signal; covers data from any source, e.g. the byhand
-          # CVMFS). --print-new emits only the requests that still need building.
-          python scripts/check_data_exists.py --from-file candidates.txt --print-new \
-            --reference-galaxy https://test.galaxyproject.org > requests.txt
-          echo "Requests to build:"; cat requests.txt || true
+          python3 -u - <<'PY'
+          import json
+          import os
+          import re
+          import time
+          from pathlib import PurePosixPath
+          from urllib.error import HTTPError, URLError
+          from urllib.request import Request, urlopen
 
-      - name: Build bundles on test.galaxyproject.org
-        env:
-          TEST_API_KEY: ${{ secrets.TEST_API_KEY }}
-          GALAXY_API_KEY: ${{ secrets.TEST_API_KEY }}
-          REBUILD_REQUEST: ${{ inputs.rebuild_request }}
-        run: |
-          set -euo pipefail
-          if [ ! -s requests.txt ]; then echo "Nothing to build."; exit 0; fi
-          # --reference-galaxy: if a chained request's upstream database already
-          # exists on the Galaxy, reference it instead of rebuilding it.
-          reference=(--reference-galaxy https://test.galaxyproject.org)
-          if [ "${{ github.event.inputs.rebuild_upstream }}" = "true" ]; then reference=(); fi
-          while read -r req; do
-            [ -n "$req" ] || continue
-            dm=$(basename "$(dirname "$req")")
-            version=$(basename "$req"); version="${version%.*}"
-            echo "::group::Building ${dm}/${version}"
-            python scripts/generate_build.py "$req" --outdir build "${reference[@]}"
-            b="build/${dm}/${version}"
-            history_name="idc-${dm}-${version}"
-            if [ "$REBUILD_REQUEST" = "true" ]; then
-              # The default publisher looks up the normal history by name.
-              history_name+="-rebuild-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
-            fi
-            # --no_use_cache: a rebuild must actually re-run the data manager;
-            # planemo defaults to Galaxy's job cache, which would hand back a
-            # copy of an earlier (possibly stale/broken) bundle instead.
-            run_status=0
-            planemo run "$b/workflow.gxwf.yml" "$b/job.yml" \
-              --galaxy_url https://test.galaxyproject.org \
-              --galaxy_user_key "$TEST_API_KEY" \
-              --history_name "$history_name" \
-              --tags idc --no_wait --no_use_cache \
-              --test_output_json "$b/run-report.json" || run_status=$?
-            if [ -f "$b/run-report.json" ]; then
-              python scripts/share_build_invocation.py \
-                --report "$b/run-report.json" --request "$req" --outdir "$b"
-            else
-              echo "::error::Planemo did not write a run report."
-              exit 1
-            fi
-            if [ "$run_status" -ne 0 ]; then exit "$run_status"; fi
-            echo "::endgroup::"
-          done < requests.txt
+          key = os.environ["GALAXY_API_KEY"]
+          want_revision = int(os.environ["IDC_REVISION"])
+          mirror = "http://cvmfs1-tacc0.galaxyproject.org/cvmfs/idc.galaxyproject.org/.cvmfspublished"
+          table = "https://test.galaxyproject.org/api/tool_data/rnastar_index2x_versioned"
+          heads = {"x-api-key": key, "Accept": "application/json"}
 
-      - name: Link Galaxy invocations from request PRs
-        if: always()
-        env:
-          GH_TOKEN: ${{ github.token }}
-          REQUEST_PR: ${{ inputs.pull_request }}
-        run: |
-          args=()
-          if [ -n "$REQUEST_PR" ]; then args+=(--pull-request "$REQUEST_PR"); fi
-          python scripts/post_build_links.py --build-dir build "${args[@]}"
+          def fetch(url, headers=None):
+              with urlopen(Request(url, headers=headers or {}), timeout=25) as response:
+                  return response.read().decode()
 
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: idc-build
-          path: build/
-          if-no-files-found: ignore
+          def star_row(payload):
+              rows = [
+                  row for row in json.loads(payload)["fields"]
+                  if row[0] == "hg38canon" and str(row[4]) == "0" and row[5] == "2.7.4a"
+              ]
+              if len(rows) == 1 and rows[0][1] == "hg38":
+                  return PurePosixPath(rows[0][3]).name
+              return "missing or duplicate"
+
+          deadline = time.monotonic() + 5400
+          while time.monotonic() < deadline:
+              try:
+                  manifest = fetch(mirror).split("\n--\n", 1)[0]
+                  match = re.search(r"^S([0-9]+)$", manifest, re.MULTILINE)
+                  revision = int(match[1]) if match else -1
+                  if revision >= want_revision:
+                      current = star_row(fetch(f"{table}/reload", heads))
+                      print(f"Test STAR row after reload: {current}")
+                      if current == "hg38canon-chrbin18":
+                          params = fetch(f"{table}/fields/hg38canon/files/genomeParameters.txt", heads)
+                          assert re.search(r"^genomeChrBinNbits\s+18$", params, re.MULTILINE)
+                          print("Verified hg38canon-chrbin18 and genomeChrBinNbits=18 on Test.")
+                          break
+                  else:
+                      print(f"TACC CVMFS mirror revision {revision}. Waiting for {want_revision}.")
+              except HTTPError as exc:
+                  if exc.code in {401, 403}:
+                      raise SystemExit(f"Test STAR table reload authorization failed with HTTP {exc.code}.")
+                  print(f"Waiting after HTTP {exc.code}.")
+              except (TimeoutError, URLError) as exc:
+                  print(f"Transient connection problem: {type(exc).__name__}.")
+              time.sleep(45)
+          else:
+              raise SystemExit("Test did not expose the replacement STAR index before the timeout.")
+          PY
