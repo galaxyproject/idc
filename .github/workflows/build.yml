@@ -35,7 +35,7 @@ jobs:
 
           def fetch(url, headers=None):
               with urlopen(Request(url, headers=headers or {}), timeout=25) as response:
-                  return response.read().decode()
+                  return response.read()
 
           def star_row(payload):
               rows = [
@@ -49,15 +49,15 @@ jobs:
           deadline = time.monotonic() + 5400
           while time.monotonic() < deadline:
               try:
-                  manifest = fetch(mirror).split("\n--\n", 1)[0]
-                  match = re.search(r"^S([0-9]+)$", manifest, re.MULTILINE)
+                  manifest = fetch(mirror).split(b"\n--\n", 1)[0]
+                  match = re.search(rb"^S([0-9]+)$", manifest, re.MULTILINE)
                   revision = int(match[1]) if match else -1
                   if revision >= want_revision:
                       current = star_row(fetch(f"{table}/reload", heads))
                       print(f"Test STAR row after reload: {current}")
                       if current == "hg38canon-chrbin18":
                           params = fetch(f"{table}/fields/hg38canon/files/genomeParameters.txt", heads)
-                          assert re.search(r"^genomeChrBinNbits\s+18$", params, re.MULTILINE)
+                          assert re.search(rb"^genomeChrBinNbits\s+18$", params, re.MULTILINE)
                           print("Verified hg38canon-chrbin18 and genomeChrBinNbits=18 on Test.")
                           break
                   else:
